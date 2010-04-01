@@ -52,7 +52,6 @@ var popup = {
 						try{
 							var data = [];
 							$(xhr).find("multiRef").each(function(i, val) {
-								try{
 									if($("key", val).text())
 									{
 										var date = popup.convertDate();
@@ -65,9 +64,6 @@ var popup = {
 											parseInt($("priority", val).text())
 										]);
 									}
-								}catch(e){
-									popup.error(e.message);
-								}
 							});
 							
 							$('#AssignedToMe').dataTable( {
@@ -98,8 +94,12 @@ var popup = {
 		},
 		convertDate: function(str){
 			if(str!='' && typeof(str)!="undefined"){
-				var d= parseXSDDateString(str);
-				return (d.getUTCMonth()+1) + "." +d.getUTCDate() + "." + d.getUTCFullYear();
+				try{
+					var d= parseXSDDateString(str);
+					return (d.getMonth()+1) + "." +d.getDate() + "." + d.getFullYear();
+				}catch(e){
+					return '';
+				}
 			} else {
 				return '';
 			}
