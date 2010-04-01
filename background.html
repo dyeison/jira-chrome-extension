@@ -6,8 +6,8 @@
 	<script>
 
 	
-
 var loader = {
+	resolutions: [],
 	token: null,
 	url:null,
 	login: function(username, password, callback){
@@ -23,11 +23,13 @@ var loader = {
 					} else {
 						localStorage.setItem("error", "");
 						loader.token = $(xhr).text();
+						loader.getSettings();
 						callback(loader);
 					}
 				});
 	},
 	update: function(){
+	
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
 				pl.add("in1", "assignee = currentUser() AND resolution is EMPTY ORDER BY priority DESC, created ASC");
@@ -38,8 +40,33 @@ var loader = {
 						chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 						localStorage.setItem("AssignedToMe", $(xhr).xml(1));
 				});
+				
+				
+				
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				pl.add("in1", "reporter = currentUser()  ORDER BY priority DESC, created ASC");
+				//pl.add("in1", "resolution is EMPTY ORDER BY priority DESC, created ASC");
+				pl.add("in2",100);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromJqlSearch", pl, true, function(r, xhr){
+						localStorage.setItem("ReportedByMe", $(xhr).xml(1));
+				});
+
+				
+	},
+	getSettings: function(){
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getResolutions", pl, true, function(r, xhr){
+					$(xhr).find("multiRef").each(function(i, val) {
+						if($("id", val).text()){
+							loader.resolutions[$("id", val).text()] = $("name", val).text();
+						}
+					});
+				});
 	}
 }
+
 
 function Auth(){
 	if(localStorage.getItem("url"))
