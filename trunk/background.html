@@ -1,0 +1,62 @@
+<html>
+  <head>
+	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+	<script type="text/javascript" src="js/jquery.xml.min.js"></script> 
+    <script type="text/javascript" src="js/soapclient.js"></script>
+	<script>
+
+	
+
+var loader = {
+	token: null,
+	url:null,
+	login: function(username, password, callback){
+			var pl = new SOAPClientParameters();
+			pl.add("username", username);
+			pl.add("password", password);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "login", pl, true, function(r, xhr){
+					if($("faultstring",xhr).text() != '')
+					{
+						localStorage.setItem("error", $("faultstring",xhr).text());
+						chrome.browserAction.setIcon({ 'path' : '16x16off.png'});
+						chrome.browserAction.setBadgeText({text: ''});
+					} else {
+						localStorage.setItem("error", "");
+						loader.token = $(xhr).text();
+						callback(loader);
+					}
+				});
+	},
+	update: function(){
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				pl.add("in1", "assignee = currentUser() AND resolution is EMPTY ORDER BY priority DESC, created ASC");
+				//pl.add("in1", "resolution is EMPTY ORDER BY priority DESC, created ASC");
+				pl.add("in2",100);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromJqlSearch", pl, true, function(r, xhr){
+						chrome.browserAction.setIcon({ 'path' : '16x16.png'});
+						chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
+						localStorage.setItem("AssignedToMe", $(xhr).xml(1));
+				});
+	}
+}
+
+function Auth(){
+	if(localStorage.getItem("url"))
+	{
+		loader.url = localStorage.getItem("url");
+		loader.login(localStorage.getItem("username"), localStorage.getItem("password"), function(){
+			loader.update();
+			window.setInterval(loader.update, 1000*60);
+		});
+	} else {
+		chrome.browserAction.setIcon({ 'path' : '16x16off.png'});
+		chrome.browserAction.setBadgeText({text: ''});
+	}
+}
+Auth();
+	</script>
+ </head>
+  <body>
+  </body>
+</html> 
