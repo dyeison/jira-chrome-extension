@@ -111,6 +111,8 @@ table.display {
 }
 
 table.display thead th {
+	font-size:11px;
+	white-space:nowrap;
 	padding: 3px 18px 3px 10px;
 	border-bottom: 1px solid black;
 	font-weight: bold;
