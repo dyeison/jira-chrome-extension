@@ -22,9 +22,16 @@ body {
 	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
 	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
 	<script type="text/javascript" src="js/jquery-ui-1.8rc3.custom.min.js"></script>
+	<script type="text/javascript" src="js/xsddate.js"></script>
 
 <script>
-
+var priority = [
+						"",
+						"priority_blocker.gif",
+						"priority_critical.gif",
+						"priority_major.gif",
+						"priority_minor.gif",
+						"priority_trivial.gif"];
 var popup = {
 		url:null,
 		init: function(){
@@ -45,14 +52,21 @@ var popup = {
 						try{
 							var data = [];
 							$(xhr).find("multiRef").each(function(i, val) {
-								if($("key", val).text())
-								{
-									data.push([
-									//	$("duedate", val).text(),
-									//	$("project", val).text(),
-										$("key", val).text(),
-										$("summary", val).text(),
-									]);
+								try{
+									if($("key", val).text())
+									{
+										var date = popup.convertDate();
+										data.push([
+										//	$("duedate", val).text(),
+										//	$("project", val).text(),
+											$("key", val).text(),
+											$("summary", val).text(),
+											popup.convertDate($("duedate", val).text()),
+											parseInt($("priority", val).text())
+										]);
+									}
+								}catch(e){
+									popup.error(e.message);
 								}
 							});
 							
@@ -62,8 +76,10 @@ var popup = {
 							"aoColumns": [
 								//	{ "sTitle": "duedate" },
 								//	{ "sTitle": "project" },
-									{ "sTitle": "key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+popup.url +"/browse/"+ obj.aData[ obj.iDataColumn ]+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
-									{ "sTitle": "Summary", "sClass": "Summary", }
+									{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+popup.url +"/browse/"+ obj.aData[ obj.iDataColumn ]+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+									{ "sTitle": "Summary", "sClass": "Summary", },
+									{ "sTitle": "Due date"},
+									{ "sTitle": "",  "fnRender": function(obj) { return "<img src='" + popup.url + "/images/icons/" + priority[obj.aData[ obj.iDataColumn ]] +"'>" ;}}
 								]
 							} );	
 						}catch(e){
@@ -79,6 +95,14 @@ var popup = {
 				var sXml = localStorage.getItem(name);
 				var data = (new DOMParser()).parseFromString(sXml, "text/xml");
 				callback(data);
+		},
+		convertDate: function(str){
+			if(str!='' && typeof(str)!="undefined"){
+				var d= parseXSDDateString(str);
+				return (d.getUTCMonth()+1) + "." +d.getUTCDate() + "." + d.getUTCFullYear();
+			} else {
+				return '';
+			}
 		},
 		error: function(err){
 			$("body").append($("<DIV />").addClass("error").text(err)).
