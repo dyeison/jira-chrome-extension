@@ -32,10 +32,14 @@ var priority = [
 						"priority_major.gif",
 						"priority_minor.gif",
 						"priority_trivial.gif"];
+						
+				
 var popup = {
 		url:null,
+		resolutinos: null,
 		init: function(){
 			this.url = localStorage.getItem("url");
+			this.resolutions = chrome.extension.getBackgroundPage().loader.resolutions;
 			if(this.url)
 			{
 				$('#tabs').tabs({
@@ -82,6 +86,45 @@ var popup = {
 							alert(e);
 						}
 					});
+					
+					this.getXml("ReportedByMe", function(xhr){
+						try{
+							var data = [];
+							$(xhr).find("multiRef").each(function(i, val) {
+									if($("key", val).text())
+									{
+										var date = popup.convertDate();
+										data.push([
+										//	$("duedate", val).text(),
+										//	$("project", val).text(),
+											$("key", val).text(),
+											$("summary", val).text(),
+											popup.convertDate($("duedate", val).text()),
+											parseInt($("priority", val).text()),
+											popup.resolutions[$("resolution", val).text()]
+										]);
+									}
+							});
+							
+							$('#ReportedByMe').dataTable( {
+							"bJQueryUI": false,
+							"aaData": data,
+							"aoColumns": [
+								//	{ "sTitle": "duedate" },
+								//	{ "sTitle": "project" },
+									{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+popup.url +"/browse/"+ obj.aData[ obj.iDataColumn ]+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+									{ "sTitle": "Summary", "sClass": "Summary", },
+									{ "sTitle": "Due date"},
+									{ "sTitle": "",  "fnRender": function(obj) { return "<img src='" + popup.url + "/images/icons/" + priority[obj.aData[ obj.iDataColumn ]] +"'>" ;}},
+									{"sTitle": "Resolution"}
+									
+								]
+							} );	
+						}catch(e){
+							alert(e);
+						}
+					});					
+					
 				}
 			} else {
 				this.error('Configure first!');
@@ -126,11 +169,16 @@ $(window).load(function () {
 		<div id="tabs"style="min-width:250px; font-size:10px;">
 			<ul>
 				<li><a href="#tab1">Assigned to me</a></li>
+				<li><a href="#tab2">Reported by me</a></li>
 			</ul>
 			<div id="tab1">
 				<table cellpadding="0" cellspacing="0" border="0" class="display" id="AssignedToMe"></table>
 				<br />
 			</div>
+			<div id="tab2">
+				<table cellpadding="0" cellspacing="0" border="0" class="display" id="ReportedByMe"></table>
+				<br />
+			</div>			
 		</div>
 
 </body>
