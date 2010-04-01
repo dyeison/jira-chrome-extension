@@ -1,0 +1,113 @@
+<html>
+  <head>
+		<style type="text/css" title="currentStyle">
+			@import "css/ui.all.css";
+			@import "css/demo_table.css";
+body {
+	font: 10px Calibri, "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	margin: 10px;
+	padding: 0px;
+	color: #333;
+	background-color: #fff;
+}
+
+.error{
+	font: 15px Calibri, "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	margin: 10px;
+	padding: 10px;
+	color: #AA0000;
+}
+
+		</style>
+	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
+	<script type="text/javascript" src="js/jquery-ui-1.8rc3.custom.min.js"></script>
+
+<script>
+
+var popup = {
+		url:null,
+		init: function(){
+			this.url = localStorage.getItem("url");
+			if(this.url)
+			{
+				$('#tabs').tabs({
+					select: function(event, ui) {
+						localStorage.setItem('lastOpenedTab', ui.index);
+					},
+					selected: (localStorage.getItem('lastOpenedTab')?localStorage.getItem('lastOpenedTab'):0)
+				});
+				if(localStorage.getItem('error')!="")
+				{
+					this.error(localStorage.getItem('error'));
+				 } else {
+					this.getXml("AssignedToMe", function(xhr){
+						try{
+							var data = [];
+							$(xhr).find("multiRef").each(function(i, val) {
+								if($("key", val).text())
+								{
+									data.push([
+									//	$("duedate", val).text(),
+									//	$("project", val).text(),
+										$("key", val).text(),
+										$("summary", val).text(),
+									]);
+								}
+							});
+							
+							$('#AssignedToMe').dataTable( {
+							"bJQueryUI": false,
+							"aaData": data,
+							"aoColumns": [
+								//	{ "sTitle": "duedate" },
+								//	{ "sTitle": "project" },
+									{ "sTitle": "key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+popup.url +"/browse/"+ obj.aData[ obj.iDataColumn ]+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+									{ "sTitle": "Summary", "sClass": "Summary", }
+								]
+							} );	
+						}catch(e){
+							alert(e);
+						}
+					});
+				}
+			} else {
+				this.error('Configure first!');
+			}
+		},
+		getXml: function(name, callback){
+				var sXml = localStorage.getItem(name);
+				var data = (new DOMParser()).parseFromString(sXml, "text/xml");
+				callback(data);
+		},
+		error: function(err){
+			$("body").append($("<DIV />").addClass("error").text(err)).
+				append($("<HR />")).
+				append($("<INPUT />").attr("type","button").attr("value", "Options").click(function(){
+						var url = chrome.extension.getURL('options.html');
+						chrome.tabs.create({ url: url, selected: true });
+				})
+			);
+			$("#tabs").hide();
+		}
+}
+
+$(window).load(function () {
+	setTimeout("popup.init();", 0);
+});
+
+</script>
+
+<body>
+		<div id="tabs"style="min-width:250px; font-size:10px;">
+			<ul>
+				<li><a href="#tab1">Assigned to me</a></li>
+			</ul>
+			<div id="tab1">
+				<table cellpadding="0" cellspacing="0" border="0" class="display" id="AssignedToMe"></table>
+				<br />
+			</div>
+		</div>
+
+</body>
+</html>
