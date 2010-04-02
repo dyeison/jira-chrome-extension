@@ -4,10 +4,10 @@
 	"description": "View your JIRA issues.",
 	"background_page": "background.html",
 	"icons": {
-		"16": "16x16.png",
-		"32": "32x32.png",
-		"48": "48x48.png",
-        "128": "128x128.png"
+		"16": "images/16x16.png",
+		"32": "images/32x32.png",
+		"48": "images/48x48.png",
+        "128": "images/128x128.png"
 	},
 	"permissions": [
 		"tabs",
@@ -16,7 +16,7 @@
    "options_page": "options.html",
 	"browser_action": {
 		"default_title": "Jira: Assigned to me",
-		"default_icon": "16x16.png",
+		"default_icon": "images/16x16.png",
 		"popup": "jira.html"
 	}
 }
