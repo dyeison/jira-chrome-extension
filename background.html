@@ -92,6 +92,7 @@ var loader = {
 
 
 function Auth(){
+	chrome.browserAction.setBadgeBackgroundColor({color: [0, 255,0, 255]})
 	if(localStorage.getItem("url"))
 	{
 		loader.url = localStorage.getItem("url");

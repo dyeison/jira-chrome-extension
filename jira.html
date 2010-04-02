@@ -17,6 +17,22 @@ body {
 	padding: 10px;
 	color: #AA0000;
 }
+div.HeaderLink{
+	font: 9px "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	color: #8888;
+	background-color: #fff;
+	margin:3px;
+	text-align:right;
+}
+a.HeaderLink{
+	color: #888888;
+	margin:3px;
+	text-decoration:none;
+}
+a.HeaderLink:hover{
+	color: #dd4444;
+	text-decoration:underline;
+}
 
 		</style>
 	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
@@ -26,28 +42,27 @@ body {
 
 <script>
 var priority = [
-						"",
+						"priority_blocker.gif",
 						"priority_blocker.gif",
 						"priority_critical.gif",
 						"priority_major.gif",
 						"priority_minor.gif",
 						"priority_trivial.gif"];
 						
-				
-var popup = {
-		url:null,
+var jira = {
+		serverUrl:null,
 		resolutinos: null,
-		
 		init: function(){
-			this.url = localStorage.getItem("url");
-			this.resolutions = chrome.extension.getBackgroundPage().loader.resolutions;
-			if(this.url)
+			jira.serverUrl = localStorage.getItem("url");
+			jira.resolutions = chrome.extension.getBackgroundPage().loader.resolutions;
+			if(jira.serverUrl)
 			{
+				jira.initHeaderLinks();
 				if(localStorage.getItem('error')!="")
 				{
-					this.error(localStorage.getItem('error'));
+					jira.error(localStorage.getItem('error'));
 				 } else {
-					this.getXml("AssignedToMe", function(xhr){
+					jira.getXml("AssignedToMe", function(xhr){
 						try{
 							var data = [];
 							$(xhr).find("multiRef").each(function(i, val) {
@@ -56,7 +71,7 @@ var popup = {
 										data.push([
 											$("key", val).text(),
 											$("summary", val).text(),
-											popup.getDate($("duedate", val).text()),
+											jira.getDate($("duedate", val).text()),
 											parseInt($("priority", val).text())
 										]);
 									}
@@ -66,10 +81,10 @@ var popup = {
 							"bJQueryUI": false,
 							"aaData": data,
 							"aoColumns": [
-									{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+popup.url +"/browse/"+ obj.aData[ obj.iDataColumn ]+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+									{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 									{ "sTitle": "Summary", "sClass": "Summary", },
 									{ "sTitle": "Due date"},
-									{ "sTitle": "",  "fnRender": function(obj) { return "<img src='" + popup.url + "/images/icons/" + priority[obj.aData[ obj.iDataColumn ]] +"'>" ;}}
+									{ "sTitle": "",  "fnRender": function(obj) { return "<img src='" + jira.url( "/images/icons/" + priority[obj.aData[ obj.iDataColumn ]]) +"'>" ;}}
 								]
 							} );	
 						}catch(e){
@@ -77,7 +92,7 @@ var popup = {
 						}
 					});
 					try{
-						popup.getIssuesFromFilter();
+						jira.getIssuesFromFilter();
 					}catch(e){
 						alert(e);
 					}
@@ -85,7 +100,7 @@ var popup = {
 
 				}
 			} else {
-				this.error('Configure first!');
+				jira.error('Configure first!');
 			}
 		},
 		getIssuesFromFilter: function(){
@@ -101,10 +116,10 @@ var popup = {
 					);
 			});
 	
-			popup.tabs();
+			jira.tabs();
 
 			$.map(filters, function(item, i){
-						popup.getXml("IssuesFromFilter_" + item.id, function(xhr){
+						jira.getXml("IssuesFromFilter_" + item.id, function(xhr){
 						try{
 							var data = [];
 							$(xhr).find("multiRef").each(function(i, val) {
@@ -116,9 +131,9 @@ var popup = {
 											$("key", val).text(),
 											$("summary", val).text(),
 											$("assignee", val).text(),
-											popup.getDate($("duedate", val).text()),
+											jira.getDate($("duedate", val).text()),
 											parseInt($("priority", val).text()),
-											popup.getResolution($("resolution", val).text())
+											jira.getResolution($("resolution", val).text())
 										]);
 									}
 							});
@@ -129,11 +144,11 @@ var popup = {
 							"aoColumns": [
 								//	{ "sTitle": "duedate" },
 								//	{ "sTitle": "project" },
-									{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+popup.url +"/browse/"+ obj.aData[ obj.iDataColumn ]+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+									{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 									{ "sTitle": "Summary", "sClass": "Summary"},
 									{ "sTitle": "Assignee",  "fnRender": function(obj) { if(obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
 									{ "sTitle": "Due date", "sClass": "Date"},
-									{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return "<img src='" + popup.url + "/images/icons/" + priority[obj.aData[ obj.iDataColumn ]] +"'>" ;}},
+									{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return "<img src='" + jira.url("/images/icons/" + priority[obj.aData[ obj.iDataColumn ]]) +"'>" ;}},
 									{"sTitle": "Res.", "sClass": "ShortField"}
 									
 								]
@@ -166,7 +181,7 @@ var popup = {
 			if(id == ''){
 				return '<span style="color:#880000; font-size:8px;">UNRESOLVED</span>';
 			}else{
-				return popup.resolutions[id];
+				return jira.resolutions[id];
 			}
 		},
 		error: function(err){
@@ -186,16 +201,29 @@ var popup = {
 						},
 						selected: (localStorage.getItem('lastOpenedTab')?localStorage.getItem('lastOpenedTab'):0)
 					});
+		},
+		initHeaderLinks: function(){
+				$("#HeaderLink").append(
+					$("<a />").addClass("HeaderLink").attr("href", jira.url('/secure/ManageFilters.jspa')).attr("target", "_blank").text("Manage Filters")
+				).append(
+					$("<a />").addClass("HeaderLink").attr("href", chrome.extension.getURL('options.html')).attr("target", "_blank").text("Options")
+				//).append(
+				//	$("<a />").addClass("HeaderLink").attr("href", "javascript:{chrome.extension.getBackgroundPage().loader.update();window.close();}").text("Update issues")
+				);
+		},
+		url: function(str){
+			return (jira.serverUrl + str);
 		}
 }
 
 $(window).load(function () {
-	setTimeout("popup.init();", 0);
+	setTimeout(jira.init, 0);
 });
 
 </script>
 
 <body>
+		<div id="HeaderLink" class="HeaderLink"></div>
 		<div id="tabs"style="min-width:250px; max-width:900px; font-size:10px;">
 			<ul id="tabHeader">
 				<li><a href="#tab1">Assigned to me</a></li>
