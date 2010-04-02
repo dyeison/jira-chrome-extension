@@ -4,7 +4,7 @@
 			@import "css/ui.all.css";
 			@import "css/demo_table.css";
 body {
-	font: 10px Calibri, "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	font: 10px "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 	margin: 10px;
 	padding: 0px;
 	color: #333;
@@ -12,7 +12,7 @@ body {
 }
 
 .error{
-	font: 15px Calibri, "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	font: 15px  "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 	margin: 10px;
 	padding: 10px;
 	color: #AA0000;
@@ -37,17 +37,12 @@ var priority = [
 var popup = {
 		url:null,
 		resolutinos: null,
+		
 		init: function(){
 			this.url = localStorage.getItem("url");
 			this.resolutions = chrome.extension.getBackgroundPage().loader.resolutions;
 			if(this.url)
 			{
-				$('#tabs').tabs({
-					select: function(event, ui) {
-						localStorage.setItem('lastOpenedTab', ui.index);
-					},
-					selected: (localStorage.getItem('lastOpenedTab')?localStorage.getItem('lastOpenedTab'):0)
-				});
 				if(localStorage.getItem('error')!="")
 				{
 					this.error(localStorage.getItem('error'));
@@ -58,13 +53,10 @@ var popup = {
 							$(xhr).find("multiRef").each(function(i, val) {
 									if($("key", val).text())
 									{
-										var date = popup.convertDate();
 										data.push([
-										//	$("duedate", val).text(),
-										//	$("project", val).text(),
 											$("key", val).text(),
 											$("summary", val).text(),
-											popup.convertDate($("duedate", val).text()),
+											popup.getDate($("duedate", val).text()),
 											parseInt($("priority", val).text())
 										]);
 									}
@@ -74,8 +66,6 @@ var popup = {
 							"bJQueryUI": false,
 							"aaData": data,
 							"aoColumns": [
-								//	{ "sTitle": "duedate" },
-								//	{ "sTitle": "project" },
 									{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+popup.url +"/browse/"+ obj.aData[ obj.iDataColumn ]+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 									{ "sTitle": "Summary", "sClass": "Summary", },
 									{ "sTitle": "Due date"},
@@ -86,37 +76,65 @@ var popup = {
 							alert(e);
 						}
 					});
+					try{
+						popup.getIssuesFromFilter();
+					}catch(e){
+						alert(e);
+					}
 					
-					this.getXml("ReportedByMe", function(xhr){
+
+				}
+			} else {
+				this.error('Configure first!');
+			}
+		},
+		getIssuesFromFilter: function(){
+			var filters = chrome.extension.getBackgroundPage().loader.filters;
+			$.map(filters, function(item, i){
+
+					$("#tabHeader").append($("<LI />").append($("<A />").attr("href", "#IssuesFromFilter_" + item.id).text(item.name)));
+					
+					$("#tabs").append(
+						$("<DIV />").attr("id", "IssuesFromFilter_" + item.id).append(
+							$("<TABLE />").attr("id", "TableIssuesFromFilter_" + item.id).addClass("display")
+						).append($("<BR />"))
+					);
+			});
+	
+			popup.tabs();
+
+			$.map(filters, function(item, i){
+						popup.getXml("IssuesFromFilter_" + item.id, function(xhr){
 						try{
 							var data = [];
 							$(xhr).find("multiRef").each(function(i, val) {
 									if($("key", val).text())
 									{
-										var date = popup.convertDate();
 										data.push([
 										//	$("duedate", val).text(),
 										//	$("project", val).text(),
 											$("key", val).text(),
 											$("summary", val).text(),
-											popup.convertDate($("duedate", val).text()),
+											$("assignee", val).text(),
+											popup.getDate($("duedate", val).text()),
 											parseInt($("priority", val).text()),
-											popup.resolutions[$("resolution", val).text()]
+											popup.getResolution($("resolution", val).text())
 										]);
 									}
 							});
 							
-							$('#ReportedByMe').dataTable( {
+							$("#TableIssuesFromFilter_" + item.id).dataTable( {
 							"bJQueryUI": false,
 							"aaData": data,
 							"aoColumns": [
 								//	{ "sTitle": "duedate" },
 								//	{ "sTitle": "project" },
 									{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+popup.url +"/browse/"+ obj.aData[ obj.iDataColumn ]+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
-									{ "sTitle": "Summary", "sClass": "Summary", },
-									{ "sTitle": "Due date"},
-									{ "sTitle": "",  "fnRender": function(obj) { return "<img src='" + popup.url + "/images/icons/" + priority[obj.aData[ obj.iDataColumn ]] +"'>" ;}},
-									{"sTitle": "Resolution"}
+									{ "sTitle": "Summary", "sClass": "Summary"},
+									{ "sTitle": "Assignee",  "fnRender": function(obj) { if(obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
+									{ "sTitle": "Due date", "sClass": "Date"},
+									{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return "<img src='" + popup.url + "/images/icons/" + priority[obj.aData[ obj.iDataColumn ]] +"'>" ;}},
+									{"sTitle": "Res.", "sClass": "ShortField"}
 									
 								]
 							} );	
@@ -125,17 +143,14 @@ var popup = {
 						}
 					});					
 					
-				}
-			} else {
-				this.error('Configure first!');
-			}
+			});
 		},
 		getXml: function(name, callback){
 				var sXml = localStorage.getItem(name);
 				var data = (new DOMParser()).parseFromString(sXml, "text/xml");
 				callback(data);
 		},
-		convertDate: function(str){
+		getDate: function(str){
 			if(str!='' && typeof(str)!="undefined"){
 				try{
 					var d= parseXSDDateString(str);
@@ -147,6 +162,13 @@ var popup = {
 				return '';
 			}
 		},
+		getResolution: function(id){
+			if(id == ''){
+				return '<span style="color:#880000; font-size:8px;">UNRESOLVED</span>';
+			}else{
+				return popup.resolutions[id];
+			}
+		},
 		error: function(err){
 			$("body").append($("<DIV />").addClass("error").text(err)).
 				append($("<HR />")).
@@ -156,6 +178,14 @@ var popup = {
 				})
 			);
 			$("#tabs").hide();
+		}, 
+		tabs: function(){
+						$('#tabs').tabs({
+						select: function(event, ui) {
+							localStorage.setItem('lastOpenedTab', ui.index);
+						},
+						selected: (localStorage.getItem('lastOpenedTab')?localStorage.getItem('lastOpenedTab'):0)
+					});
 		}
 }
 
@@ -166,19 +196,14 @@ $(window).load(function () {
 </script>
 
 <body>
-		<div id="tabs"style="min-width:250px; font-size:10px;">
-			<ul>
+		<div id="tabs"style="min-width:250px; max-width:900px; font-size:10px;">
+			<ul id="tabHeader">
 				<li><a href="#tab1">Assigned to me</a></li>
-				<li><a href="#tab2">Reported by me</a></li>
 			</ul>
 			<div id="tab1">
 				<table cellpadding="0" cellspacing="0" border="0" class="display" id="AssignedToMe"></table>
 				<br />
 			</div>
-			<div id="tab2">
-				<table cellpadding="0" cellspacing="0" border="0" class="display" id="ReportedByMe"></table>
-				<br />
-			</div>			
 		</div>
 
 </body>

@@ -113,7 +113,7 @@ table.display {
 table.display thead th {
 	font-size:11px;
 	white-space:nowrap;
-	padding: 3px 18px 3px 10px;
+	padding: 1px 18px 1px 1px;
 	border-bottom: 1px solid black;
 	font-weight: bold;
 	cursor: pointer;
@@ -144,13 +144,28 @@ table.display td.center {
 }
 
 table.display td.Summary {
-	max-width: 500px;
-	min-width: 400px;
+	max-width: 400px;
+	min-width: 300px;
 	white-space:pre-line;
 }
 
+table.display td.Icon {
+	padding:0px;
+	margin:0px;
+	max-width: 10px;
+	overflow:hidden;
+}
 
+table.display td.Date {
+	max-width: 50px;
+	overflow:hidden;
+}
 
+table.display td.ShortField {
+	max-width: 50px;
+	overflow:hidden;
+	white-space:pre-line;
+}
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables sorting
  */
