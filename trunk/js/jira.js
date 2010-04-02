@@ -164,8 +164,8 @@ var jira = {
 					$("<a />").addClass("HeaderLink").attr("href", jira.url('/secure/ManageFilters.jspa')).attr("target", "_blank").text("Manage Filters")
 				).append(
 					$("<a />").addClass("HeaderLink").attr("href", chrome.extension.getURL('options.html')).attr("target", "_blank").text("Options")
-				//).append(
-				//	$("<a />").addClass("HeaderLink").attr("href", "javascript:{chrome.extension.getBackgroundPage().loader.update();window.close();}").text("Update issues")
+				).append(
+					$("<a />").addClass("HeaderLink").attr("href", "javascript:{chrome.extension.getBackgroundPage().loader.update();window.close();}").text("Update issues")
 				);
 		},
 		url: function(str){
