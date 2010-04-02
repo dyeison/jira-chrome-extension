@@ -11,7 +11,7 @@ var loader = {
 					if($("faultstring",xhr).text() != '')
 					{
 						localStorage.setItem("error", $("faultstring",xhr).text());
-						chrome.browserAction.setIcon({ 'path' : '16x16off.png'});
+						chrome.browserAction.setIcon({ 'path' : 'images/16x16off.png'});
 						chrome.browserAction.setBadgeText({text: ''});
 					} else {
 						localStorage.setItem("error", "");
@@ -30,7 +30,7 @@ var loader = {
 				pl.add("in2",100);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromJqlSearch", pl, true, function(r, xhr){
 						
-						chrome.browserAction.setIcon({ 'path' : '16x16.png'});
+						chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
 						chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 						localStorage.setItem("AssignedToMe", $(xhr).xml(1));
 				});

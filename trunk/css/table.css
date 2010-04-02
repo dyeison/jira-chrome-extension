@@ -72,7 +72,6 @@ a.HeaderLink:hover{
 
 .dataTables_paginate {
 	width: 44px;
-	* width: 50px;
 	float: right;
 	text-align: right;
 }
@@ -131,18 +130,15 @@ table.display tfoot th {
 
 table.display tr.heading2 td {
 	border-bottom: 1px solid #aaa;
-	white-space:nowrap;
 }
 
 table.display td {
 	padding: 3px 10px;
-	white-space:nowrap;
 	font-size: 10px;
 }
 
 table.display td.center {
 	text-align: center;
-	white-space:nowrap;
 }
 
 table.display td.Summary {
