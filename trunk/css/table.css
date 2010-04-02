@@ -1,35 +1,37 @@
-/*
- *  File:         demo_table.css
- *  CVS:          $Id$
- *  Description:  CSS descriptions for DataTables demo pages
- *  Author:       Allan Jardine
- *  Created:      Tue May 12 06:47:22 BST 2009
- *  Modified:     $Date$ by $Author$
- *  Language:     CSS
- *  Project:      DataTables
- *
- *  Copyright 2009 Allan Jardine. All Rights Reserved.
- *
- * ***************************************************************************
- * DESCRIPTION
- *
- * The styles given here are suitable for the demos that are used with the standard DataTables
- * distribution (see www.datatables.net). You will most likely wish to modify these styles to
- * meet the layout requirements of your site.
- *
- * Common issues:
- *   'full_numbers' pagination - I use an extra selector on the body tag to ensure that there is
- *     no conflict between the two pagination types. If you want to use full_numbers pagination
- *     ensure that you either have "example_alt_pagination" as a body class name, or better yet,
- *     modify that selector.
- *   Note that the path used for Images is relative. All images are by default located in
- *     ../images/ - relative to this CSS file.
- */
+ body {
+	font: 10px "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	margin: 10px;
+	padding: 0px;
+	color: #333;
+	background-color: #fff;
+}
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * DataTables features
- */
+.error{
+	font: 15px  "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	margin: 10px;
+	padding: 10px;
+	color: #AA0000;
+}
+div.HeaderLink{
+	font: 9px "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	color: #8888;
+	background-color: #fff;
+	margin:3px;
+	text-align:right;
+}
+a.HeaderLink{
+	color: #888888;
+	margin:3px;
+	text-decoration:none;
+}
+a.HeaderLink:hover{
+	color: #dd4444;
+	text-decoration:underline;
+}
 
+ 
+ 
+ 
 .dataTables_wrapper {
 	position: relative;
 	clear: both;
@@ -113,7 +115,7 @@ table.display {
 table.display thead th {
 	font-size:11px;
 	white-space:nowrap;
-	padding: 1px 18px 1px 1px;
+	padding: 1px 18px 5px 1px;
 	border-bottom: 1px solid black;
 	font-weight: bold;
 	cursor: pointer;
