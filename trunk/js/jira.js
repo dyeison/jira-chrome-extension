@@ -1,17 +1,16 @@
-var priority = [
-						"priority_blocker.gif",
-						"priority_blocker.gif",
-						"priority_critical.gif",
-						"priority_major.gif",
-						"priority_minor.gif",
-						"priority_trivial.gif"];
-						
 var jira = {
 		serverUrl:null,
 		resolutinos: null,
+		issuetypes: null,
+		priorities: null,
+		statuses: null,
 		init: function(){
 			jira.serverUrl = localStorage.getItem("url");
 			jira.resolutions = chrome.extension.getBackgroundPage().loader.resolutions;
+			jira.issuetypes = chrome.extension.getBackgroundPage().loader.issuetypes;
+			jira.priorities = chrome.extension.getBackgroundPage().loader.priorities;
+			jira.statuses = chrome.extension.getBackgroundPage().loader.statuses;
+			
 			if(jira.serverUrl)
 			{
 				jira.initHeaderLinks();
@@ -19,11 +18,11 @@ var jira = {
 				{
 					jira.error(localStorage.getItem('error'));
 				 } else {
-					jira.getXml("AssignedToMe", function(xhr){
-						jira.addTab("assignedtome", "Assigned to me");
-						jira.renderTableFromXml("assignedtome", xhr);
-					});
 					try{
+						jira.getXml("AssignedToMe", function(xhr){
+							jira.addTab("assignedtome", "Assigned to me");
+							jira.renderTableFromXml("assignedtome", xhr);
+						});
 						jira.getIssuesFromFilter();
 					}catch(e){
 						alert(e);
@@ -52,25 +51,30 @@ var jira = {
 						if($("key", val).text())
 						{
 							data.push([
+								$("type", val).text(),
 								$("key", val).text(),
 								$("summary", val).text(),
 								$("assignee", val).text(),
 								jira.getDate($("duedate", val).text()),
 								parseInt($("priority", val).text()),
-								jira.getResolution($("resolution", val).text())
+								jira.getResolution($("resolution", val).text()),
+								$("status", val).text(),
 							]);
 						}
 				});
 				$("#table_"+id).dataTable( {
 				"bJQueryUI": false,
 				"aaData": data,
+				"aaSorting": [[ 5, "asc" ]],
 				"aoColumns": [
+						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
 						{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 						{ "sTitle": "Summary", "sClass": "Summary"},
 						{ "sTitle": "Assignee",  "fnRender": function(obj) { if(obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
 						{ "sTitle": "Due date", "sClass": "Date"},
-						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return "<img src='" + jira.url("/images/icons/" + priority[obj.aData[ obj.iDataColumn ]]) +"'>" ;}},
-						{"sTitle": "Res.", "sClass": "ShortField"}
+						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+						{"sTitle": "Res.", "sClass": "ShortField"},
+						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 					]
 				} );	
 			}catch(e){

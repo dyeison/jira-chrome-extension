@@ -1,5 +1,5 @@
  body {
-	font: 10px "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	font: 10px Calibri, "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 	margin: 10px;
 	padding: 0px;
 	color: #333;
@@ -106,8 +106,8 @@ a.HeaderLink:hover{
  * DataTables display
  */
 table.display {
-	margin: 0 auto;
-	width: 100%;
+	margin: 0 0;
+	width: 700px;
 	clear: both;
 }
 
@@ -135,6 +135,7 @@ table.display tr.heading2 td {
 table.display td {
 	padding: 3px 10px;
 	font-size: 10px;
+	white-space:nowrap;
 }
 
 table.display td.center {
@@ -142,13 +143,13 @@ table.display td.center {
 }
 
 table.display td.Summary {
-	max-width: 400px;
-	min-width: 300px;
+	max-width: 250px;
+	min-width: 250px;
 	white-space:pre-line;
 }
 
 table.display td.Icon {
-	padding:0px;
+	padding:0 2px 0 0 0;
 	margin:0px;
 	max-width: 10px;
 	overflow:hidden;
