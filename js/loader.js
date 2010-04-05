@@ -1,5 +1,8 @@
 var loader = {
 	resolutions: [],
+	priorities: [],
+	issuetypes: [],
+	statuses: [],
 	filters: [],
 	token: null,
 	url:null,
@@ -39,10 +42,45 @@ var loader = {
 	getSettings: function(){
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
+
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getResolutions", pl, true, function(r, xhr){
-					$(xhr).find("multiRef").each(function(i, val) {
+				$(xhr).find("multiRef").each(function(i, val) {
 						if($("id", val).text()){
 							loader.resolutions[$("id", val).text()] = $("name", val).text();
+						}
+					});
+				});
+
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssueTypes", pl, true, function(r, xhr){
+					$(xhr).find("multiRef").each(function(i, val) {
+						if($("id", val).text()){
+							loader.issuetypes[$("id", val).text()] = {
+								"icon": $("icon", val).text(), 
+								"text": $("name", val).text()
+							};
+						}
+					});
+				});
+				
+				
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getPriorities", pl, true, function(r, xhr){
+					$(xhr).find("multiRef").each(function(i, val) {
+						if($("id", val).text()){
+							loader.priorities[$("id", val).text()] = {
+								"icon": $("icon", val).text(), 
+								"text": $("name", val).text()
+							};
+						}
+					});
+				});
+				
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getStatuses", pl, true, function(r, xhr){
+					$(xhr).find("multiRef").each(function(i, val) {
+						if($("id", val).text()){
+							loader.statuses[$("id", val).text()] = {
+								"icon": $("icon", val).text(), 
+								"text": $("name", val).text()
+							};
 						}
 					});
 				});
