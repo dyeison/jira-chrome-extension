@@ -12,7 +12,7 @@
   function restoreOptions(){
 	$("#username").attr("value",  localStorage.getItem('username'));
 	$("#password").attr("value",  localStorage.getItem('password'));
-	$("#url").attr("value",  (localStorage.getItem('url')?localStorage.getItem('url'):"http://softomate.net/jira"));
+	$("#url").attr("value",  (localStorage.getItem('url')?localStorage.getItem('url'):"http://jira.atlassian.com/"));
 	var vals = [1, 3, 5, 10, 30, 60];
 	var curval = parseInt(localStorage.getItem('updateinterval'))/(1000*60);
 	$.map(vals,function(val){
@@ -28,17 +28,42 @@
 	localStorage.setItem('password', $("#password").attr("value"));
 	localStorage.setItem('url', $("#url").attr("value"));	
 	localStorage.setItem('updateinterval', parseInt($("#updateinterval").attr("value"))*60000);
-	chrome.extension.getBackgroundPage().Auth();;
+	chrome.extension.getBackgroundPage().Auth();
+	alert("Settings was saved");
   }
   </script>
 </head>
 
 <body onload="restoreOptions()">
-	Username: <input id="username" type="text" /><br />
-	Password: <input type="password" id="password" type="text" /><br />
-	Jira URL: <input id="url" type="text" /><br />
-	Update Interval: <select id="updateinterval" ></select>, min<br />
-	
-	<input type="button" onclick="saveOptions();" value="Save Options" />
+	<table style="width:100%;height:100%;">
+		<tr>
+			<td valign="center">
+				<center>
+				<font size="5" face="calibri, tahoma" color="#2e6eaf">JIRA Chrome Extension Settings</font>
+				<table style="border:8px solid #87b6d9; border-radius:10px; background-color:#e2e4ff;padding:15px;font-family: Calibri, tahoma">
+				<tr>
+					<td align="right">Username: </td>
+					<td><input id="username" type="text" /></td>
+				</tr>
+				<tr>
+					<td align="right">Password:</td>
+					<td><input type="password" id="password" type="text" /></td>
+				</tr>
+				<tr>
+					<td align="right">Jira URL:</td>
+					<td><input id="url" type="text" /></td>
+				</tr>
+				<tr>
+					<td align="right">Update Interval:</td>
+					<td><select id="updateinterval" ></select>, min</td>
+				<tr>
+				<tr>
+					<td colspan="2" align="right"><hr/><input type="button" onclick="saveOptions();" value="Save Options" /></td>
+				</tr>
+				</table>
+				</center>
+			</td>
+		</tr>
+	</table>
 </body>
 </html>
