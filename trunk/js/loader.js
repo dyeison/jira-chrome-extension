@@ -29,7 +29,7 @@ var loader = {
 	
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
-				pl.add("in1", "assignee = currentUser() AND resolution is EMPTY ORDER BY priority DESC, created ASC");
+				pl.add("in1", "assignee = currentUser() AND resolution = unresolved ORDER BY priority DESC, created ASC");
 				//pl.add("in1", "resolution is EMPTY ORDER BY priority DESC, created ASC");
 				pl.add("in2",100);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromJqlSearch", pl, true, function(r, xhr){
