@@ -19,10 +19,8 @@ var jira = {
 					jira.error(localStorage.getItem('error'));
 				 } else {
 					try{
-						jira.getXml("AssignedToMe", function(xhr){
 							jira.addTab("assignedtome", "Assigned to me");
-							jira.renderTableFromXml("assignedtome", xhr);
-						});
+							jira.renderTableFromXml("assignedtome");
 						jira.getIssuesFromFilter();
 					}catch(e){
 						alert(e);
@@ -35,36 +33,19 @@ var jira = {
 		getIssuesFromFilter: function(){
 			var filters = chrome.extension.getBackgroundPage().loader.filters;
 			$.map(filters, function(item, i){
-					jira.addTab("IssuesFromFilter_" + item.id, item.name);
+					jira.addTab(item.id, item.name);
 			});
 			jira.tabs();
 			$.map(filters, function(item, i){
-				jira.getXml("IssuesFromFilter_" + item.id, function(xhr){
-					jira.renderTableFromXml("IssuesFromFilter_" + item.id, xhr);
-				});					
+					jira.renderTableFromXml(item.id);
+		
 			});
 		},
-		renderTableFromXml: function(id, xhr){
+		renderTableFromXml: function(id){
 			try{
-				var data = [];
-				$(xhr).find("multiRef").each(function(i, val) {
-						if($("key", val).text())
-						{
-							data.push([
-								$("type", val).text(),
-								$("key", val).text(),
-								$("summary", val).text(),
-								$("assignee", val).text(),
-								jira.getDate($("duedate", val).text()),
-								parseInt($("priority", val).text()),
-								jira.getResolution($("resolution", val).text()),
-								$("status", val).text(),
-							]);
-						}
-				});
 				$("#table_"+id).dataTable( {
 				"bJQueryUI": false,
-				"aaData": data,
+				"aaData": chrome.extension.getBackgroundPage().loader.issuesFromFilter[id],
 				"aaSorting": [[ 5, "asc" ]],
 				"aoColumns": [
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
@@ -82,9 +63,9 @@ var jira = {
 			}
 		},
 		addTab: function(id, name){
-			$("#tabHeader").append($("<LI />").append($("<A />").attr("href", "#"+id).text(name)));
+			$("#tabHeader").append($("<LI />").append($("<A />").attr("href", "#div_"+id).text(name)));
 			$("#tabs").append(
-				$("<DIV />").attr("id", id).append(
+				$("<DIV />").attr("id", "div_"+id).append(
 					$("<TABLE />").attr("id", "table_"+id).addClass("display")
 				).append($("<BR />"))
 			);
@@ -93,25 +74,6 @@ var jira = {
 				var sXml = localStorage.getItem(name);
 				var data = (new DOMParser()).parseFromString(sXml, "text/xml");
 				callback(data);
-		},
-		getDate: function(str){
-			if(str!='' && typeof(str)!="undefined"){
-				try{
-					var d= parseXSDDateString(str);
-					return (d.getMonth()+1) + "." +d.getDate() + "." + d.getFullYear();
-				}catch(e){
-					return '';
-				}
-			} else {
-				return '';
-			}
-		},
-		getResolution: function(id){
-			if(id == ''){
-				return '<span style="color:#880000; font-size:8px;">UNRESOLVED</span>';
-			}else{
-				return jira.resolutions[id];
-			}
 		},
 		error: function(err){
 			$("body").append($("<DIV />").addClass("error").text(err)).

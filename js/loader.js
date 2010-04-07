@@ -4,6 +4,7 @@ var loader = {
 	issuetypes: [],
 	statuses: [],
 	filters: [],
+	issuesFromFilter:[],
 	token: null,
 	url:null,
 	login: function(username, password, callback){
@@ -35,7 +36,7 @@ var loader = {
 						
 						chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
 						chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
-						localStorage.setItem("AssignedToMe", $(xhr).xml(1));
+						loader.issuesFromFilter["assignedtome"] = loader.parseXml(xhr);
 				});
 				loader.getSavedFilters();
 	},
@@ -88,7 +89,6 @@ var loader = {
 	getSavedFilters: function(){
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
-				
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getSavedFilters", pl, true, function(r, xhr){
 					loader.filters.length = 0;
 					$(xhr).find("multiRef").each(function(i, val) {
@@ -107,15 +107,51 @@ var loader = {
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
 				pl.add("in1", filterid);
-				//pl.add("in1", "resolution is EMPTY ORDER BY priority DESC, created ASC");
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromFilter", pl, true, function(r, xhr){
-						//alert($(xhr).xml());
-						localStorage.setItem("IssuesFromFilter_" + filterid , $(xhr).xml(1));
+						loader.issuesFromFilter[filterid] = loader.parseXml(xhr);
 				});
+	},
+	parseXml: function(xhr){
+			var data = [];
+			$(xhr).find("multiRef").each(function(i, val) {
+					if($("key", val).text())
+					{
+						data.push([
+							$("type", val).text(),
+							$("key", val).text(),
+							$("summary", val).text(),
+							$("assignee", val).text(),
+							loader.getDate($("duedate", val).text()),
+							parseInt($("priority", val).text()),
+							loader.getResolution($("resolution", val).text()),
+							$("status", val).text(),
+						]);
+					}
+			});
+			return data;
 	},
 	updateIssuesFromFilter: function(){
 		$.map(loader.filters, function(){
 		
 		});
-	}
+	},
+	getDate: function(str){
+		if(str!='' && typeof(str)!="undefined"){
+			try{
+				var d= parseXSDDateString(str);
+				return (d.getMonth()+1) + "." +d.getDate() + "." + d.getFullYear();
+			}catch(e){
+				return '';
+			}
+		} else {
+			return '';
+		}
+	},
+	getResolution: function(id){
+		if(id == ''){
+			return '<span style="color:#880000; font-size:8px;">UNRESOLVED</span>';
+		}else{
+			return loader.resolutions[id];
+		}
+	},
 }
