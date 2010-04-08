@@ -107,7 +107,9 @@ var loader = {
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
 				pl.add("in1", filterid);
-				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromFilter", pl, true, function(r, xhr){
+				pl.add("in2", 0);
+				pl.add("in3", 100);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", " getIssuesFromFilterWithLimit", pl, true, function(r, xhr){
 						loader.issuesFromFilter[filterid] = loader.parseXml(xhr);
 				});
 	},
