@@ -10,6 +10,7 @@
 	font: 15px  "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 	margin: 10px;
 	padding: 10px;
+	min-width:300px;
 	color: #AA0000;
 }
 div.HeaderLink{

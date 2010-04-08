@@ -14,7 +14,7 @@
 			loader.url = localStorage.getItem("url");
 			loader.login(localStorage.getItem("username"), localStorage.getItem("password"), function(){
 				loader.update();
-				window.setInterval(loader.update, 1000*60);
+				window.setInterval(loader.update, localStorage.getItem('updateinterval'));
 			});
 		} else {
 			chrome.browserAction.setIcon({ 'path' : 'images/16x16off.png'});
