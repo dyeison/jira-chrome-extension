@@ -53,6 +53,7 @@ var jira = {
 						{ "sTitle": "Summary", "sClass": "Summary"},
 						{ "sTitle": "Assignee",  "fnRender": function(obj) { if(obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
 						{ "sTitle": "Due date", "sClass": "Date"},
+						//{ "sTitle": "Est.", "sClass": "Date"},
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"sTitle": "Res.", "sClass": "ShortField"},
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
@@ -63,7 +64,7 @@ var jira = {
 			}
 		},
 		addTab: function(id, name){
-			$("#tabHeader").append($("<LI />").append($("<A />").attr("href", "#div_"+id).text(name)));
+			$("#tabHeader").append($("<LI />").append($("<A />").attr("href", "#div_"+id).text(name + " ("+chrome.extension.getBackgroundPage().loader.issuesFromFilter[id].length+")")));
 			$("#tabs").append(
 				$("<DIV />").attr("id", "div_"+id).append(
 					$("<TABLE />").attr("id", "table_"+id).addClass("display")
