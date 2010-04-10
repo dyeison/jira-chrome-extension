@@ -33,10 +33,18 @@ var loader = {
 				//pl.add("in1", "resolution is EMPTY ORDER BY priority DESC, created ASC");
 				pl.add("in2",100);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromJqlSearch", pl, true, function(r, xhr){
-						
-						chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
-						chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
-						loader.issuesFromFilter["assignedtome"] = loader.parseXml(xhr);
+					try{
+						alert($("Fault", xhr).xml(1));
+						if($("Fault", xhr).size()>=1){
+							loader.issuesFromFilter["assignedtome"] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
+						} else {
+							chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
+							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
+							loader.issuesFromFilter["assignedtome"] = loader.parseXml(xhr);
+						}
+					}catch(e){
+						alert("Load assign to me issues failed: " + e);
+					}
 				});
 				loader.getSavedFilters();
 	},
@@ -114,6 +122,7 @@ var loader = {
 				});
 	},
 	parseXml: function(xhr){
+		try{
 			var data = [];
 			$(xhr).find("multiRef").each(function(i, val) {
 					if($("key", val).text())
@@ -132,6 +141,9 @@ var loader = {
 					}
 			});
 			return data;
+		}catch(e){
+			alert("Parse xml failed: "+e);
+		}
 	},
 	updateIssuesFromFilter: function(){
 		$.map(loader.filters, function(){

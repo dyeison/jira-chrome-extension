@@ -20,7 +20,12 @@ var jira = {
 				 } else {
 					try{
 							jira.addTab("assignedtome", "Assigned to me");
-							jira.renderTableFromXml("assignedtome");
+							if(typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter["assignedtome"]) == "string")
+								$("#table_assignedtome").append(
+									$("<tr />").append($("<td />").text(chrome.extension.getBackgroundPage().loader.issuesFromFilter["assignedtome"]))
+								);
+							else
+								jira.renderTableFromXml("assignedtome");
 						jira.getIssuesFromFilter();
 					}catch(e){
 						alert(e);
@@ -51,7 +56,7 @@ var jira = {
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
 						{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 						{ "sTitle": "Summary", "sClass": "Summary"},
-						{ "sTitle": "Assignee",  "fnRender": function(obj) { if(obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
+						{ "sTitle": "Assignee",  "fnRender": function(obj) { if(obj.aData[ obj.iDataColumn ] && obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
 						{ "sTitle": "Due date", "sClass": "Date"},
 						//{ "sTitle": "Est.", "sClass": "Date"},
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
@@ -64,7 +69,13 @@ var jira = {
 			}
 		},
 		addTab: function(id, name){
-			$("#tabHeader").append($("<LI />").append($("<A />").attr("href", "#div_"+id).text(name + " ("+chrome.extension.getBackgroundPage().loader.issuesFromFilter[id].length+")")));
+			$("#tabHeader").append(
+				$("<LI />").append(
+					$("<A />").attr("href", "#div_"+id).text(name +
+							((typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter[id]) != "string")?
+									("(" + chrome.extension.getBackgroundPage().loader.issuesFromFilter[id].length + ")"):''))
+				)
+			);
 			$("#tabs").append(
 				$("<DIV />").attr("id", "div_"+id).append(
 					$("<TABLE />").attr("id", "table_"+id).addClass("display")
