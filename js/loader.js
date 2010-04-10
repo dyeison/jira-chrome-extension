@@ -34,7 +34,6 @@ var loader = {
 				pl.add("in2",100);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromJqlSearch", pl, true, function(r, xhr){
 					try{
-						alert($("Fault", xhr).xml(1));
 						if($("Fault", xhr).size()>=1){
 							loader.issuesFromFilter["assignedtome"] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
 						} else {
