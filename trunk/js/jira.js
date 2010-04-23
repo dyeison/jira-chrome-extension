@@ -37,6 +37,8 @@ var jira = {
 		},
 		getIssuesFromFilter: function(){
 			var filters = chrome.extension.getBackgroundPage().loader.filters;
+			filters = filters.sort(function(a,b){return (a.id-b.id)});
+			var str = '';
 			$.map(filters, function(item, i){
 					jira.addTab(item.id, item.name);
 			});
@@ -112,6 +114,8 @@ var jira = {
 					$("<a />").addClass("HeaderLink").attr("href", chrome.extension.getURL('options.html')).attr("target", "_blank").text("Options")
 				).append(
 					$("<a />").addClass("HeaderLink").attr("href", "javascript:{chrome.extension.getBackgroundPage().loader.update();window.close();}").text("Reload issues")
+				).append(
+					$("<a />").addClass("HeaderLink").attr("href", "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QAWCRPFR2FW8S&lc=RU&item_name=JIRA%20Chrome%20extension&item_number=jira%2dchrome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted").attr("target", "_blank").text("Contribute")
 				);
 		},
 		url: function(str){
