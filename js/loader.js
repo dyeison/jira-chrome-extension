@@ -155,7 +155,8 @@ var loader = {
 				var d= parseXSDDateString(str);
 				return (d.getMonth()+1) + "." +d.getDate() + "." + d.getFullYear();
 			}catch(e){
-				return '';
+				alert(e);
+				return str;
 			}
 		} else {
 			return '';

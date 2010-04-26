@@ -1,7 +1,7 @@
 {
-	"name": "JIRA Chrome Extension",
-	"version": "1.0.11",
-	"description": "View your JIRA issues.",
+	"name": "JIRA Issues viewer",
+	"version": "1.0.17",
+	"description": "With this extension you'll get simple access to all your issues or task from Atlassian  JIRA.",
 	"background_page": "background.html",
 	"icons": {
 		"16": "images/16x16.png",
@@ -15,7 +15,7 @@
 	],
    "options_page": "options.html",
 	"browser_action": {
-		"default_title": "Jira: Assigned to me",
+		"default_title": "JIRA issues viewer",
 		"default_icon": "images/16x16.png",
 		"popup": "jira.html"
 	}
