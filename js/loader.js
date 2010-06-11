@@ -40,6 +40,9 @@ var loader = {
 							chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
 							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 							loader.issuesFromFilter["assignedtome"] = loader.parseXml(xhr);
+							loader.showNotifications("keys", loader.issuesFromFilter["assignedtome"]);
+							loader.saveKeys("keys", loader.issuesFromFilter["assignedtome"] );
+							
 						}
 					}catch(e){
 						alert("Load assign to me issues failed: " + e);
@@ -124,8 +127,7 @@ var loader = {
 		try{
 			var data = [];
 			$(xhr).find("multiRef").each(function(i, val) {
-					if($("key", val).text())
-					{
+					if($("key", val).text()){
 						data.push([
 							$("type", val).text(),
 							$("key", val).text(),
@@ -135,7 +137,7 @@ var loader = {
 							//$("timeoriginalestimate", val).text(), 
 							parseInt($("priority", val).text()),
 							loader.getResolution($("resolution", val).text()),
-							$("status", val).text(),
+							$("status", val).text()
 						]);
 					}
 			});
@@ -169,4 +171,34 @@ var loader = {
 			return loader.resolutions[id];
 		}
 	},
+	saveKeys: function(id, data){
+		var keys = $.map(data, function(n, i){
+			return n[1];
+		});
+		localStorage.setItem(id, keys.toString());
+	},
+	showNotifications: function(id, data){
+		var keys = [];
+		try{
+			keys = localStorage.getItem(id).split(",");
+		}catch(e){}
+		$.each(data, function(i, val){
+			try{
+				if($.inArray(val[1], keys)<0){
+					// Create a simple text notification:
+					var notification = webkitNotifications.createNotification(
+					  'images/48x48.png',  // icon url - can be relative
+					  val[1],  // notification title
+					  val[2] // notification body text
+					);
+					// Then show the notification.
+					//notification.ondisplay = function() { setTimeout(notification.cancel(), 5000); }
+					//notification.onclick = function(){ alert(123); }
+					notification.show();
+				}
+			}catch(e){
+				//alert(e);
+			}
+		});
+	}
 }
