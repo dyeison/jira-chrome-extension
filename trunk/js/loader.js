@@ -124,7 +124,6 @@ var loader = {
 				});
 	},
 	parseXml: function(xhr){
-		try{
 			var data = [];
 			$(xhr).find("multiRef").each(function(i, val) {
 					if($("key", val).text()){
@@ -133,7 +132,7 @@ var loader = {
 							$("key", val).text(),
 							$("summary", val).text(),
 							$("assignee", val).text(),
-							loader.getDate($("duedate", val).text()),
+							$("duedate", val).text(),
 							//$("timeoriginalestimate", val).text(), 
 							parseInt($("priority", val).text()),
 							loader.getResolution($("resolution", val).text()),
@@ -142,9 +141,6 @@ var loader = {
 					}
 			});
 			return data;
-		}catch(e){
-			alert("Parse xml failed: "+e);
-		}
 	},
 	updateIssuesFromFilter: function(){
 		$.map(loader.filters, function(){
@@ -155,9 +151,8 @@ var loader = {
 		if(str!='' && typeof(str)!="undefined"){
 			try{
 				var d= parseXSDDateString(str);
-				return (d.getMonth()+1) + "." +d.getDate() + "." + d.getFullYear();
+				return d.getFullYear()+"-"+(d.getMonth()+1) + "-" +d.getDate()
 			}catch(e){
-				alert(e);
 				return str;
 			}
 		} else {
@@ -177,13 +172,16 @@ var loader = {
 		});
 		localStorage.setItem(id, keys.toString());
 	},
+	addTab: function(url){
+		chrome.tabs.create({
+			url: url,
+			selected: true
+		});
+	},
 	showNotifications: function(id, data){
-		var keys = [];
-		try{
-			keys = localStorage.getItem(id).split(",");
-		}catch(e){}
+		var keys = localStorage.getItem(id)?localStorage.getItem(id).split(","):[];
+
 		$.each(data, function(i, val){
-			try{
 				if($.inArray(val[1], keys)<0){
 					// Create a simple text notification:
 					var notification = webkitNotifications.createNotification(
@@ -193,12 +191,9 @@ var loader = {
 					);
 					// Then show the notification.
 					//notification.ondisplay = function() { setTimeout(notification.cancel(), 5000); }
-					//notification.onclick = function(){ alert(123); }
+					notification.onclick = function(){ loader.addTab(loader.url +"/browse/"+val[1]); }
 					notification.show();
 				}
-			}catch(e){
-				//alert(e);
-			}
 		});
 	}
 }
