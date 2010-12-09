@@ -11,6 +11,15 @@ var jira = {
 			jira.priorities = chrome.extension.getBackgroundPage().loader.priorities;
 			jira.statuses = chrome.extension.getBackgroundPage().loader.statuses;
 			
+			jQuery.fn.dataTableExt.oSort['string-date-asc']  = function(x,y) {
+				if(x == "")return 1;
+				return ((x < y) ? -1 : ((x > y) ?  1 : 0));
+			};
+			jQuery.fn.dataTableExt.oSort['string-date-desc']  = function(x,y) {
+				if(x == "")return 0;
+				return ((x < y) ? 1 : ((x > y) ?  -1 : 0));
+			};	
+			
 			if(jira.serverUrl)
 			{
 				jira.initHeaderLinks();
@@ -49,26 +58,28 @@ var jira = {
 			});
 		},
 		renderTableFromXml: function(id){
-			try{
+		
 				$("#table_"+id).dataTable( {
 				"bJQueryUI": false,
 				"aaData": chrome.extension.getBackgroundPage().loader.issuesFromFilter[id],
-				"aaSorting": [[ 5, "asc" ]],
+				"aaSorting": [[4, "asc"],[ 5, "asc" ]],
 				"aoColumns": [
-						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
-						{ "sTitle": "Key",  "fnRender": function(obj) { return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { 
+							return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
+						{ "sTitle": "Key",  "fnRender": function(obj) { 
+							return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 						{ "sTitle": "Summary", "sClass": "Summary"},
-						{ "sTitle": "Assignee",  "fnRender": function(obj) { if(obj.aData[ obj.iDataColumn ] && obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
-						{ "sTitle": "Due date", "sClass": "Date"},
+						{ "sTitle": "Assignee",  "fnRender": function(obj) { 
+							if(obj.aData[ obj.iDataColumn ] && obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
+						{ "sType": "string-date","sTitle": "Due date",  "fnRender": function(obj) {
+							return obj.aData[ obj.iDataColumn ]?chrome.extension.getBackgroundPage().loader.getDate(obj.aData[ obj.iDataColumn ]):"";
+						}, "sClass": "Date"},
 						//{ "sTitle": "Est.", "sClass": "Date"},
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"sTitle": "Res.", "sClass": "ShortField"},
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 					]
 				} );	
-			}catch(e){
-				alert(e);
-			}
 		},
 		addTab: function(id, name){
 			$("#tabHeader").append(
@@ -109,13 +120,25 @@ var jira = {
 		},
 		initHeaderLinks: function(){
 				$("#HeaderLink").append(
-					$("<a />").addClass("HeaderLink").attr("href", jira.url('/secure/ManageFilters.jspa')).attr("target", "_blank").text("Manage Filters")
+					$("<button />").click(function(){
+						chrome.extension.getBackgroundPage().loader.addTab(jira.url('/secure/ManageFilters.jspa'));
+						window.close();
+					}).text("Manage Filters").button({icons: {primary: "ui-icon-flag"},text: false})
 				).append(
-					$("<a />").addClass("HeaderLink").attr("href", chrome.extension.getURL('options.html')).attr("target", "_blank").text("Options")
+					$("<button />").click(function(){
+						chrome.extension.getBackgroundPage().loader.addTab(chrome.extension.getURL('options.html'));
+						window.close();
+					}).text("Options").button({icons: {primary: "ui-icon-wrench"},text: false})
 				).append(
-					$("<a />").addClass("HeaderLink").attr("href", "javascript:{chrome.extension.getBackgroundPage().loader.update();window.close();}").text("Reload issues")
+					$("<button />").click(function(){
+						chrome.extension.getBackgroundPage().loader.update();
+						window.close();
+					}).text("Reload issues").button({icons: {primary: "ui-icon-refresh"},text: false})
 				).append(
-					$("<a />").addClass("HeaderLink").attr("href", "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QAWCRPFR2FW8S&lc=RU&item_name=JIRA%20Chrome%20extension&item_number=jira%2dchrome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted").attr("target", "_blank").text("Contribute")
+					$("<button />").click(function(){
+						chrome.extension.getBackgroundPage().loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QAWCRPFR2FW8S&lc=RU&item_name=JIRA%20Chrome%20extension&item_number=jira%2dchrome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
+						window.close();
+					}).text("Contribute").button({icons: {primary: "ui-icon-heart"},text: false})
 				);
 		},
 		url: function(str){
