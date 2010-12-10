@@ -26,7 +26,9 @@ var loader = {
 				});
 	},
 	update: function(){
-	
+				if(!loader.icon)
+					loader.icon = new AnimatedIcon('images/16x16.png');
+				loader.icon.play();
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
 				pl.add("in1", "assignee = currentUser() AND resolution = unresolved ORDER BY priority DESC, created ASC");

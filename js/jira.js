@@ -5,11 +5,14 @@ var jira = {
 		priorities: null,
 		statuses: null,
 		init: function(){
+			
 			jira.serverUrl = localStorage.getItem("url");
 			jira.resolutions = chrome.extension.getBackgroundPage().loader.resolutions;
 			jira.issuetypes = chrome.extension.getBackgroundPage().loader.issuetypes;
 			jira.priorities = chrome.extension.getBackgroundPage().loader.priorities;
 			jira.statuses = chrome.extension.getBackgroundPage().loader.statuses;
+			
+			$("#quicksearch").attr("action", jira.url("/secure/QuickSearch.jspa"));
 			
 			jQuery.fn.dataTableExt.oSort['string-date-asc']  = function(x,y) {
 				if(x == "")return 1;
@@ -27,18 +30,14 @@ var jira = {
 				{
 					jira.error(localStorage.getItem('error'));
 				 } else {
-					try{
-							jira.addTab("assignedtome", "Assigned to me");
-							if(typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter["assignedtome"]) == "string")
-								$("#table_assignedtome").append(
-									$("<tr />").append($("<td />").text(chrome.extension.getBackgroundPage().loader.issuesFromFilter["assignedtome"]))
-								);
-							else
-								jira.renderTableFromXml("assignedtome");
+						jira.addTab("assignedtome", "Assigned to me");
+						if(typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter["assignedtome"]) == "string")
+							$("#table_assignedtome").append(
+								$("<tr />").append($("<td />").text(chrome.extension.getBackgroundPage().loader.issuesFromFilter["assignedtome"]))
+							);
+						else
+							jira.renderTableFromXml("assignedtome");
 						jira.getIssuesFromFilter();
-					}catch(e){
-						alert(e);
-					}
 				}
 			} else {
 				jira.error('Configure first!');
