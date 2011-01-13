@@ -18,7 +18,7 @@
 				window.setInterval(loader.update, localStorage.getItem('updateinterval'));
 			});
 		} else {
-			browserAction.setIcon({ 'path' : 'images/16x16off.png'});
+			chrome.browserAction.setIcon({ 'path' : 'images/16x16off.png'});
 			chrome.browserAction.setBadgeText({text: ''});
 		}
 	}
@@ -57,6 +57,26 @@
 				}
 			}
 			
+		chrome.omnibox.onInputChanged.addListener(  function(text, suggest) {
+			loader.getIssuesFromTextSearchWithLimit(text, function(xhr){
+				var data = [];
+				$(xhr).find("multiRef").each(function(i, val) {
+					if($("key", val).text()){
+						data.push({
+							content: $("key", val).text(),
+							description: $("key", val).text() +": "+$("summary", val).text()
+						})
+					}
+				});
+				suggest(data);
+			});
+		  });
+
+		chrome.omnibox.onInputEntered.addListener(
+		  function(text) {
+			loader.redirect(loader.url +"/browse/"+ text);
+		  });	  
+		  
 	</script>
  </head>
   <body></body>

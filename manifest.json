@@ -1,6 +1,6 @@
 {
 	"name": "JIRA Issues viewer",
-	"version": "1.0.19",
+	"version": "1.1.1",
 	"description": "With this extension you'll get simple access to all your issues or task from Atlassian  JIRA.",
 	"background_page": "background.html",
 	"icons": {
@@ -15,6 +15,8 @@
 		"http://*/",
 		"https://*/"
 	],
+	"omnibox": { "keyword" : "jira" },
+	"homepage_url": "http://ya.ru",
 	"key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBWxO6VfwT0VkjeVYjw7wCIuBoRUuX873l2rDHt5FzthPsVSKZSLSpjs4Qoh+ObxP+5FI+S6fxA6KyTpcuJDKO7IxDb2Y3rLV9IMWzXJcXsx2cDNjxnFns593TdQq8PUW7XVOiOLi79EO/uTpaURxY911ZJcQTZfr1f15fDwKvlQIDAQAB",
    "options_page": "options.html",
 	"browser_action": {
@@ -22,4 +24,5 @@
 		"default_icon": "images/16x16.png",
 		"popup": "jira.html"
 	}
+	
 }

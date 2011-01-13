@@ -12,7 +12,10 @@ var jira = {
 			jira.priorities = chrome.extension.getBackgroundPage().loader.priorities;
 			jira.statuses = chrome.extension.getBackgroundPage().loader.statuses;
 			
-			$("#quicksearch").attr("action", jira.url("/secure/QuickSearch.jspa"));
+			
+			$("span#title").click(function(){
+				chrome.extension.getBackgroundPage().loader.addTab(jira.url(""));
+			}).css("cursor", "pointer");
 			
 			jQuery.fn.dataTableExt.oSort['string-date-asc']  = function(x,y) {
 				if(x == "")return 1;
@@ -25,6 +28,7 @@ var jira = {
 			
 			if(jira.serverUrl)
 			{
+				$("#quicksearch").attr("action", jira.url("/secure/QuickSearch.jspa")).show();
 				jira.initHeaderLinks();
 				if(localStorage.getItem('error')!="")
 				{
@@ -100,12 +104,13 @@ var jira = {
 				callback(data);
 		},
 		error: function(err){
-			$("body").append($("<DIV />").addClass("error").text(err)).
+			$("#HeaderLink").hide();
+			$("body").append($("<HR />")).append($("<P />").addClass("error").text(err)).
 				append($("<HR />")).
 				append($("<INPUT />").attr("type","button").attr("value", "Options").click(function(){
 						var url = chrome.extension.getURL('options.html');
 						chrome.tabs.create({ url: url, selected: true });
-				})
+				}).button()
 			);
 			$("#tabs").hide();
 		}, 
