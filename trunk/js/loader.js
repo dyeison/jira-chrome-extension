@@ -125,6 +125,16 @@ var loader = {
 						loader.issuesFromFilter[filterid] = loader.parseXml(xhr);
 				});
 	},
+	getIssuesFromTextSearchWithLimit: function(terms, callback){
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				pl.add("in1", terms);
+				pl.add("in2", 0);
+				pl.add("in3", 10);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromTextSearchWithLimit", pl, true, function(r, xhr){
+						callback(xhr);
+				});
+	},
 	parseXml: function(xhr){
 			var data = [];
 			$(xhr).find("multiRef").each(function(i, val) {
@@ -180,6 +190,13 @@ var loader = {
 			selected: true
 		});
 	},
+	redirect: function(url){
+		chrome.tabs.getSelected(null, function(Tab){
+			chrome.tabs.update(Tab.id,{
+				url: url
+			});
+		})
+	},	
 	showNotifications: function(id, data){
 		var keys = localStorage.getItem(id)?localStorage.getItem(id).split(","):[];
 
