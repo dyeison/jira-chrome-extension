@@ -29,6 +29,11 @@ var loader = {
 				if(!loader.icon)
 					loader.icon = new AnimatedIcon('images/16x16.png');
 				loader.icon.play();
+
+				loader.countedFilterId = localStorage.getItem('countedFilterId');
+				if(loader.countedFilterId == null)
+					loader.countedFilterId = 0;
+
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
 				pl.add("in1", "assignee = currentUser() AND resolution = unresolved ORDER BY priority DESC, created ASC");
@@ -39,8 +44,10 @@ var loader = {
 						if($("Fault", xhr).size()>=1){
 							loader.issuesFromFilter["assignedtome"] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
 						} else {
-							chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
-							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
+							if(loader.countedFilterId == 0){
+								chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
+								chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
+							}
 							loader.issuesFromFilter["assignedtome"] = loader.parseXml(xhr);
 							loader.showNotifications("keys", loader.issuesFromFilter["assignedtome"]);
 							loader.saveKeys("keys", loader.issuesFromFilter["assignedtome"] );
@@ -122,6 +129,10 @@ var loader = {
 				//pl.add("in2", 0);
 				//pl.add("in3", 50);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromFilter", pl, true, function(r, xhr){
+							if(loader.countedFilterId.toString() == filterid){
+								chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
+								chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
+							}
 						loader.issuesFromFilter[filterid] = loader.parseXml(xhr);
 				});
 	},

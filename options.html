@@ -4,11 +4,31 @@
 <head>
   <title>JIRA Chrome Extension Options</title>
   <style type="text/css">
+	.icon{
+		width: 16px; height: 16px;
+		margin: 0 4px;
+		display: inline-block;
+		background: url(images/counter.png)
+	}
+	.active #counter{
+		background: url(images/counter.png)
+	}
+	.passive #counter{
+		background: url(images/counter_gray.png)
+	}
+	.passive #counter:hover{
+		background: url(images/counter.png)
+	}
 
+	#filters{
+		border: 1px solid gray;
+		background-color: #ffffff;
+		padding: 4px;
+	}
   </style>
 	<script type="text/javascript" src="js/jquery-1.4.3.min.js"></script>
 	<script type="text/javascript">
-
+	var countedFilterId;
   function restoreOptions(){
 	$("#username").attr("value",  localStorage.getItem('username'));
 	$("#password").attr("value",  localStorage.getItem('password'));
@@ -18,9 +38,40 @@
 	$.map(vals,function(val){
 		$("#updateinterval").append($("<OPTION "+((val == curval)?"SELECTED":'')+" />").attr("value", val).text(val));
 	});
+	
+	var loader = chrome.extension.getBackgroundPage().loader;
+	if(loader.filters.length){
+		filters = [{id:0, name:"Assigned to me"}].concat(loader.filters);
+		countedFilterId =  localStorage.getItem('countedFilterId');
+		if(countedFilterId == null)
+			countedFilterId = 0;
+		$("#filters_row").show();
+		for (i in filters){
+			$("#filters").append(
+				$("<div />").append(
+					$("<div />").addClass("icon").attr("id", "counter")
+				).append(
+					$("<span />").text(filters[i].name)
+				).addClass(function(){
+					if(countedFilterId == filters[i].id)
+						return "active";
+					else
+						return "passive";
+				}).attr("filterid", filters[i].id).click(function(){
+					if(countedFilterId.toString() != $(this).attr("filterid")){
+						countedFilterId = $(this).attr("filterid");
+						$(".active").toggleClass("active passive");
+						$(this).toggleClass("active passive");
+					}
+				})
+			);
+		}
+	}
+	
   }
   function saveOptions(){
 
+	localStorage.setItem('countedFilterId', countedFilterId);
 	localStorage.setItem('username', $("#username").attr("value"));
 	localStorage.setItem('password', $("#password").attr("value"));
 	localStorage.setItem('url', $("#url").attr("value"));	
@@ -54,6 +105,10 @@
 					<td align="right">Update Interval:</td>
 					<td><select id="updateinterval" ></select>, min</td>
 				<tr>
+				<tr id="filters_row" style="display: hide;">
+					<td align="right" valign="top">Filters:</td>
+					<td id="filters"></td>
+				<tr>				
 				<tr>
 					<td colspan="2" align="right"><hr/><input type="button" onclick="saveOptions();" value="Save Options" /></td>
 				</tr>
