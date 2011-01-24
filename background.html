@@ -19,6 +19,9 @@
 		alert(html);
 	})
 	*/
+	localStorage.setItem('updateinterval', localStorage.getItem('updateinterval')?localStorage.getItem('updateinterval'):600000)
+	localStorage.setItem('countedFilterId', localStorage.getItem('countedFilterId')?localStorage.getItem('countedFilterId'):0);
+	
 	function Auth(){
 		chrome.browserAction.setBadgeBackgroundColor({color: [0, 255,0, 255]})
 		if(localStorage.getItem("url"))

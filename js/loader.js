@@ -210,20 +210,23 @@ var loader = {
 	},	
 	showNotifications: function(id, data){
 		var keys = localStorage.getItem(id)?localStorage.getItem(id).split(","):[];
-
+		var newKeys = [];
 		$.each(data, function(i, val){
 				if($.inArray(val[1], keys)<0){
-					// Create a simple text notification:
-					var notification = webkitNotifications.createNotification(
-					  'images/48x48.png',  // icon url - can be relative
-					  val[1],  // notification title
-					  val[2] // notification body text
-					);
-					// Then show the notification.
-					//notification.ondisplay = function() { setTimeout(notification.cancel(), 5000); }
-					notification.onclick = function(){ loader.addTab(loader.url +"/browse/"+val[1]); }
-					notification.show();
+					newKeys.push(val);
 				}
-		});
+		});	
+		console.log(newKeys);
+		if(newKeys.length>0 && newKeys.length<=5){
+			$.each(newKeys, function(i, val){
+						var notification = webkitNotifications.createNotification(
+						  'images/48x48.png',  // icon url - can be relative
+						  val[1],  // notification title
+						  val[2] // notification body text
+						);
+						notification.onclick = function(){ loader.addTab(loader.url +"/browse/"+val[1]); }
+						notification.show();
+			});
+		}
 	}
 }
