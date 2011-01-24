@@ -28,7 +28,7 @@ var jira = {
 			
 			if(jira.serverUrl)
 			{
-				$("#quicksearch").attr("action", jira.url("/secure/QuickSearch.jspa")).show();
+				$("#quicksearch").attr("action", jira.url("/secure/QuickSearch.jspa"));
 				jira.initHeaderLinks();
 				if(localStorage.getItem('error')!="")
 				{
@@ -44,6 +44,7 @@ var jira = {
 						jira.getIssuesFromFilter();
 				}
 			} else {
+				$("#quicksearch").hide();
 				jira.error('Configure first!');
 			}
 		},
