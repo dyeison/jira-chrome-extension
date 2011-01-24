@@ -22,7 +22,7 @@ var jira = {
 				return ((x < y) ? -1 : ((x > y) ?  1 : 0));
 			};
 			jQuery.fn.dataTableExt.oSort['string-date-desc']  = function(x,y) {
-				if(x == "")return 0;
+				if(x == "")return -1;
 				return ((x < y) ? 1 : ((x > y) ?  -1 : 0));
 			};	
 			
