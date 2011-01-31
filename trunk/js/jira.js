@@ -18,12 +18,12 @@ var jira = {
 			}).css("cursor", "pointer");
 			
 			jQuery.fn.dataTableExt.oSort['string-date-asc']  = function(x,y) {
-				if(x == "")return 1;
+				if(x == "") return (y=="")?0:1;
+				if(y == "") return (x=="")?0:-1;
 				return ((x < y) ? -1 : ((x > y) ?  1 : 0));
 			};
 			jQuery.fn.dataTableExt.oSort['string-date-desc']  = function(x,y) {
-				if(x == "")return -1;
-				return ((x < y) ? 1 : ((x > y) ?  -1 : 0));
+				return -1* jQuery.fn.dataTableExt.oSort['string-date-asc'](x,y);
 			};	
 			
 			if(jira.serverUrl)
