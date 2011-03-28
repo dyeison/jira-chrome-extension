@@ -160,17 +160,39 @@ var jira = {
 		},
 		stopProgress: function(issueId){
 			var timeSpent = chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(issueId);
+			var bResolve = false;
+			function stop(id, spent, log, resolve){
+				chrome.extension.getBackgroundPage().loader.addWorkLog(id, spent, log, function(data){
+					console.log(data);
+					if($("faultstring:first", data).length){
+						$("#alertDlg").text($("faultstring:first", data).text()).dialog({
+							title: "Error",
+							width: "350px",
+							modal: true
+						});
+					} else {
+						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(id);
+						if(resolve){
+							
+						}
+						window.close();
+					}
+				});
+			}
 			$("#progressTimeSpent").val(timeSpent);
 
 			$("#stopProggresDlg").dialog({
 				width: "420px",
 				title: "Work Log",
 				resizable: false,
+				modal: true,
 				buttons: {
 					"Save": function(){
-						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(issueId, $("#progressTimeSpent").val(), $("#progressLog").val());
-						window.close();
+						stop(issueId, $("#progressTimeSpent").val(), $("#progressLog").val(), false);
 					},
+					// "Save & Resolve": function(){
+						// stop(issueId, $("#progressTimeSpent").val(), $("#progressLog").val(), true);
+					// },					
 					"Cancel": function(){
 						$("#stopProggresDlg").dialog('close');
 					}
