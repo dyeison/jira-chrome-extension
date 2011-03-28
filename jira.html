@@ -39,11 +39,16 @@
 			<table style="font-size: inherit;">
 				<tr>
 					<td width="150" align="right"> Time Spent: </td>
-					<td> <input type='text' id="progressTimeSpent" style="width: 50px;"> </td>
+					<td colspan=2> <input type='text' id="progressTimeSpent" style="width: 50px;"> </td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td> <input type='checkbox' id="progressIsResolved">Resolve issue </td>
+					<td><select id="progressResolution" disabled="true"></select></td>
 				</tr>
 				<tr>
 					<td align="right"> Log: </td>
-					<td> <textarea id="progressLog"  style="width: 300px;height:60px;"></textarea> </td>
+					<td colspan=2> <textarea id="progressLog"  style="width: 300px;height:60px;"></textarea> </td>
 				</tr>
 			</table>
 		</div>

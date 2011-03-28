@@ -1,6 +1,6 @@
 var jira = {
 		serverUrl:null,
-		resolutinos: null,
+		resolutions: null,
 		issuetypes: null,
 		priorities: null,
 		statuses: null,
@@ -12,6 +12,15 @@ var jira = {
 			jira.priorities = chrome.extension.getBackgroundPage().loader.priorities;
 			jira.statuses = chrome.extension.getBackgroundPage().loader.statuses;
 			
+			for (i in jira.resolutions){
+				console.log(jira.resolutions[i])
+				$("#progressResolution").append(
+					$("<option />").val(i).text(jira.resolutions[i])
+				)
+			}
+			$("#progressIsResolved").click(function(){
+				$("#progressResolution").attr("disabled", !this.checked);
+			})
 			
 			$("span#title").click(function(){
 				chrome.extension.getBackgroundPage().loader.addTab(jira.url(""));
@@ -161,7 +170,7 @@ var jira = {
 		stopProgress: function(issueId){
 			var timeSpent = chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(issueId);
 			var bResolve = false;
-			function stop(id, spent, log, resolve){
+			function stop(id, spent, log, resolve, resolution){
 				chrome.extension.getBackgroundPage().loader.addWorkLog(id, spent, log, function(data){
 					console.log(data);
 					if($("faultstring:first", data).length){
@@ -173,7 +182,7 @@ var jira = {
 					} else {
 						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(id);
 						if(resolve){
-							
+							chrome.extension.getBackgroundPage().loader.resolveIssue(id, resolution);
 						}
 						window.close();
 					}
@@ -188,7 +197,12 @@ var jira = {
 				modal: true,
 				buttons: {
 					"Save": function(){
-						stop(issueId, $("#progressTimeSpent").val(), $("#progressLog").val(), false);
+					
+						stop(issueId, 
+							$("#progressTimeSpent").val(), 
+							$("#progressLog").val(), 
+							$("#progressIsResolved").is(":checked"), 
+							$("#progressResolution").val());
 					},
 					// "Save & Resolve": function(){
 						// stop(issueId, $("#progressTimeSpent").val(), $("#progressLog").val(), true);
@@ -205,6 +219,6 @@ var jira = {
 		}
 }
 
-$(window).load(function () {
-	setTimeout(jira.init, 0);
+$(document).ready(function () {
+	jira.init();
 });

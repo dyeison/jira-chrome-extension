@@ -42,10 +42,10 @@ function Worklog(){
 }
 
 var loader = {
-	resolutions: [],
-	priorities: [],
-	issuetypes: [],
-	statuses: [],
+	resolutions: {},
+	priorities: {},
+	issuetypes: {},
+	statuses: {},
 	filters: [],
 	issuesFromFilter:[],
 	token: null,
@@ -206,6 +206,14 @@ var loader = {
 						console.log(xhr);
 				});
 	},
+	getAvailableActions: function(issue){
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				pl.add("in1", issue);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getAvailableActions", pl, true, function(r, xhr){
+						console.log(xhr);
+				});
+	},
 	addWorkLog: function(issue, timeSpent, log, callback){
 		var pl = new SOAPClientParameters();
 		pl.add("in0", loader.token);
@@ -220,20 +228,21 @@ var loader = {
 				callback(xhr);
 		});
 	},
-	resolveIssue: function(issue, timeSpent, log, callback){
+	resolveIssue: function(issue, resolution){
 		var pl = new SOAPClientParameters();
 		pl.add("in0", loader.token);
 		pl.add("in1", issue);
-		pl.add("in2", {
+		pl.add("in2", "5");  //-- is 'Resolve issue' action
+		pl.add("in3", {
 			//"startDate":"2001-10-10T00:00:00",
-			"comment":log,
-			"timeSpent":timeSpent
+			"resolution":resolution
 		});
-		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addWorklogAndAutoAdjustRemainingEstimate", pl, true, function(r, xhr){
+		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "progressWorkflowAction", pl, true, function(r, xhr){
 			if(callback)
 				callback(xhr);
 		});
 	},	
+	
 	parseXml: function(xhr){
 			var data = [];
 			$(xhr).find("multiRef").each(function(i, val) {
@@ -323,7 +332,7 @@ var loader = {
 				if($.inArray(val[1], keys)<0){
 					newKeys.push(val);
 				}
-		});	
+		});
 		console.log(newKeys);
 		if(newKeys.length>0 && newKeys.length<=5){
 			$.each(newKeys, function(i, val){
