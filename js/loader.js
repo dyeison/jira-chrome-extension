@@ -1,3 +1,46 @@
+function Worklog(){
+	var issues = {};
+	this.__defineGetter__("issues", function(){
+       return issues;
+    });
+	this.__defineSetter__("issues", function(val){
+       return localStorage.setItem('worklog', JSON.stringify(issues));
+    });
+	
+	this.startProgress = function(issueId){
+		//if(typeof issues[issueId])
+		issues[issueId] = (new Date()).getTime();
+		this.issues = issues;
+	}
+	this.getTimeSpent = function(issueId){
+		var timeSpent = 0;
+		if(typeof issues[issueId] != 'undefined'){
+			timeSpent = (new Date()).getTime() - issues[issueId];
+		}
+		console.log(timeSpent)
+		return timeToString(timeSpent);
+	}
+	this.stopProgress = function(issueId, timeSpent, log){
+		loader.addWorkLog(issueId, timeSpent, log)
+		delete issues[issueId];
+		this.issues = issues;
+	}
+	this.inProgress = function(issueId){
+		return typeof issues[issueId] != 'undefined';
+	}
+	
+	function timeToString(iTime){
+		// iTime  - number of millisecconds
+		var m = Math.ceil(iTime/60000);
+		var h = Math.floor(m/60);
+		m = m%60;
+		return (h)?(h+"h "):''+ (m)?(m+"m"):'';
+	}
+	
+	
+	issues = localStorage.getItem('worklog')?JSON.parse(localStorage.getItem('worklog')):{};
+}
+
 var loader = {
 	resolutions: [],
 	priorities: [],
@@ -7,6 +50,7 @@ var loader = {
 	issuesFromFilter:[],
 	token: null,
 	url:null,
+	worklog: new Worklog(),
 	login: function(username, password, callback){
 			var pl = new SOAPClientParameters();
 			pl.add("username", username);
@@ -58,6 +102,7 @@ var loader = {
 					}
 				});
 				loader.getSavedFilters();
+				//loader.getCustomFields();
 	},
 	getSettings: function(){
 				var pl = new SOAPClientParameters();
@@ -146,10 +191,41 @@ var loader = {
 						callback(xhr);
 				});
 	},
+	getCustomFields: function(){
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getCustomFields", pl, true, function(r, xhr){
+						console.log(xhr);
+				});
+	},
+	getWorklogs: function(issue){
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				pl.add("in1", issue);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getWorklogs", pl, true, function(r, xhr){
+						console.log(xhr);
+				});
+	},
+	addWorkLog: function(issue, timeSpent, log){
+		//var parser = parser=new DOMParser();
+		//xmlDoc=parser.parseFromString('<RemoteWorklog><startDate type="xsd:dateTime"/><comment type="xsd:string">'+escape(log)+'</comment><timeSpent type="xsd:string">'+timeSpent+'</timeSpent></RemoteWorklog>',"text/xml");
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				pl.add("in1", issue);
+				pl.add("in2", {
+					"startDate":"2001-10-10T00:00:00",
+					"comment":log,
+					"timeSpent":timeSpent
+				});
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addWorklogAndAutoAdjustRemainingEstimate", pl, true, function(r, xhr){
+						console.log(xhr);
+				});
+	},
 	parseXml: function(xhr){
 			var data = [];
 			$(xhr).find("multiRef").each(function(i, val) {
 					if($("key", val).text()){
+						//loader.getWorklogs($("key", val).text());
 						data.push([
 							$("type", val).text(),
 							$("key", val).text(),
@@ -159,7 +235,8 @@ var loader = {
 							//$("timeoriginalestimate", val).text(), 
 							parseInt($("priority", val).text()),
 							loader.getResolution($("resolution", val).text()),
-							$("status", val).text()
+							$("status", val).text(),
+							$("key", val).text()
 						]);
 					}
 			});
@@ -173,8 +250,11 @@ var loader = {
 	getDate: function(str){
 		if(str!='' && typeof(str)!="undefined"){
 			try{
-				var d= parseXSDDateString(str);
-				return d.getFullYear()+"-"+(d.getMonth()+1) + "-" +d.getDate()
+				var date= parseXSDDateString(str);
+				  //console.log(str+": "+d.getFullYear()+"-"+(d.getMonth()+1) + "-" +d.getDate());
+				  var m = date.getMonth()+1; m=(m.toString().length==1)?"0"+m:m;
+				  var d = date.getDate()+1; d=(d.toString().length==1)?"0"+d:d;
+				return date.getFullYear()+"-"+m+ "-" +d;
 			}catch(e){
 				return str;
 			}
@@ -224,7 +304,9 @@ var loader = {
 						  val[1],  // notification title
 						  val[2] // notification body text
 						);
-						notification.onclick = function(){ loader.addTab(loader.url +"/browse/"+val[1]); }
+						notification.onclick = (
+							function(notif){ return function(){ loader.addTab(loader.url +"/browse/"+val[1]); notif.cancel(); }}
+						)(notification);
 						notification.show();
 			});
 		}

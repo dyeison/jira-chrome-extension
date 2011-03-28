@@ -20,6 +20,9 @@ var jira = {
 			jQuery.fn.dataTableExt.oSort['string-date-asc']  = function(x,y) {
 				if(x == "") return (y=="")?0:1;
 				if(y == "") return (x=="")?0:-1;
+				var xa = x.split("-");
+				var ya = y.split("-");
+				//return (new Date(xa[0],xa[1],xa[2]) > new Date(ya[0],ya[1],ya[2]))
 				return ((x < y) ? -1 : ((x > y) ?  1 : 0));
 			};
 			jQuery.fn.dataTableExt.oSort['string-date-desc']  = function(x,y) {
@@ -82,6 +85,12 @@ var jira = {
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"sTitle": "Res.", "sClass": "ShortField"},
 						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+						{ "sTitle": "Worklog", "fnRender":function(obj){
+							return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
+								"<a href='#' onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><img src='images/stop.png' />"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</a>":
+								"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');window.close();\"><img src='images/start.png' /></a>");
+								
+						}}
 					]
 				} );	
 		},
@@ -139,15 +148,38 @@ var jira = {
 						chrome.extension.getBackgroundPage().loader.update();
 						window.close();
 					}).text("Reload issues").button({icons: {primary: "ui-icon-refresh"},text: false})
-				).append(
+				);/*.append(
 					$("<button />").click(function(){
 						chrome.extension.getBackgroundPage().loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QAWCRPFR2FW8S&lc=RU&item_name=JIRA%20Chrome%20extension&item_number=jira%2dchrome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
 						window.close();
 					}).text("Contribute").button({icons: {primary: "ui-icon-heart"},text: false})
-				);
+				);*/
 		},
 		url: function(str){
 			return (jira.serverUrl + str);
+		},
+		stopProgress: function(issueId){
+			var timeSpent = chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(issueId);
+			$("#progressTimeSpent").val(timeSpent);
+
+			$("#stopProggresDlg").dialog({
+				width: "420px",
+				title: "Work Log",
+				resizable: false,
+				buttons: {
+					"Save": function(){
+						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(issueId, $("#progressTimeSpent").val(), $("#progressLog").val());
+						window.close();
+					},
+					"Cancel": function(){
+						$("#stopProggresDlg").dialog('close');
+					}
+				}
+				
+			});
+			$("#progressLog").get(0).focus();
+			//chrome.extension.getBackgroundPage().loader.worklog.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');
+			//window.close();
 		}
 }
 
