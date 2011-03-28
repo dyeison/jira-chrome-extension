@@ -20,8 +20,8 @@ function Worklog(){
 		console.log(timeSpent)
 		return timeToString(timeSpent);
 	}
-	this.stopProgress = function(issueId, timeSpent, log){
-		loader.addWorkLog(issueId, timeSpent, log)
+	this.stopProgress = function(issueId){
+		//loader.addWorkLog(issueId, timeSpent, log, callback);
 		delete issues[issueId];
 		this.issues = issues;
 	}
@@ -34,7 +34,7 @@ function Worklog(){
 		var m = Math.ceil(iTime/60000);
 		var h = Math.floor(m/60);
 		m = m%60;
-		return (h)?(h+"h "):''+ (m)?(m+"m"):'';
+		return ((h)?(h+"h "):'')+ ((m)?(m+"m"):'');
 	}
 	
 	
@@ -206,21 +206,34 @@ var loader = {
 						console.log(xhr);
 				});
 	},
-	addWorkLog: function(issue, timeSpent, log){
-		//var parser = parser=new DOMParser();
-		//xmlDoc=parser.parseFromString('<RemoteWorklog><startDate type="xsd:dateTime"/><comment type="xsd:string">'+escape(log)+'</comment><timeSpent type="xsd:string">'+timeSpent+'</timeSpent></RemoteWorklog>',"text/xml");
-				var pl = new SOAPClientParameters();
-				pl.add("in0", loader.token);
-				pl.add("in1", issue);
-				pl.add("in2", {
-					"startDate":"2001-10-10T00:00:00",
-					"comment":log,
-					"timeSpent":timeSpent
-				});
-				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addWorklogAndAutoAdjustRemainingEstimate", pl, true, function(r, xhr){
-						console.log(xhr);
-				});
+	addWorkLog: function(issue, timeSpent, log, callback){
+		var pl = new SOAPClientParameters();
+		pl.add("in0", loader.token);
+		pl.add("in1", issue);
+		pl.add("in2", {
+			"startDate":this.getXsdDateTime(new Date()),
+			"comment":log,
+			"timeSpent":timeSpent
+		});
+		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addWorklogAndAutoAdjustRemainingEstimate", pl, true, function(r, xhr){
+			if(callback)
+				callback(xhr);
+		});
 	},
+	resolveIssue: function(issue, timeSpent, log, callback){
+		var pl = new SOAPClientParameters();
+		pl.add("in0", loader.token);
+		pl.add("in1", issue);
+		pl.add("in2", {
+			//"startDate":"2001-10-10T00:00:00",
+			"comment":log,
+			"timeSpent":timeSpent
+		});
+		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addWorklogAndAutoAdjustRemainingEstimate", pl, true, function(r, xhr){
+			if(callback)
+				callback(xhr);
+		});
+	},	
 	parseXml: function(xhr){
 			var data = [];
 			$(xhr).find("multiRef").each(function(i, val) {
@@ -261,6 +274,21 @@ var loader = {
 		} else {
 			return '';
 		}
+	},
+	getXsdDateTime: function(date){
+	  function pad(n) {
+		 var s = n.toString();
+		 return s.length < 2 ? '0'+s : s;
+	  };
+
+	  var yyyy = date.getUTCFullYear();
+	  var mm1  = pad(date.getUTCMonth()+1);
+	  var dd   = pad(date.getUTCDate());
+	  var hh   = pad(date.getUTCHours());
+	  var mm2  = pad(date.getUTCMinutes());
+	  var ss   = pad(date.getUTCSeconds());
+
+	  return yyyy +'-' +mm1 +'-' +dd +'T' +hh +':' +mm2 +':' +ss;
 	},
 	getResolution: function(id){
 		if(id == ''){
