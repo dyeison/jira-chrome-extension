@@ -84,25 +84,30 @@ var jira = {
 		renderTableFromXml: function(id){
 		
 				$("#table_"+id).dataTable( {
+				"bLengthChange": false,
+				"bFilter": false,
+				"bSort": true,
+				//"bInfo": false,
 				"bJQueryUI": false,
+				"sPaginationType ": "full_numbers",
 				"aaData": chrome.extension.getBackgroundPage().loader.issuesFromFilter[id],
 				"aaSorting": [[4, "asc"],[ 5, "asc" ]],
 				"aoColumns": [
-						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { 
+						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { 
 							return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
-						{ "sTitle": "Key",  "fnRender": function(obj) { 
+						{"sTitle": "Key",  "fnRender": function(obj) { 
 							return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
-						{ "sTitle": "Summary", "sClass": "Summary"},
-						{ "sTitle": "Assignee",  "fnRender": function(obj) { 
+						{"sTitle": "Summary", "sClass": "Summary"},
+						{"sTitle": "Assignee",  "fnRender": function(obj) { 
 							if(obj.aData[ obj.iDataColumn ] && obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
-						{ "sType": "string-date","sTitle": "Due date",  "fnRender": function(obj) {
+						{"sType": "string-date","sTitle": "Due date",  "fnRender": function(obj) {
 							return obj.aData[ obj.iDataColumn ]?chrome.extension.getBackgroundPage().loader.getDate(obj.aData[ obj.iDataColumn ]):"";
 						}, "sClass": "Date"},
 						//{ "sTitle": "Est.", "sClass": "Date"},
-						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"sTitle": "Res.", "sClass": "ShortField"},
-						{ "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
-						{ "sTitle": "Worklog", "fnRender":function(obj){
+						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+						{"sTitle": "Worklog", "fnRender":function(obj){
 							return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
 								"<a href='#' onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><img src='images/stop.png' />"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</a>":
 								"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');window.close();\"><img src='images/start.png' /></a>");
@@ -121,7 +126,11 @@ var jira = {
 			);
 			$("#tabs").append(
 				$("<DIV />").attr("id", "div_"+id).append(
-					$("<TABLE />").attr("id", "table_"+id).addClass("display")
+					$("<TABLE />").attr({
+						"id": "table_"+id,
+						"cellspacing":"0",
+						"cellpadding":"0"
+					}).addClass("display")
 				).append($("<BR />"))
 			);
 		},
