@@ -1,24 +1,25 @@
 
   <head>
 		<style type="text/css" title="currentStyle">
-			@import "css/redmond/jquery-ui-1.8.9.custom.css";
+			@import "css/custom-theme/jquery-ui-1.8.11.custom.css";
 			@import "css/table.css";
 			
 			#title{
-				font-family: arial, sans-serif;
+				font-family: segoe ui, Arial, sans-serif;
 				font-size: 19px;
 				font-weight: bold;
 				color: #2e5781;
 				float: left;
 				
 			}
+			body {background:  -webkit-linear-gradient(top, #fff, #eaeef3 50%, #d3d7db);}
 			.ui-button { margin-left: -1px; }
 			.ui-button-icon-only .ui-button-text { padding: 0.35em; } 
 			.ui-autocomplete-input { margin: 0; padding: 0.48em 0 0 0.45em; height: 16px; }
 			.ui-menu-item a{color: #444444 !important;font-weight: normal !important;}			
 		</style>
-	<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
-	<script type="text/javascript" src="js/jquery-ui-1.8.9.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.11.custom.min.js"></script>
 	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
 	
 	<script type="text/javascript" src="js/jquery.combobox.js"></script>
@@ -26,7 +27,7 @@
 	<script type="text/javascript" src="js/jira.js"></script>
 
 <body>
-		<div id="HeaderLink" class="HeaderLink"><span id="title"><img src="images/16x16.png">JIRA issues viewer</span>
+		<div id="HeaderLink" class="HeaderLink"><span id="title"><img src="images/16x16.png">JIRA assistant for Google Chrome</span>
 		
 			<form id="quicksearch" action="/jira/secure/QuickSearch.jspa" target="_main" method="post" style="display: inline-block;margin-bottom: 0px;height: 22px;">
 				<label for="quickSearchInput" class="overlabel-apply" >Quick Search</label>

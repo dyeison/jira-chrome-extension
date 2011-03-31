@@ -16,7 +16,6 @@
 div.HeaderLink{
 	font: 9px "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 	color: #8888;
-	background-color: #fff;
 	margin:3px;
 	text-align:right;
 }
@@ -69,6 +68,7 @@ a.HeaderLink:hover{
 .dataTables_info {
 	width: 60%;
 	float: left;
+	margin-top: 3px;
 }
 
 .dataTables_paginate {
@@ -79,26 +79,27 @@ a.HeaderLink:hover{
 
 /* Pagination nested */
 .paginate_disabled_previous, .paginate_enabled_previous, .paginate_disabled_next, .paginate_enabled_next {
-	height: 19px;
-	width: 19px;
+	height: 16px;
+	width: 16px;
 	margin-left: 3px;
+	margin-top: 3px;
 	float: left;
 }
 
 .paginate_disabled_previous {
-	background-image: url('../images/back_disabled.jpg');
+	background-image: url('../images/back_disabled.png');
 }
 
 .paginate_enabled_previous {
-	background-image: url('../images/back_enabled.jpg');
+	background-image: url('../images/back.png');
 }
 
 .paginate_disabled_next {
-	background-image: url('../images/forward_disabled.jpg');
+	background-image: url('../images/next_disabled.png');
 }
 
 .paginate_enabled_next {
-	background-image: url('../images/forward_enabled.jpg');
+	background-image: url('../images/next.png');
 }
 
 
@@ -107,18 +108,22 @@ a.HeaderLink:hover{
  * DataTables display
  */
 table.display {
+	border-radius: 3px;
 	margin: 0 0;
-	width: 700px;
+	width: 100%;
 	clear: both;
 }
 
 table.display thead th {
 	font-size:11px;
+	margin:6px;
 	white-space:nowrap;
-	padding: 1px 18px 5px 1px;
-	border-bottom: 1px solid black;
+	padding: 3px 18px 5px 3px;
+	background-color: #7db0dd;
+	vertical-align:middle;
 	font-weight: bold;
 	cursor: pointer;
+	border-bottom:1px solid #3672a8;
 	* cursor: hand;
 }
 
@@ -239,11 +244,11 @@ table.display tr.even.gradeU {
 
 
 tr.odd {
-	background-color: #E2E4FF;
+	background-color: #b2d5f3;
 }
 
 tr.even {
-	background-color: white;
+	background-color: #d1e3f3;
 }
 
 
@@ -340,27 +345,27 @@ table.display tr.odd.row_selected td {
  */
 /* For the standard odd/even */
 tr.odd td.sorting_1 {
-	background-color: #D3D6FF;
+	background-color: #abcfef;
 }
 
 tr.odd td.sorting_2 {
-	background-color: #DADCFF;
+	background-color: #abcfef;
 }
 
 tr.odd td.sorting_3 {
-	background-color: #E0E2FF;
+	background-color: #abcfef;
 }
 
 tr.even td.sorting_1 {
-	background-color: #EAEBFF;
+	background-color: #c8dcee;
 }
 
 tr.even td.sorting_2 {
-	background-color: #F2F3FF;
+	background-color: #c8dcee;
 }
 
 tr.even td.sorting_3 {
-	background-color: #F9F9FF;
+	background-color: #c8dcee;
 }
 
 
