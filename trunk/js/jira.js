@@ -11,16 +11,24 @@ var jira = {
 			jira.issuetypes = chrome.extension.getBackgroundPage().loader.issuetypes;
 			jira.priorities = chrome.extension.getBackgroundPage().loader.priorities;
 			jira.statuses = chrome.extension.getBackgroundPage().loader.statuses;
+			jira.users = chrome.extension.getBackgroundPage().loader.users;
 			
 			for (i in jira.resolutions){
-				console.log(jira.resolutions[i])
 				$("#progressResolution").append(
 					$("<option />").val(i).text(jira.resolutions[i])
 				)
 			}
+			for (i in jira.users){
+				$("#progressUsers").append(
+					$("<option />").val(i).text(jira.users[i].fullname).attr("title", jira.users[i].email)
+				)
+			}
 			$("#progressIsResolved").click(function(){
-				$("#progressResolution").attr("disabled", !this.checked);
-			})
+				$("#progressResolution").attr("disabled", !this.checked).toggleClass('ui-state-disabled');
+			});
+			$("#progressIsAssignee").click(function(){
+				$("#progressUsers").attr("disabled", !this.checked).toggleClass('ui-state-disabled');
+			});
 			
 			$("span#title").click(function(){
 				chrome.extension.getBackgroundPage().loader.addTab(jira.url(""));
@@ -170,8 +178,9 @@ var jira = {
 		stopProgress: function(issueId){
 			var timeSpent = chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(issueId);
 			var bResolve = false;
-			function stop(id, spent, log, resolve, resolution){
-				chrome.extension.getBackgroundPage().loader.addWorkLog(id, spent, log, function(data){
+			
+			function stop(opt){
+				chrome.extension.getBackgroundPage().loader.addWorkLog(opt.issueId, opt.timeSpent, opt.log, function(data){
 					console.log(data);
 					if($("faultstring:first", data).length){
 						$("#alertDlg").text($("faultstring:first", data).text()).dialog({
@@ -180,14 +189,18 @@ var jira = {
 							modal: true
 						});
 					} else {
-						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(id);
-						if(resolve){
-							chrome.extension.getBackgroundPage().loader.resolveIssue(id, resolution);
+						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(opt.issueId);
+						if(opt.bResolve){
+							chrome.extension.getBackgroundPage().loader.resolveIssue(opt.issueId, opt.resolution);
+						}
+						if(opt.bAssignee){
+							chrome.extension.getBackgroundPage().loader.resolveIssue(opt.issueId, opt.assignee);
 						}
 						window.close();
 					}
 				});
 			}
+			
 			$("#progressTimeSpent").val(timeSpent);
 
 			$("#stopProggresDlg").dialog({
@@ -198,11 +211,15 @@ var jira = {
 				buttons: {
 					"Save": function(){
 					
-						stop(issueId, 
-							$("#progressTimeSpent").val(), 
-							$("#progressLog").val(), 
-							$("#progressIsResolved").is(":checked"), 
-							$("#progressResolution").val());
+						stop({
+							issueId: issueId, 
+							timeSpent: $("#progressTimeSpent").val(), 
+							log: $("#progressLog").val(), 
+							bResolve: $("#progressIsResolved").is(":checked"), 
+							resolution: $("#progressResolution").val(),
+							bAssignee: $("#progressIsAssignee").is(":checked"), 
+							assignee: $("#progressUsers").val()
+						});
 					},
 					// "Save & Resolve": function(){
 						// stop(issueId, $("#progressTimeSpent").val(), $("#progressLog").val(), true);

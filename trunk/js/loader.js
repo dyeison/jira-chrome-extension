@@ -46,6 +46,7 @@ var loader = {
 	priorities: {},
 	issuetypes: {},
 	statuses: {},
+	users: {},
 	filters: [],
 	issuesFromFilter:[],
 	token: null,
@@ -149,6 +150,16 @@ var loader = {
 						}
 					});
 				});
+				this.getGroup("jira-users", function(xhr){
+					$("multiRef", xhr).each(function(i, val) {
+						if($("fullname", val).text()){
+							loader.users[$("name", val).text()] = {
+								"email": $("email", val).text(), 
+								"fullname": $("fullname", val).text()
+							};
+						}
+					});
+				})
 	},
 	getSavedFilters: function(){
 				var pl = new SOAPClientParameters();
@@ -234,15 +245,37 @@ var loader = {
 		pl.add("in1", issue);
 		pl.add("in2", "5");  //-- is 'Resolve issue' action
 		pl.add("in3", {
-			//"startDate":"2001-10-10T00:00:00",
 			"resolution":resolution
 		});
 		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "progressWorkflowAction", pl, true, function(r, xhr){
 			if(callback)
 				callback(xhr);
 		});
-	},	
-	
+	},
+	getGroup: function(groupName, callback){
+		var pl = new SOAPClientParameters();
+		pl.add("in0", loader.token);
+		pl.add("in1", groupName);
+		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getGroup", pl, true, function(r, xhr){
+			if(callback)
+				callback(xhr);
+		});
+	},
+	assigneIssue: function(issue, user, callback){
+		var pl = new SOAPClientParameters();
+		pl.add("in0", loader.token);
+		pl.add("in1", issue);
+		pl.add("in2", {
+			RemoteFieldValue: {
+				id: "assignee",
+				values: [user]
+			}
+		});
+		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "updateIssue", pl, true, function(r, xhr){
+			if(callback)
+				callback(xhr);
+		});
+	},
 	parseXml: function(xhr){
 			var data = [];
 			$(xhr).find("multiRef").each(function(i, val) {
@@ -273,10 +306,11 @@ var loader = {
 		if(str!='' && typeof(str)!="undefined"){
 			try{
 				var date= parseXSDDateString(str);
+					date.setUTCDate(date.getUTCDate()+1);
 				  //console.log(str+": "+d.getFullYear()+"-"+(d.getMonth()+1) + "-" +d.getDate());
-				  var m = date.getMonth()+1; m=(m.toString().length==1)?"0"+m:m;
-				  var d = date.getDate()+1; d=(d.toString().length==1)?"0"+d:d;
-				return date.getFullYear()+"-"+m+ "-" +d;
+				  var m = date.getUTCMonth()+1; m=(m.toString().length==1)?"0"+m:m;
+				  var d = date.getUTCDate(); d=(d.toString().length==1)?"0"+d:d;
+				return date.getUTCFullYear()+"-"+m+ "-" +d;
 			}catch(e){
 				return str;
 			}

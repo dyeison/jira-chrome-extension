@@ -12,10 +12,16 @@
 				float: left;
 				
 			}
+			.ui-button { margin-left: -1px; }
+			.ui-button-icon-only .ui-button-text { padding: 0.35em; } 
+			.ui-autocomplete-input { margin: 0; padding: 0.48em 0 0 0.45em; height: 16px; }
+			.ui-menu-item a{color: #444444 !important;font-weight: normal !important;}			
 		</style>
 	<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.8.9.custom.min.js"></script>
 	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
+	
+	<script type="text/javascript" src="js/jquery.combobox.js"></script>
 	<script type="text/javascript" src="js/xsddate.js"></script>
 	<script type="text/javascript" src="js/jira.js"></script>
 
@@ -39,16 +45,21 @@
 			<table style="font-size: inherit;">
 				<tr>
 					<td width="150" align="right"> Time Spent: </td>
-					<td colspan=2> <input type='text' id="progressTimeSpent" style="width: 50px;"> </td>
+					<td colspan=2> <input type='text' id="progressTimeSpent" style="width: 50px;" class="ui-widget ui-widget-content ui-corner-all"> </td>
 				</tr>
 				<tr>
 					<td align="right"></td>
-					<td> <input type='checkbox' id="progressIsResolved">Resolve issue </td>
-					<td><select id="progressResolution" disabled="true"></select></td>
+					<td> <input type='checkbox' id="progressIsResolved" class="ui-widget ui-widget-content ui-corner-all">Resolve issue </td>
+					<td><select id="progressResolution"  class="ui-widget ui-widget-content ui-corner-all ui-state-disabled"></select></td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td> <input type='checkbox' id="progressIsAssignee" class="ui-widget ui-widget-content ui-corner-all">Assigne issue </td>
+					<td><select id="progressUsers" class="ui-widget ui-widget-content ui-corner-all ui-state-disabled"></select></td>
 				</tr>
 				<tr>
 					<td align="right"> Log: </td>
-					<td colspan=2> <textarea id="progressLog"  style="width: 300px;height:60px;"></textarea> </td>
+					<td colspan=2> <textarea id="progressLog"  style="width: 300px;height:60px;"  class="ui-widget ui-widget-content ui-corner-all"></textarea> </td>
 				</tr>
 			</table>
 		</div>

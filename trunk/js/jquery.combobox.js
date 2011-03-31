@@ -1,6 +1,7 @@
 	(function( $ ) {
 		$.widget( "ui.combobox", {
 			input: null,
+			button: null,
 			options: {
 			 editable: false,
 			 value: null
@@ -69,7 +70,7 @@
 						.appendTo( ul );
 				};
 
-				$( "<button>&nbsp;</button>" )
+				this.button = $( "<button>&nbsp;</button>" )
 					.attr( "tabIndex", -1 )
 					.attr( "title", "Show All Items" )
 					.insertAfter( this.input )
@@ -92,9 +93,14 @@
 						self.input.autocomplete( "search", "" );
 						self.input.focus();
 					});
+				this.disable(select.attr("disabled"))
 			},
 			value: function() {
 			 return this.input.val();
+		   },
+		   disable: function(state){
+			this.input.attr("disabled", state).toggleClass('ui-state-disabled');
+			this.button.attr("disabled", state).toggleClass('ui-state-disabled');
 		   }
 		});
 	})( jQuery );
