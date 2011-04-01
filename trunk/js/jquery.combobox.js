@@ -99,8 +99,8 @@
 			 return this.input.val();
 		   },
 		   disable: function(state){
-			this.input.attr("disabled", state).toggleClass('ui-state-disabled');
-			this.button.attr("disabled", state).toggleClass('ui-state-disabled');
+			this.input.attr("disabled", state);//.toggleClass('ui-state-disabled');
+			this.button.attr("disabled", state);//.toggleClass('ui-state-disabled');
 		   }
 		});
 	})( jQuery );
