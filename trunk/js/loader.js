@@ -239,7 +239,7 @@ var loader = {
 				callback(xhr);
 		});
 	},
-	resolveIssue: function(issue, resolution){
+	resolveIssue: function(issue, resolution, callback){
 		var pl = new SOAPClientParameters();
 		pl.add("in0", loader.token);
 		pl.add("in1", issue);
@@ -272,6 +272,18 @@ var loader = {
 			}
 		});
 		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "updateIssue", pl, true, function(r, xhr){
+			if(callback)
+				callback(xhr);
+		});
+	},
+	addComment: function(issue, comment, callback){
+		var pl = new SOAPClientParameters();
+		pl.add("in0", loader.token);
+		pl.add("in1", issue);
+		pl.add("in2", {
+				"body": comment
+		});
+		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addComment", pl, true, function(r, xhr){
 			if(callback)
 				callback(xhr);
 		});

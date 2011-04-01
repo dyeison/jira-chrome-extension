@@ -1,6 +1,6 @@
 {
-	"name": "JIRA Issues viewer",
-	"version": "1.3.0",
+	"name": "JIRA assistant",
+	"version": "1.4.0",
 	"description": "With this extension you'll get simple access to all your issues or task from Atlassian  JIRA.",
 	"background_page": "background.html",
 	"icons": {
