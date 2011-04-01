@@ -14,12 +14,12 @@ var jira = {
 			jira.users = chrome.extension.getBackgroundPage().loader.users;
 			
 			for (i in jira.resolutions){
-				$("#progressResolution").append(
+				$("#progressResolution, #resolveResolution").append(
 					$("<option />").val(i).text(jira.resolutions[i])
 				)
 			}
 			for (i in jira.users){
-				$("#progressUsers").append(
+				$("#progressUsers, #assigneeUsers").append(
 					$("<option />").val(i).text(jira.users[i].fullname).attr("title", jira.users[i].email)
 				)
 			}
@@ -95,17 +95,27 @@ var jira = {
 				"aoColumns": [
 						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { 
 							return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
-						{"sTitle": "Key",  "fnRender": function(obj) { 
+						{"sTitle": "Key", "bUseRendered":false,  "fnRender": function(obj) { 
 							return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 						{"sTitle": "Summary", "sClass": "Summary"},
 						{"sTitle": "Assignee",  "fnRender": function(obj) { 
-							if(obj.aData[ obj.iDataColumn ] && obj.aData[ obj.iDataColumn ].length>10)return obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."; else return obj.aData[ obj.iDataColumn ];}},
+								return "<a href=\"javascript:{jira.assignee('"+obj.aData[1]+"')}\">" + 
+									((obj.aData[ obj.iDataColumn ] && obj.aData[ obj.iDataColumn ].length>10)?(obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."):obj.aData[ obj.iDataColumn ])+
+									"</a>";
+							}
+						},
 						{"sType": "string-date","sTitle": "Due date",  "fnRender": function(obj) {
 							return obj.aData[ obj.iDataColumn ]?chrome.extension.getBackgroundPage().loader.getDate(obj.aData[ obj.iDataColumn ]):"";
 						}, "sClass": "Date"},
 						//{ "sTitle": "Est.", "sClass": "Date"},
 						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
-						{"sTitle": "Res.", "sClass": "ShortField"},
+						{"sTitle": "Res.", "sClass": "ShortField","fnRender": function(obj) { 
+								if(obj.aData[ obj.iDataColumn ].toLowerCase().indexOf("unresolved")>=0)
+									return "<a href=\"javascript:{jira.resolve('"+obj.aData[1]+"')}\">" + obj.aData[ obj.iDataColumn ] + "</a>";
+								else
+									return obj.aData[ obj.iDataColumn ];
+							}
+						},
 						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"sTitle": "Worklog", "fnRender":function(obj){
 							return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
@@ -203,7 +213,7 @@ var jira = {
 							chrome.extension.getBackgroundPage().loader.resolveIssue(opt.issueId, opt.resolution);
 						}
 						if(opt.bAssignee){
-							chrome.extension.getBackgroundPage().loader.resolveIssue(opt.issueId, opt.assignee);
+							chrome.extension.getBackgroundPage().loader.assigneIssue(opt.issueId, opt.assignee);
 						}
 						window.close();
 					}
@@ -218,7 +228,7 @@ var jira = {
 				resizable: false,
 				modal: true,
 				buttons: {
-					"Save": function(){
+					"Log work": function(){
 					
 						stop({
 							issueId: issueId, 
@@ -242,6 +252,64 @@ var jira = {
 			$("#progressLog").get(0).focus();
 			//chrome.extension.getBackgroundPage().loader.worklog.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');
 			//window.close();
+		},
+		assignee: function(id){
+			$("#assigneeIssue").text(id);
+			$("#assigneeDlg").dialog({
+				width: "420px",
+				title: "Assign",
+				resizable: false,
+				modal: true,
+				buttons: {
+					"Assign": function(){
+						chrome.extension.getBackgroundPage().loader.assigneIssue(id, $("#assigneeUsers").val(), function(data){
+							if($("#assigneeComment").val()){
+								chrome.extension.getBackgroundPage().loader.addComment(id, $("#assigneeComment").val(), function(data){
+									$("#assigneeDlg").dialog('close');
+								});
+							} else {
+								$("#assigneeDlg").dialog('close');
+							}
+						});
+					},
+					// "Save & Resolve": function(){
+						// stop(issueId, $("#progressTimeSpent").val(), $("#progressLog").val(), true);
+					// },					
+					"Cancel": function(){
+						$("#assigneeDlg").dialog('close');
+					}
+				}
+				
+			});		
+		},
+		resolve: function(id){
+			$("#resolveIssue").text(id);
+			$("#resolveDlg").dialog({
+				width: "420px",
+				title: "Resolve Issue",
+				resizable: false,
+				modal: true,
+				buttons: {
+					"Resolve": function(){
+						chrome.extension.getBackgroundPage().loader.resolveIssue(id, $("#resolveResolution").val(), function(data){
+							if($("#resolveComment").val()){
+								chrome.extension.getBackgroundPage().loader.addComment(id, $("#resolveComment").val(), function(data){
+									$("#resolveDlg").dialog('close');
+								});
+							} else {
+								$("#resolveDlg").dialog('close');
+							}
+						});
+					},
+					// "Save & Resolve": function(){
+						// stop(issueId, $("#progressTimeSpent").val(), $("#progressLog").val(), true);
+					// },					
+					"Cancel": function(){
+						$("#resolveDlg").dialog('close');
+					}
+				}
+				
+			});		
 		}
 }
 
