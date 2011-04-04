@@ -1,0 +1,77 @@
+﻿{
+	"title": {
+		"message": "JIRA assistant for Google Chrome"
+	},
+	"quickSearch": {
+		"message": "Быстрый поиск"
+	},
+	"timeSpent": {
+		"message": "Затрачено времени:"
+	},
+	"resolveIssue": {
+		"message": "Закрыть задачу"
+	},
+	"assignIssue": {
+		"message": "Назанчить исполнителя"
+	},
+	"issue": {
+		"message": "Задача"
+	},
+	"assigne": {
+		"message": "Испольнитель"
+	},
+	"comment": {
+		"message": "Комментарий"
+	},
+	"resolution": {
+		"message": "Статус"
+	},
+	"log": {
+		"message": "Лог"
+	},
+	"save": {
+		"message": "Сохранить"
+	},
+	"cancel": {
+		"message": "Отмена"
+	},
+	"close": {
+		"message": "Закрыть"
+	},
+	"logWork": {
+		"message": "Логировать"
+	},
+	"cancelProgress": {
+		"message": "Отменить прогресс"
+	},
+	"reload": {
+		"message": "Перезагрузить список задач"
+	},
+	"manageFilters": {
+		"message": "Управление фильтрами"
+	},
+	"options": {
+		"message": "Опции"
+	},
+	"Key": {
+		"message": "#"
+	},
+	"Worklog": {
+		"message": "Worklog"
+	},
+	"Summary": {
+		"message": "Описание"
+	},
+	"duedate": {
+		"message": "Дата"
+	},
+	"Res": {
+		"message": "Res."
+	},
+	"assignedToMe": {
+		"message": "Мои задачи"
+	},
+	"configError": {
+		"message": "Упс, ошибка! Проверьте конфигурацию"
+	}
+}
