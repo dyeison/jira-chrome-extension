@@ -1,0 +1,77 @@
+{
+	"title": {
+		"message": "JIRA assistant for Google Chrome"
+	},
+	"quickSearch": {
+		"message": "Quick Search"
+	},
+	"timeSpent": {
+		"message": "Time spent:"
+	},
+	"resolveIssue": {
+		"message": "Resolve issue"
+	},
+	"assignIssue": {
+		"message": "Assign issue"
+	},
+	"issue": {
+		"message": "Issue"
+	},
+	"assigne": {
+		"message": "Assignee"
+	},
+	"comment": {
+		"message": "Comment"
+	},
+	"resolution": {
+		"message": "Resolution"
+	},
+	"log": {
+		"message": "Log"
+	},
+	"save": {
+		"message": "Save"
+	},
+	"cancel": {
+		"message": "Cancel"
+	},
+	"close": {
+		"message": "Close"
+	},
+	"logWork": {
+		"message": "Log Work"
+	},
+	"cancelProgress": {
+		"message": "Cancel progress"
+	},
+	"reload": {
+		"message": "Reload issues"
+	},
+	"manageFilters": {
+		"message": "Manage filters"
+	},
+	"options": {
+		"message": "Options"
+	},
+	"Key": {
+		"message": "Key"
+	},
+	"Worklog": {
+		"message": "Worklog"
+	},
+	"Summary": {
+		"message": "Summary"
+	},
+	"duedate": {
+		"message": "Due date"
+	},
+	"Res": {
+		"message": "Res."
+	},
+	"assignedToMe": {
+		"message": "Assigned to me"
+	},
+	"configError": {
+		"message": "Configure first!"
+	}
+}
