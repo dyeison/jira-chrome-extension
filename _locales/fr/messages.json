@@ -1,0 +1,77 @@
+﻿{
+	"title": {
+		"message": "JIRA assistant pour Google Chrome"
+	},
+	"quickSearch": {
+		"message": "Recherche rapide"
+	},
+	"timeSpent": {
+		"message": "Consigné:"
+	},
+	"resolveIssue": {
+		"message": "Traiter la demande"
+	},
+	"assignIssue": {
+		"message": "Attribuer la demande"
+	},
+	"issue": {
+		"message": "Demande"
+	},
+	"assigne": {
+		"message": "Attribuer"
+	},
+	"comment": {
+		"message": "Commentaire"
+	},
+	"resolution": {
+		"message": "Résolution"
+	},
+	"log": {
+		"message": "Commentaire"
+	},
+	"save": {
+		"message": "Sauver"
+	},
+	"cancel": {
+		"message": "Annuler"
+	},
+	"close": {
+		"message": "Fermer"
+	},
+	"logWork": {
+		"message": "Connexion de travail"
+	},
+	"cancelProgress": {
+		"message": "Annuler de travail"
+	},
+	"reload": {
+		"message": "Recharger la demande"
+	},
+	"manageFilters": {
+		"message": "Gérer les filtres"
+	},
+	"options": {
+		"message": "Options"
+	},
+	"Key": {
+		"message": "Clé"
+	},
+	"Worklog": {
+		"message": "En cours"
+	},
+	"Summary": {
+		"message": "Echéance"
+	},
+	"duedate": {
+		"message": "Echéance"
+	},
+	"Res": {
+		"message": "Res."
+	},
+	"assignedToMe": {
+		"message": "Qui me sont attribuées"
+	},
+	"configError": {
+		"message": "Configurez d'abord!"
+	}
+}
