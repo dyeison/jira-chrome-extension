@@ -42,6 +42,7 @@ function Worklog(){
 }
 
 var loader = {
+	notifications: [],
 	resolutions: {},
 	priorities: {},
 	issuetypes: {},
@@ -53,6 +54,7 @@ var loader = {
 	url:null,
 	worklog: new Worklog(),
 	login: function(username, password, callback){
+		this.showNotifications(12, [1231231,12312,123]);
 			var pl = new SOAPClientParameters();
 			pl.add("username", username);
 			pl.add("password", password);
@@ -60,7 +62,7 @@ var loader = {
 					if($("faultstring",xhr).text() != '')
 					{
 						localStorage.setItem("error", $("faultstring",xhr).text());
-						chrome.browserAction.setIcon({ 'path' : 'images/16x16off.png'});
+						chrome.browserAction.setIcon({ 'path' : 'images/logo-16-off.png'});
 						chrome.browserAction.setBadgeText({text: ''});
 					} else {
 						localStorage.setItem("error", "");
@@ -72,7 +74,7 @@ var loader = {
 	},
 	update: function(){
 				if(!loader.icon)
-					loader.icon = new AnimatedIcon('images/16x16.png');
+					loader.icon = new AnimatedIcon('images/logo-16.png');
 				loader.icon.play();
 
 				loader.countedFilterId = localStorage.getItem('countedFilterId');
@@ -90,7 +92,7 @@ var loader = {
 							loader.issuesFromFilter["assignedtome"] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
 						} else {
 							if(loader.countedFilterId == 0){
-								chrome.browserAction.setIcon({ 'path' : 'images/16x16.png'});
+								chrome.browserAction.setIcon({ 'path' : 'images/logo-16.png'});
 								chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 							}
 							loader.issuesFromFilter["assignedtome"] = loader.parseXml(xhr);
@@ -379,18 +381,31 @@ var loader = {
 					newKeys.push(val);
 				}
 		});
-		console.log(newKeys);
+
 		if(newKeys.length>0 && newKeys.length<=5){
 			$.each(newKeys, function(i, val){
 						var notification = webkitNotifications.createNotification(
-						  'images/48x48.png',  // icon url - can be relative
+						  'images/logo-48.png',  // icon url - can be relative
 						  val[1],  // notification title
 						  val[2] // notification body text
 						);
-						notification.onclick = (
-							function(notif){ return function(){ loader.addTab(loader.url +"/browse/"+val[1]); notif.cancel(); }}
-						)(notification);
+						notification.onclick = function(event){
+							loader.addTab(loader.url +"/browse/"+val[1]); 
+							event.currentTarget.cancel(); 
+						}
+						notification.ondisplay = function(event){
+							setTimeout((function (notif){return function(){notif.cancel();}})(event.currentTarget), 1000);
+						}
+						notification.onclose = function(event){
+							loader.notifications = $.map(loader.notifications,function(notif){
+								if (notif == event.currentTarget)
+									return null;
+								else 
+									return notif;
+							});
+						}						
 						notification.show();
+						loader.notifications.push(notification);
 			});
 		}
 	}
