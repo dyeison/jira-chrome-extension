@@ -54,7 +54,6 @@ var loader = {
 	url:null,
 	worklog: new Worklog(),
 	login: function(username, password, callback){
-		this.showNotifications(12, [1231231,12312,123]);
 			var pl = new SOAPClientParameters();
 			pl.add("username", username);
 			pl.add("password", password);
