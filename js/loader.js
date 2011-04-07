@@ -394,7 +394,7 @@ var loader = {
 							event.currentTarget.cancel(); 
 						}
 						notification.ondisplay = function(event){
-							setTimeout((function (notif){return function(){notif.cancel();}})(event.currentTarget), 1000);
+							setTimeout((function (notif){return function(){notif.cancel();}})(event.currentTarget), 10000);
 						}
 						notification.onclose = function(event){
 							loader.notifications = $.map(loader.notifications,function(notif){
