@@ -1,0 +1,32 @@
+ body {
+	font: 10px 'Segoe UI', Calibri, "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	margin: 10px;
+	padding: 0px;
+	color: #333;
+	background-color: #fff;
+}
+
+.error{
+	font: 15px  'Segoe UI', "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	margin: 10px;
+	padding: 10px;
+	min-width:300px;
+	color: #AA0000;
+}
+div.HeaderLink{
+	font: 9px 'Segoe UI', "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+	color: #8888;
+	margin:3px;
+	text-align:right;
+}
+a.HeaderLink{
+	color: #888888;
+	margin:3px;
+	text-decoration:none;
+}
+a.HeaderLink:hover{
+	color: #dd4444;
+	text-decoration:underline;
+}
+
+ 

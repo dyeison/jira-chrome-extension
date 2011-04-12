@@ -54,14 +54,7 @@ var jira = {
 				{
 					jira.error(localStorage.getItem('error'));
 				 } else {
-						jira.addTab("assignedtome", chrome.i18n.getMessage("assignedToMe"));
-						if(typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter["assignedtome"]) == "string")
-							$("#table_assignedtome").append(
-								$("<tr />").append($("<td />").text(chrome.extension.getBackgroundPage().loader.issuesFromFilter["assignedtome"]))
-							);
-						else
-							jira.renderTableFromXml("assignedtome");
-						jira.getIssuesFromFilter();
+					jira.getIssuesFromFilter();
 				}
 			} else {
 				$("#quicksearch").hide();
@@ -70,14 +63,16 @@ var jira = {
 		},
 		getIssuesFromFilter: function(){
 			var filters = chrome.extension.getBackgroundPage().loader.filters;
-			filters = filters.sort(function(a,b){return (a.id-b.id)});
+			//filters = filters.sort(function(a,b){return (a.id-b.id)});
 			var str = '';
-			$.map(filters, function(item, i){
-					jira.addTab(item.id, item.name);
+			$.each(filters, function(i, filter){
+				if(filter.enabled)
+					jira.addTab(filter.id, filter.name);
 			});
 			jira.tabs();
-			$.map(filters, function(item, i){
-					jira.renderTableFromXml(item.id);
+			$.each(filters, function(i, filter){
+				if(filter.enabled)
+					jira.renderTableFromXml(filter.id);
 		
 			});
 		},
@@ -161,12 +156,12 @@ var jira = {
 			$("#tabs").hide();
 		}, 
 		tabs: function(){
-						$('#tabs').tabs({
-						select: function(event, ui) {
-							localStorage.setItem('lastOpenedTab', ui.index);
-						},
-						selected: (localStorage.getItem('lastOpenedTab')?localStorage.getItem('lastOpenedTab'):0)
-					});
+			$('#tabs').tabs({
+				select: function(event, ui) {
+					localStorage.setItem('lastOpenedTab', ui.index);
+				},
+				selected: (localStorage.getItem('lastOpenedTab')?localStorage.getItem('lastOpenedTab'):0)
+			});
 		},
 		initHeaderLinks: function(){
 				$("#HeaderLink").append(
