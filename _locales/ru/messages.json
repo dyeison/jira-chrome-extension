@@ -72,6 +72,51 @@
 		"message": "Мои задачи"
 	},
 	"configError": {
-		"message": "Упс, ошибка! Проверьте конфигурацию"
+		"message": "Configure first!"
+	},
+	"optionsTitle": { 
+		"message": "JIRA assistant settings"
+	},
+	"optionsPpageMain": { 
+		"message": "Main settings"
+	},
+	"optionsPageFilters": { 
+		"message": "Configure filters"
+	},
+	"optionsUpdateInterval": { 
+		"message": "Update interval"
+	},
+	"optionsServerUrl": { 
+		"message": "JIRA Server URL"
+	},
+	"optionsUsername": { 
+		"message": "Username"
+	},
+	"optionsPassword": { 
+		"message": "Password"
+	},
+	"optionsFilterName": { 
+		"message": "Filter name"
+	},
+	"optionsFilterEnabled": { 
+		"message": "Enabled"
+	},
+	"optionsFilterDisable": { 
+		"message": "Disable/Enable"
+	},
+	"optionsFilterShowCounter": { 
+		"message": "Show counter for this filter"
+	},
+	"optionsDlgLoading": { 
+		"message": "Authorization..."
+	},
+	"optionsFilterJQL": { 
+		"message": "JIRA Query:"
+	},
+	"optionsFilterName": { 
+		"message": "Filter name:"
+	},
+	"optionsFilterAdd": { 
+		"message": "Add filter"
 	}
 }

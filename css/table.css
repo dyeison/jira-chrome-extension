@@ -1,37 +1,4 @@
- body {
-	font: 10px Calibri, "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
-	margin: 10px;
-	padding: 0px;
-	color: #333;
-	background-color: #fff;
-}
 
-.error{
-	font: 15px  "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
-	margin: 10px;
-	padding: 10px;
-	min-width:300px;
-	color: #AA0000;
-}
-div.HeaderLink{
-	font: 9px "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
-	color: #8888;
-	margin:3px;
-	text-align:right;
-}
-a.HeaderLink{
-	color: #888888;
-	margin:3px;
-	text-decoration:none;
-}
-a.HeaderLink:hover{
-	color: #dd4444;
-	text-decoration:underline;
-}
-
- 
- 
- 
 .dataTables_wrapper {
 	position: relative;
 	clear: both;
@@ -122,9 +89,9 @@ table.display thead th {
 	background-color: #7db0dd;
 	vertical-align:middle;
 	font-weight: bold;
-	cursor: pointer;
 	border-bottom:1px solid #3672a8;
-	* cursor: hand;
+	color: #fff;
+	cursor: default;
 }
 
 table.display tfoot th {
@@ -199,57 +166,19 @@ table.display td.ShortField {
 
 
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * DataTables row classes
- */
-table.display tr.odd.gradeA {
-	background-color: #ddffdd;
-}
-
-table.display tr.even.gradeA {
-	background-color: #eeffee;
-}
-
-table.display tr.odd.gradeA {
-	background-color: #ddffdd;
-}
-
-table.display tr.even.gradeA {
-	background-color: #eeffee;
-}
-
-table.display tr.odd.gradeC {
-	background-color: #ddddff;
-}
-
-table.display tr.even.gradeC {
-	background-color: #eeeeff;
-}
-
-table.display tr.odd.gradeX {
-	background-color: #ffdddd;
-}
-
-table.display tr.even.gradeX {
-	background-color: #ffeeee;
-}
-
-table.display tr.odd.gradeU {
-	background-color: #ddd;
-}
-
-table.display tr.even.gradeU {
-	background-color: #eee;
-}
-
 
 tr.odd {
-	background-color: #b2d5f3;
+	background-color: #deedf7;
 }
 
 tr.even {
-	background-color: #d1e3f3;
+	background-color: #cee4f4;
 }
+
+tr.selected_row {
+	background: #1484e6 url(images/ui-bg_diagonals-thick_22_1484e6_40x40.png) 50% 50% repeat; color: #ffffff; 
+}
+
 
 
 
@@ -345,27 +274,27 @@ table.display tr.odd.row_selected td {
  */
 /* For the standard odd/even */
 tr.odd td.sorting_1 {
-	background-color: #abcfef;
+	background-color: #eff7fc;
 }
 
 tr.odd td.sorting_2 {
-	background-color: #abcfef;
+	background-color: #eff7fc;
 }
 
 tr.odd td.sorting_3 {
-	background-color: #abcfef;
+	background-color: #eff7fc;
 }
 
 tr.even td.sorting_1 {
-	background-color: #c8dcee;
+	background-color: #e3f1fc;
 }
 
 tr.even td.sorting_2 {
-	background-color: #c8dcee;
+	background-color: #e3f1fc;
 }
 
 tr.even td.sorting_3 {
-	background-color: #c8dcee;
+	background-color: #e3f1fc;
 }
 
 
