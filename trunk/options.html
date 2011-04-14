@@ -119,6 +119,7 @@
 						</td>
 						<td valign="top">
 							<button id="optionsFilterAdd" onclick="addFilter()" i18n-content="optionsFilterAdd"></button><br/>
+							<button id="optionsFilterEdit" onclick="editFilter()" disabled=true i18n-content="optionsFilterEdit"></button><br/>
 							<br/>
 							<button id="optionsFilterDisable" onclick="disableFilter()" disabled=true i18n-content="optionsFilterDisable"></button><br/>
 							<button id="optionsFilterShowCounter" onclick="setCounterForFilter()" disabled=true  i18n-content="optionsFilterShowCounter"></button><br/>
@@ -133,6 +134,7 @@
 
 	<div id="dlgCnnecting" style="display: none;"></div>
 	<div id="dlgAddFilter" style="display: none;">
+				<input id="filterId" type="hidden" />
 				<table>
 					<tr>
 						<td class="label" i18n-content="optionsFilterName"></td>
@@ -140,7 +142,7 @@
 					</tr>				
 					<tr>
 						<td class="label" i18n-content="optionsFilterJQL"></td>
-						<td><input id="filterJQL" type="text" class="ui-widget-content ui-corner-all" style="width:300px;" />
+						<td><textarea id="filterJQL" type="text" class="ui-widget-content ui-corner-all" style="width:300px;max-width:300px;" ></textarea></td>
 					</tr>
 				</table>  
 	</div>

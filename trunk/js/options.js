@@ -1,3 +1,4 @@
+var optionsPage = this;
 var countedFilterId;
 var oFilters = null;
 var loader = chrome.extension.getBackgroundPage().loader;
@@ -22,12 +23,8 @@ $(document).ready(function(){
 });
 
 	function updateFiltesTable(){
-	
+		console.log(loader.filters.length)
 		if(loader.filters.length){
-			countedFilterId =  localStorage.getItem('countedFilterId');
-			if(countedFilterId == null)
-				countedFilterId = 0;
-				console.log(loader.filters)
 			oFilters = $("#filters").dataTable( {
 				"bLengthChange": false,
 				"bPaginate": false,
@@ -37,11 +34,12 @@ $(document).ready(function(){
 				"aoColumns": [
 						{	"sTitle": chrome.i18n.getMessage( "optionsFilterCounter"), 
 							"sClass": "center ShortField",
-							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ].toString() == countedFilterId)?"<img src='images/counter.png'>":"";}},
+							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ].toString() == loader.countedFilterId)?"<img src='images/counter.png'>":"";}},
 						{	"sTitle": chrome.i18n.getMessage( "optionsFilterEnabled"), 
 							"sClass": "center ShortField",
 							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ])?"<img src='images/bullet_tick.png'>":"";}},
-						{"sTitle": chrome.i18n.getMessage('optionsFilterName')}
+						{"sTitle": chrome.i18n.getMessage('optionsFilterName')},
+						{"sTitle": chrome.i18n.getMessage('optionsFilterJQL')}
 					]
 			})
 			$("#filters tbody tr").live('click', function () {
@@ -56,9 +54,10 @@ $(document).ready(function(){
 	function toggleSelectedFilter(){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
 		$("#optionsFilterDisable").button({disabled:
-			loader.filters[iSelectedFilter].id.toString()=="0" || loader.filters[iSelectedFilter].id.toString()==countedFilterId
+			loader.filters[iSelectedFilter].id.toString()=="0" || loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId
 		});
-		$("#optionsFilterShowCounter").button({disabled:loader.filters[iSelectedFilter].id.toString()==countedFilterId});
+		$("#optionsFilterShowCounter").button({disabled:loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId});
+		$("#optionsFilterEdit").button({disabled:loader.filters[iSelectedFilter].type!='jql'});
 	}
 	
 	function updateFilterTable(iSelectedFilter){
@@ -77,18 +76,14 @@ $(document).ready(function(){
 	
 	function setCounterForFilter(){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
-		countedFilterId = loader.filters[iSelectedFilter].id.toString();
-		localStorage.setItem('countedFilterId', countedFilterId);
+		loader.countedFilterId = loader.filters[iSelectedFilter].id.toString();
+		localStorage.setItem('countedFilterId', loader.countedFilterId);
 		updateFilterTable(iSelectedFilter);
+		loader.getIssuesFromFilter(loader.filters[iSelectedFilter]);
 	}
 
   function saveOptions(){
-
-
-	
-	localStorage.setItem('countedFilterId', countedFilterId);
 	localStorage.setItem('updateinterval', parseInt($("#updateinterval").attr("value"))*60000);
-	
 	if(
 		localStorage.getItem('username')!=$("#username").attr("value") || 
 		localStorage.getItem('password') != $("#password").attr("value") ||
@@ -112,10 +107,8 @@ $(document).ready(function(){
 					
 					localStorage.setItem('username', $("#username").attr("value"));
 					localStorage.setItem('password', $("#password").attr("value"));
-					loader.update();
-					window.setInterval(loader.update, localStorage.getItem('updateinterval'));
-					
-					loader.updateFavoritesFilters(function(){
+					loader.update(function(){
+						updateFiltesTable();
 						$("#tabPageFilters").show().click();
 						$("#dlgCnnecting").dialog('close');
 					});
@@ -123,6 +116,7 @@ $(document).ready(function(){
 			});
 			$("#dlgCnnecting").html('<center><img src="images/ajax-loader.gif">').dialog({
 				modal: true,
+				resizable: false,
 				"title": chrome.i18n.getMessage("optionsDlgLoading")
 			});			
 	} else {
@@ -132,24 +126,41 @@ $(document).ready(function(){
   }
   
   function addFilter(){
+	editFilter(new Filter({
+						type: "jql",
+						enabled: true
+					}));
+  }
+  
+  function editFilter(filter){
+	if (!filter){
+		var iSelectedFilter = oFilters.fnGetSelectedPosition();
+		filter = loader.filters[iSelectedFilter];
+	}
+	$("#filterId").val(filter.id);
+	$("#filterName").val(filter.name);
+	$("#filterJQL").val(filter.jql);
+	
 	$("#dlgAddFilter").dialog({
 		modal:true,
 		width: 420,
+		resizable: false,
 		title: chrome.i18n.getMessage("optionsFilterAdd"),
 		buttons: [{
-				text: chrome.i18n.getMessage("optionsFilterAdd"),
+				text: chrome.i18n.getMessage("optionsFilterSave"),
 				click: function(){
-					var newFilter = new Filter({
-						name: $("#filterName").attr("value"),
-						type: "jql",
-						enabled: true,
-						jql: $("#filterJQL").attr("value")
-					});
-					loader.filters.push(newFilter);
-					loader.getIssuesFromFilter(newFilter);
-					loader.updateFavoritesFilters(function(){
-						updateFilterTable(loader.filters.length-1);
-					});
+					var filter = loader.filters.get($("#filterId").val());
+					if(!filter){
+						filter = new Filter({type:'jql', enabled: true});
+						loader.filters.push(filter);
+						var iSelectedFilter = loader.filters.length-1;
+					} else {
+						var iSelectedFilter = oFilters.fnGetSelectedPosition();
+					}
+					filter.jql = $("#filterJQL").val();
+					filter.name = $("#filterName").val();
+					updateFilterTable(iSelectedFilter);		
+					loader.getIssuesFromFilter(filter);
 					$("#dlgAddFilter").dialog('close');
 				}
 		},{

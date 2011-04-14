@@ -78,13 +78,13 @@
 		"message": "JIRA assistant settings"
 	},
 	"optionsPpageMain": { 
-		"message": "Main settings"
+		"message": "Основные настройки"
 	},
 	"optionsPageFilters": { 
-		"message": "Configure filters"
+		"message": "Конфигурирование фильтров"
 	},
 	"optionsUpdateInterval": { 
-		"message": "Update interval"
+		"message": "Интервал обновления"
 	},
 	"optionsServerUrl": { 
 		"message": "JIRA Server URL"
@@ -96,27 +96,30 @@
 		"message": "Password"
 	},
 	"optionsFilterName": { 
-		"message": "Filter name"
+		"message": "Название фильтра"
 	},
 	"optionsFilterEnabled": { 
-		"message": "Enabled"
+		"message": "Включен"
 	},
 	"optionsFilterDisable": { 
-		"message": "Disable/Enable"
+		"message": "Включить/Выключить"
 	},
 	"optionsFilterShowCounter": { 
-		"message": "Show counter for this filter"
+		"message": "Показывать счетчик задач для этого фильтра"
 	},
 	"optionsDlgLoading": { 
-		"message": "Authorization..."
+		"message": "Авторизация..."
 	},
 	"optionsFilterJQL": { 
-		"message": "JIRA Query:"
-	},
-	"optionsFilterName": { 
-		"message": "Filter name:"
+		"message": "Запрос JIRA:"
 	},
 	"optionsFilterAdd": { 
-		"message": "Add filter"
-	}
+		"message": "Добавить фильтр"
+	},
+	"optionsFilterEdit": { 
+		"message": "Редактировать фильтр"
+	},
+	"optionsFilterSave": { 
+		"message": "Сохранить фильтр"
+	},	
 }

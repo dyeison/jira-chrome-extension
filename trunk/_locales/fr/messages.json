@@ -118,5 +118,11 @@
 	},
 	"optionsFilterAdd": { 
 		"message": "Add filter"
+	},
+	"optionsFilterSave": { 
+		"message": "Save filter"
+	},	
+	"optionsFilterEdit": { 
+		"message": "Edit filter"
 	}
 }
