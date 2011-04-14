@@ -49,10 +49,11 @@ var loader = {
 	issuetypes: {},
 	statuses: {},
 	users: {},
-	filters: [],
+	filters:new Array(),
 	issuesFromFilter:{},
 	token: null,
 	url:null,
+	countedFilterId: ((typeof localStorage.getItem('countedFilterId') == 'string')?localStorage.getItem('countedFilterId'):"0"),
 	worklog: new Worklog(),
 	login: function(username, password, callback){
 		
@@ -77,31 +78,32 @@ var loader = {
 					}
 				});
 	},
-	update: function(){
-				if(!loader.icon)
-					loader.icon = new AnimatedIcon('images/logo-19.png');
-				loader.icon.play();
+	update: function(callback){
+		if(loader.timer)
+			window.clearTimeout(loader.timer);
+		loader.timer = window.setTimeout(loader.update, localStorage.getItem('updateinterval'));
+		if(!loader.icon)
+			loader.icon = new AnimatedIcon('images/logo-19.png');
+		loader.icon.play();
 
-				loader.filters = localStorage.getItem('filters')?$.map(
-					JSON.parse(localStorage.getItem('filters')), 
-					function(data){
-						return new Filter(data);
-					}):[new Filter({
-							id:"0", 
-							enabled: true,
-							name:"Assigned to me",
-							type: 'jql',
-							jql: "assignee = currentUser() AND resolution = unresolved ORDER BY priority DESC, created ASC"
-						})];
-				loader.countedFilterId = localStorage.getItem('countedFilterId');
-				if(loader.countedFilterId == null)
-					loader.countedFilterId = 0;
-
-				
-				loader.updateFavoritesFilters(function(){
-					loader.getSavedFilters();
-				});
-				//loader.getCustomFields();
+		loader.filters = localStorage.getItem('filters')?$.map(
+			JSON.parse(localStorage.getItem('filters')), 
+			function(data){
+				return new Filter(data);
+			}):[new Filter({
+					id:"0", 
+					enabled: true,
+					name:"Assigned to me",
+					type: 'jql',
+					jql: "assignee = currentUser() AND resolution = unresolved ORDER BY priority DESC, created ASC"
+				})];
+		loader.filters.get = getFilterById;						
+		loader.updateFavoritesFilters(function(){
+			loader.getSavedFilters();
+			if(callback)
+				callback();
+		});
+		//loader.getCustomFields();
 	},
 	updateFavoritesFilters: function(callback){
 		var pl = new SOAPClientParameters();
@@ -460,4 +462,14 @@ var loader = {
 			}					
 		});
 	}
+}
+function getFilterById(id){
+	var res = null;
+	$.each(this, function(i, el){
+		if (el.id == id){
+			res = el;
+			return false;
+		}
+	});
+	return res;
 }

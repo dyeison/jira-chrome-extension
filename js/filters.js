@@ -21,5 +21,5 @@ function Filter(param){
 }
 
 Filter.prototype.toArray = function(){
-	return [this.id, this.enabled, this.name];
+	return [this.id, this.enabled, this.name, this.jql?this.jql:''];
 }

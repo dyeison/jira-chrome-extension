@@ -9,7 +9,6 @@
 	<script>
 
 	localStorage.setItem('updateinterval', localStorage.getItem('updateinterval')?localStorage.getItem('updateinterval'):600000)
-	localStorage.setItem('countedFilterId', (typeof localStorage.getItem('countedFilterId') == 'number')?localStorage.getItem('countedFilterId'):0);
 	chrome.browserAction.setBadgeBackgroundColor({color: [0, 255,0, 255]})
 	
 	function Auth(){
@@ -18,7 +17,6 @@
 			loader.url = localStorage.getItem("url");
 			loader.login(localStorage.getItem("username"), localStorage.getItem("password"), function(){
 				loader.update();
-				window.setInterval(loader.update, localStorage.getItem('updateinterval'));
 			});
 		} else {
 		
