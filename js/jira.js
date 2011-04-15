@@ -18,11 +18,20 @@ var jira = {
 					$("<option />").val(i).text(jira.resolutions[i])
 				)
 			}
+			$("#progressResolution, #resolveResolution").combobox();
 			for (i in jira.users){
 				$("#progressUsers, #assigneeUsers").append(
 					$("<option />").val(i).text(jira.users[i].fullname).attr("title", jira.users[i].email)
 				)
 			}
+			$.each(chrome.extension.getBackgroundPage().loader.projects, function(i, p){
+				$("#createIssueProject").append($("<option />").val(p.id).text(p.name));
+			});
+			$.each(chrome.extension.getBackgroundPage().loader.issuetypes, function(i, type){
+				$("#createIssueType").append($("<option />").val(i).text(type.text));
+			});
+			$("select").combobox();
+			
 			$("#progressIsResolved").click(function(){
 				$("#progressResolution").attr("disabled", !this.checked).toggleClass('ui-state-disabled');
 			});
@@ -179,6 +188,10 @@ var jira = {
 						chrome.extension.getBackgroundPage().loader.update();
 						window.close();
 					}).text(chrome.i18n.getMessage('reload')).button({icons: {primary: "ui-icon-refresh"},text: false})
+				).append(
+					$("<button />").click(function(){
+						jira.createIssue();
+					}).text(chrome.i18n.getMessage('createIssue')).button({icons: {primary: "ui-icon-plusthick"},text: false})
 				);/*.append(
 					$("<button />").click(function(){
 						chrome.extension.getBackgroundPage().loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QAWCRPFR2FW8S&lc=RU&item_name=JIRA%20Chrome%20extension&item_number=jira%2dchrome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
@@ -311,6 +324,29 @@ var jira = {
 				}]
 				
 			});		
+		},
+		createIssue: function(){
+			$("#createIssueDlg").dialog({
+				width: "420px",
+				title: chrome.i18n.getMessage('createIssue'),
+				resizable: false,
+				modal: true,
+				buttons: [{
+					text: chrome.i18n.getMessage('create'),
+					click: function(){
+						var pid = $("#createIssueProject").val();
+						var type = $("#createIssueType").val();
+						chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/CreateIssue.jspa?pid="+pid+"&issuetype="+type+"&Create=Create"));
+						$(this).dialog('close');
+						window.close();
+					}
+				},{
+					text: chrome.i18n.getMessage('cancel'),
+					click: function(){
+						$(this).dialog('close');
+					}
+				}]
+			});	
 		}
 }
 

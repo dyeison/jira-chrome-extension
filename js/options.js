@@ -15,7 +15,7 @@ $(document).ready(function(){
 	$.map(vals,function(val){
 		$("#updateinterval").append($("<OPTION  />").attr("value", val).text(val));
 	});
-	$("#updateinterval").val(curval).combobox();
+	$("#updateinterval").val(curval).combobox({autocomplete:false});
 	$("input[type=button]").button();
 	
 	updateFiltesTable();

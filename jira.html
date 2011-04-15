@@ -4,20 +4,6 @@
 			@import "css/custom-theme/jquery-ui-1.8.11.custom.css";
 			@import "css/table.css";
 			@import "css/popup.css";
-			
-			#title{
-				font-family: 'Segoe UI', Arial, sans-serif;
-				font-size: 19px;
-				font-weight: bold;
-				color: #2e5781;
-				float: left;
-				
-			}
-			body {background:  -webkit-linear-gradient(top, #fff, #eaeef3 50%, #d3d7db);}
-			.ui-button { margin-left: -1px; }
-			.ui-button-icon-only .ui-button-text { padding: 0.35em; } 
-			.ui-autocomplete-input { margin: 0; padding: 0.48em 0 0 0.45em; height: 16px; }
-			.ui-menu-item a{color: #444444 !important;font-weight: normal !important;}			
 		</style>
 	<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.8.11.custom.min.js"></script>
@@ -96,7 +82,19 @@
 					<td > <textarea id="resolveComment"  style="width: 300px;height:60px;"  class="ui-widget ui-widget-content ui-corner-all"></textarea> </td>
 				</tr>
 			</table>
-		</div>				
+		</div>
+		<div id="createIssueDlg" style="display: none;">
+			<table style="font-size: inherit;">
+				<tr>
+					<td align="right" i18n-content="project"></td>
+					<td><select id="createIssueProject"></select></td>
+				</tr>
+				<tr>
+					<td align="right" i18n-content="issueType"></td>
+					<td><select id="createIssueType"></select></td>
+				</tr>
+			</table>
+		</div>		
 		<div id="alertDlg" style="display: none;"></div>
 	<script type="text/javascript">
 	var i18n=function(){function i(b){b=b.querySelectorAll(l);for(var d,f=0;d=b[f];f++)for(var e=0;e<h.length;e++){var c=h[e],a=d.getAttribute(c);a!=null&&j[c](d,a)}}var j={"i18n-content":function(b,d){b.textContent=chrome.i18n.getMessage(d)},"i18n-values":function(b,d){for(var f=d.replace(/\s/g,"").split(/;/),e=0;e<f.length;e++){var c=f[e].match(/^([^:]+):(.+)$/);if(c){var a=c[1];c=chrome.i18n.getMessage(c[2]);if(a.charAt(0)=="."){a=a.slice(1).split(".");for(var g=b;g&&a.length>1;)g=g[a.shift()];if(g){g[a]=c;a=="innerHTML"&&i(b)}}else b.setAttribute(a,c)}}}},h=[],k;for(k in j)h.push(k);var l="["+h.join("],[")+"]";return{process:i}}();
