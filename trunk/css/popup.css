@@ -1,9 +1,11 @@
- body {
-	font: 10px 'Segoe UI', Calibri, "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
-	margin: 10px;
-	padding: 0px;
-	color: #333;
-	background-color: #fff;
+body {background:  -webkit-linear-gradient(top, #fff, #eaeef3 50%, #d3d7db);}
+#title{
+	font-family: 'Segoe UI', Arial, sans-serif;
+	font-size: 19px;
+	font-weight: bold;
+	color: #2e5781;
+	float: left;
+	
 }
 
 .error{
@@ -29,4 +31,13 @@ a.HeaderLink:hover{
 	text-decoration:underline;
 }
 
- 
+.ui-button { margin-left: -1px; }
+.ui-button-icon-only .ui-button-text { padding: 0.35em; } 
+.ui-autocomplete-input { margin: 0; padding: 0.48em 0 0 0.45em; width: 200px; height: 20px; }
+.ui-menu-item a{color: #444444 !important;font-weight: normal !important;}
+.ui-autocomplete {
+		max-height: 150px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding-right: 20px;
+}

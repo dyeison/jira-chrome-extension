@@ -175,6 +175,18 @@ var loader = {
 						}
 					});
 				});
+				this.getProjects(function(xhr){
+					loader.projects = $(xhr).find("multiRef").map(function(el){
+						if($("id", this).text()){
+							return {
+								"id": $("id", this).text(),
+								"name":  $("name", this).text(),
+								"key":  $("key", this).text()
+							}
+						}
+					}).get().sort(function(a,b){return (a.name.toLowerCase()>b.name.toLowerCase())?1:(a.name.toLowerCase()<b.name.toLowerCase())?-1:0});
+				});
+				
 				this.getGroup("jira-users", function(xhr){
 					$("multiRef", xhr).each(function(i, val) {
 						if($("fullname", val).text()){
@@ -263,6 +275,14 @@ var loader = {
 						console.log(xhr);
 				});
 	},
+	getProjects: function(callback){
+				var pl = new SOAPClientParameters();
+				pl.add("in0", loader.token);
+				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getProjectsNoSchemes", pl, true, function(r, xhr){
+						if(callback)
+							callback(xhr);
+				});
+	},	
 	addWorkLog: function(issue, timeSpent, log, callback){
 		var pl = new SOAPClientParameters();
 		pl.add("in0", loader.token);

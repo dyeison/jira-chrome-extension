@@ -121,5 +121,16 @@
 	},
 	"optionsFilterSave": { 
 		"message": "Сохранить фильтр"
+	}	"issueType": { 
+		"message": "Тип"
 	},	
+	"project": { 
+		"message": "Проект"
+	},	
+	"create": { 
+		"message": "Создать"
+	},	
+	"createIssue": { 
+		"message": "Создать задачу"
+	}
 }

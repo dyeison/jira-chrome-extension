@@ -9,8 +9,15 @@
 			_create: function() {
 				var self = this,
 					select = this.element.hide(),
-					selected = select.children( ":selected" ),
+					selected = select.children( ":selected" )?select.children( ":selected" ):select.children( "option:first" ),
 					value = this.options.value?this.options.value:(selected.val() ? selected.text():"");
+					if(selected && selected.val()!=value){
+						select.children("option").each(function(){
+							if(this.innerText == value)
+								this.selected = true;
+								return false;
+						});
+					}
 				this.input = $( "<input>" )
 					.insertAfter( select )
 					.val( value )
@@ -53,8 +60,7 @@
 								if ( !valid ) {
 									// remove invalid value, as it didn't match anything
 									if(!self.options.editable){
-										$( this ).val( "" );
-										select.val( $(this).val() );
+										$( this ).val(select.children(":selected").text());
 									}
 									return false;
 								}
@@ -96,7 +102,7 @@
 				this.disable(select.attr("disabled"))
 			},
 			value: function() {
-			 return this.input.val();
+			 return this.select.val();
 		   },
 		   disable: function(state){
 			this.input.attr("disabled", state);//.toggleClass('ui-state-disabled');

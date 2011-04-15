@@ -124,5 +124,16 @@
 	},	
 	"optionsFilterEdit": { 
 		"message": "Edit filter"
+	}	"issueType": { 
+		"message": "Issue type"
+	},	
+	"project": { 
+		"message": "Project"
+	},	
+	"create": { 
+		"message": "Create"
+	},	
+	"createIssue": { 
+		"message": "Create issue"
 	}
 }
