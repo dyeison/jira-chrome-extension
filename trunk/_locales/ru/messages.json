@@ -121,7 +121,8 @@
 	},
 	"optionsFilterSave": { 
 		"message": "Сохранить фильтр"
-	}	"issueType": { 
+	},
+	"issueType": { 
 		"message": "Тип"
 	},	
 	"project": { 

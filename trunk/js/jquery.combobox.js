@@ -102,7 +102,7 @@
 				this.disable(select.attr("disabled"))
 			},
 			value: function() {
-			 return this.select.val();
+			 return this.element.val();
 		   },
 		   disable: function(state){
 			this.input.attr("disabled", state);//.toggleClass('ui-state-disabled');
