@@ -231,7 +231,7 @@ var jira = {
 			$("#progressTimeSpent").val(timeSpent);
 
 			$("#stopProggresDlg").dialog({
-				width: "420px",
+				width: "500px",
 				title: chrome.i18n.getMessage('Worklog'),
 				resizable: false,
 				modal: true,

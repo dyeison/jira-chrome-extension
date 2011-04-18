@@ -111,10 +111,7 @@
 		"message": "Authorization..."
 	},
 	"optionsFilterJQL": { 
-		"message": "JIRA Query:"
-	},
-	"optionsFilterName": { 
-		"message": "Filter name:"
+		"message": "JIRA Query"
 	},
 	"optionsFilterAdd": { 
 		"message": "Add filter"
@@ -124,7 +121,8 @@
 	},	
 	"optionsFilterEdit": { 
 		"message": "Edit filter"
-	}	"issueType": { 
+	},
+	"issueType": { 
 		"message": "Issue type"
 	},	
 	"project": { 
