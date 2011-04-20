@@ -122,6 +122,9 @@
 	"optionsFilterSave": { 
 		"message": "Сохранить фильтр"
 	},
+	"optionsOmniboxEnabled": { 
+		"message": "Enable omnibox handler"
+	},	
 	"issueType": { 
 		"message": "Тип"
 	},	

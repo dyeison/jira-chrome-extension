@@ -54,6 +54,7 @@ var loader = {
 	token: null,
 	url:null,
 	countedFilterId: ((typeof localStorage.getItem('countedFilterId') == 'string')?localStorage.getItem('countedFilterId'):"0"),
+	omnibox: ((typeof localStorage.getItem('countedFilterId') == 'string')?(localStorage.getItem('countedFilterId') == "true"):false),
 	worklog: new Worklog(),
 	login: function(username, password, callback){
 		
@@ -230,6 +231,7 @@ var loader = {
 					if($("Fault", xhr).size()>=1){
 						loader.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
 					} else {
+						console.log(xhr);
 						if(loader.countedFilterId == filter.id){
 							chrome.browserAction.setIcon({ 'path' : 'images/logo-16.png'});
 							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});

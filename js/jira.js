@@ -76,7 +76,7 @@ var jira = {
 			var str = '';
 			$.each(filters, function(i, filter){
 				if(filter.enabled)
-					jira.addTab(filter.id, filter.name);
+					jira.addTab(filter);
 			});
 			jira.tabs();
 			$.each(filters, function(i, filter){
@@ -124,24 +124,30 @@ var jira = {
 						{"sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
 							return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
 								"<a href='#' onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><img src='images/stop.png' />"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</a>":
-								"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');window.close();\"><img src='images/start.png' /></a>");
+								"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');window.location.reload();\"><img src='images/start.png' /></a>");
 								
 						}}
 					]
 				} );	
 		},
-		addTab: function(id, name){
+		addTab: function(filter){
 			$("#tabHeader").append(
 				$("<LI />").append(
-					$("<A />").attr("href", "#div_"+id).text(name +
-							((typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter[id]) != "string")?
-									("(" + chrome.extension.getBackgroundPage().loader.issuesFromFilter[id].length + ")"):''))
+					$("<A />").attr("href", "#div_"+filter.id)
+							.attr("filterId", (filter.type=="filter")?filter.id:'')
+							.text(filter.name +
+								((typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter[filter.id]) != "string")?
+									("(" + chrome.extension.getBackgroundPage().loader.issuesFromFilter[filter.id].length + ")"):''))
+							.dblclick(function(){
+								if(this.getAttribute("filterId"))
+									chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
+							})
 				)
 			);
 			$("#tabs").append(
-				$("<DIV />").attr("id", "div_"+id).append(
+				$("<DIV />").attr("id", "div_"+filter.id).append(
 					$("<TABLE />").attr({
-						"id": "table_"+id,
+						"id": "table_"+filter.id,
 						"cellspacing":"0",
 						"cellpadding":"0"
 					}).addClass("display")

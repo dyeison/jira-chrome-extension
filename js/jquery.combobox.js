@@ -102,7 +102,11 @@
 				this.disable(select.attr("disabled"))
 			},
 			value: function() {
-			 return this.element.val();
+				if(this.options.editable){
+					return this.input.val();
+				} else {
+					return this.element.val();
+				}
 		   },
 		   disable: function(state){
 			this.input.attr("disabled", state);//.toggleClass('ui-state-disabled');
