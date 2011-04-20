@@ -122,6 +122,9 @@
 	"optionsFilterEdit": { 
 		"message": "Edit filter"
 	},	
+	"optionsOmniboxEnabled": { 
+		"message": "Enable omnibox handler"
+	},	
 	"issueType": { 
 		"message": "Issue type"
 	},	

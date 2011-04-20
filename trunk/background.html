@@ -10,7 +10,7 @@
 
 	localStorage.setItem('updateinterval', localStorage.getItem('updateinterval')?localStorage.getItem('updateinterval'):600000)
 	chrome.browserAction.setBadgeBackgroundColor({color: [0, 255,0, 255]})
-	
+	//localStorage.setItem('omniboxEnabled', (typeof localStorage.getItem('omniboxEnabled') == 'boolean')?localStorage.getItem('omniboxEnabled'):false);
 	function Auth(){
 		if(localStorage.getItem("url"))
 		{
@@ -60,27 +60,31 @@
 					chrome.browserAction.setIcon({path:this.src});
 				}
 			}
-			
+		/*
 		chrome.omnibox.onInputChanged.addListener(  function(text, suggest) {
-			loader.getIssuesFromTextSearchWithLimit(text, function(xhr){
-				var data = [];
-				$(xhr).find("multiRef").each(function(i, val) {
-					if($("key", val).text()){
-						data.push({
-							content: $("key", val).text(),
-							description: $("key", val).text() +": "+$("summary", val).text()
-						})
-					}
+			console.log(localStorage.getItem('omniboxEnabled') == 'true');
+			if(localStorage.getItem('omniboxEnabled') == 'true'){
+				loader.getIssuesFromTextSearchWithLimit(text, function(xhr){
+					var data = [];
+					$(xhr).find("multiRef").each(function(i, val) {
+						if($("key", val).text()){
+							data.push({
+								content: $("key", val).text(),
+								description: $("key", val).text() +": "+$("summary", val).text()
+							})
+						}
+					});
+					suggest(data);
 				});
-				suggest(data);
-			});
+			}
 		  });
-
-		chrome.omnibox.onInputEntered.addListener(
-		  function(text) {
-			loader.redirect(loader.url +"/browse/"+ text);
-		  });	  
-		  
+		
+		chrome.omnibox.onInputEntered.addListener(function(text) {
+			if(localStorage.getItem('omniboxEnabled') == 'true'){
+				loader.redirect(loader.url +"/browse/"+ text);
+			}
+		});	  
+		  */
 	</script>
  </head>
   <body></body>

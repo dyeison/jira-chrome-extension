@@ -5,6 +5,13 @@ var loader = chrome.extension.getBackgroundPage().loader;
 $(document).ready(function(){
 	$("#username").attr("value",  localStorage.getItem('username'));
 	$("#password").attr("value",  localStorage.getItem('password'));
+	/*
+	if(localStorage.getItem('omniboxEnabled') =='true' )
+		$("#omniboxEnabled").attr("checked", 'true');
+	$("#omniboxEnabled").click(function(){
+		localStorage.setItem('omniboxEnabled', this.checked);
+	});
+	*/
 	$("#url").combobox({
 		editable:true, 
 		value:localStorage.getItem('url')?localStorage.getItem('url'):"http://jira.atlassian.com/"
@@ -18,11 +25,11 @@ $(document).ready(function(){
 	$("#updateinterval").val(curval).combobox({autocomplete:false});
 	$("input[type=button]").button();
 	
-	updateFiltesTable();
+	updateFilterTable();
 
 });
 
-	function updateFiltesTable(){
+	function createFiltersTable(){
 		console.log(loader.filters.length)
 		if(loader.filters.length){
 			oFilters = $("#filters").dataTable( {
@@ -61,11 +68,15 @@ $(document).ready(function(){
 	}
 	
 	function updateFilterTable(iSelectedFilter){
-		oFilters.fnClearTable();
-		oFilters.fnAddData(loader.filters);
-		if(typeof iSelectedFilter == 'number')
-			oFilters.fnSelectRow(iSelectedFilter);
-		toggleSelectedFilter();	
+		if(!oFilters){
+			createFiltersTable();
+		} else {
+			oFilters.fnClearTable();
+			oFilters.fnAddData(loader.filters);
+			if(typeof iSelectedFilter == 'number')
+				oFilters.fnSelectRow(iSelectedFilter);
+			toggleSelectedFilter();
+		}
 	}
 	
 	function disableFilter(){
@@ -108,7 +119,7 @@ $(document).ready(function(){
 					localStorage.setItem('username', $("#username").attr("value"));
 					localStorage.setItem('password', $("#password").attr("value"));
 					loader.update(function(){
-						updateFiltesTable();
+						updateFilterTable();
 						$("#tabPageFilters").show().click();
 						$("#dlgCnnecting").dialog('close');
 					});

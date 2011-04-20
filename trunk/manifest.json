@@ -12,14 +12,12 @@
 	"permissions": [
 		"tabs",
 		"notifications",
-		"http://*/",
-		"https://*/"
+		"<all_urls>"
 	],
 	"default_locale" : "en",
-	"omnibox": { "keyword" : "jira" },
 	"homepage_url": "http://code.google.com/p/jira-chrome-extension/",
 	"key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBWxO6VfwT0VkjeVYjw7wCIuBoRUuX873l2rDHt5FzthPsVSKZSLSpjs4Qoh+ObxP+5FI+S6fxA6KyTpcuJDKO7IxDb2Y3rLV9IMWzXJcXsx2cDNjxnFns593TdQq8PUW7XVOiOLi79EO/uTpaURxY911ZJcQTZfr1f15fDwKvlQIDAQAB",
-   "options_page": "options.html",
+	"options_page": "options.html",
 	"browser_action": {
 		"default_title": "JIRA issues viewer",
 		"default_icon": "images/logo-19.png",
