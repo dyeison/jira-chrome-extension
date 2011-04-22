@@ -17,7 +17,6 @@ function Worklog(){
 		if(typeof issues[issueId] != 'undefined'){
 			timeSpent = (new Date()).getTime() - issues[issueId];
 		}
-		console.log(timeSpent)
 		return timeToString(timeSpent);
 	}
 	this.stopProgress = function(issueId){
@@ -231,7 +230,6 @@ var loader = {
 					if($("Fault", xhr).size()>=1){
 						loader.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
 					} else {
-						console.log(xhr);
 						if(loader.countedFilterId == filter.id){
 							chrome.browserAction.setIcon({ 'path' : 'images/logo-16.png'});
 							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
@@ -258,7 +256,7 @@ var loader = {
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getCustomFields", pl, true, function(r, xhr){
-						console.log(xhr);
+
 				});
 	},
 	getWorklogs: function(issue){
@@ -266,7 +264,7 @@ var loader = {
 				pl.add("in0", loader.token);
 				pl.add("in1", issue);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getWorklogs", pl, true, function(r, xhr){
-						console.log(xhr);
+
 				});
 	},
 	getAvailableActions: function(issue){
@@ -274,7 +272,7 @@ var loader = {
 				pl.add("in0", loader.token);
 				pl.add("in1", issue);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getAvailableActions", pl, true, function(r, xhr){
-						console.log(xhr);
+
 				});
 	},
 	getProjects: function(callback){

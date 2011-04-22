@@ -170,8 +170,11 @@ $(document).ready(function(){
 					}
 					filter.jql = $("#filterJQL").val();
 					filter.name = $("#filterName").val();
-					updateFilterTable(iSelectedFilter);		
-					loader.getIssuesFromFilter(filter);
+					updateFilterTable(iSelectedFilter);
+					loader.updateFavoritesFilters(function(){
+						loader.getIssuesFromFilter(filter);
+					});
+					
 					$("#dlgAddFilter").dialog('close');
 				}
 		},{
