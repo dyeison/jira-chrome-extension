@@ -48,7 +48,7 @@ var loader = {
 	issuetypes: {},
 	statuses: {},
 	users: {},
-	filters:new Array(),
+	filters:new FiltersArray(),
 	issuesFromFilter:{},
 	token: null,
 	url:null,
@@ -85,19 +85,6 @@ var loader = {
 		if(!loader.icon)
 			loader.icon = new AnimatedIcon('images/logo-19.png');
 		loader.icon.play();
-
-		loader.filters = localStorage.getItem('filters')?$.map(
-			JSON.parse(localStorage.getItem('filters')), 
-			function(data){
-				return new Filter(data);
-			}):[new Filter({
-					id:"0", 
-					enabled: true,
-					name:"Assigned to me",
-					type: 'jql',
-					jql: "assignee = currentUser() AND resolution = unresolved ORDER BY priority DESC, created ASC"
-				})];
-		loader.filters.get = getFilterById;						
 		loader.updateFavoritesFilters(function(){
 			loader.getSavedFilters();
 			if(callback)
@@ -106,16 +93,14 @@ var loader = {
 		//loader.getCustomFields();
 	},
 	updateFavoritesFilters: function(callback){
+
 		var pl = new SOAPClientParameters();
 		pl.add("in0", loader.token);
 		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getSavedFilters", pl, true, function(r, xhr){
 			$(xhr).find("multiRef").each(function(i, val) {
 				if($("id", val).text()){
 					var id = $("id", val).text();
-					if($.grep(loader.filters, function(n, i){
-						return (n.id == id);
-					}).length==0){
-					
+					if(loader.filters.index(id) < 0){
 						loader.filters.push(new Filter({
 							id: id,
 							type: "filter",
@@ -125,7 +110,7 @@ var loader = {
 					}
 				}
 			});
-			localStorage.setItem('filters', JSON.stringify(loader.filters));
+			loader.filters.save();
 			if(callback)
 				callback(loader.filters);
 		});
@@ -482,14 +467,4 @@ var loader = {
 			}					
 		});
 	}
-}
-function getFilterById(id){
-	var res = null;
-	$.each(this, function(i, el){
-		if (el.id == id){
-			res = el;
-			return false;
-		}
-	});
-	return res;
 }

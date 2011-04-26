@@ -134,12 +134,13 @@ var jira = {
 			$("#tabHeader").append(
 				$("<LI />").append(
 					$("<A />").attr("href", "#div_"+filter.id)
-							.attr("filterId", (filter.type=="filter")?filter.id:'')
+							.attr("filterId", filter.id)
+							.attr("type", filter.type)
 							.text(filter.name +
 								((typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter[filter.id]) != "string")?
 									("(" + chrome.extension.getBackgroundPage().loader.issuesFromFilter[filter.id].length + ")"):''))
 							.dblclick(function(){
-								if(this.getAttribute("filterId"))
+								if(this.getAttribute("type") == "filter")
 									chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
 							})
 				)
@@ -176,6 +177,15 @@ var jira = {
 					localStorage.setItem('lastOpenedTab', ui.index);
 				},
 				selected: (localStorage.getItem('lastOpenedTab')?localStorage.getItem('lastOpenedTab'):0)
+			}).find( ".ui-tabs-nav" ).sortable({ 
+				axis: "x" ,  
+				update: function(event, ui) {
+					var i = chrome.extension.getBackgroundPage().loader.filters.index($("a", ui.item).attr("filterid"));
+					var j = $("li", ui.item.parentNode).index(ui.item);
+					var tmp = chrome.extension.getBackgroundPage().loader.filters[i];
+					chrome.extension.getBackgroundPage().loader.filters.swap(i,j);
+					chrome.extension.getBackgroundPage().loader.filters.save();
+				}
 			});
 		},
 		initHeaderLinks: function(){
