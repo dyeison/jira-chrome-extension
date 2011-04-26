@@ -190,9 +190,9 @@ var loader = {
 					}
 				});
 	},
-	getIssuesFromFilter: function(filter){
+	getIssuesFromFilter: function(filter, callback){
 		if(filter.type == 'jql'){
-			loader.getIssuesFromJQL(filter);
+			loader.getIssuesFromJQL(filter, callback);
 		} else {
 			var pl = new SOAPClientParameters();
 			pl.add("in0", loader.token);
@@ -203,10 +203,13 @@ var loader = {
 					chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 				}
 				loader.issuesFromFilter[filter.id] = loader.parseXml(xhr);
+				if(callback){
+					callback(loader.issuesFromFilter[filter.id]);
+				}
 			});
 		}
 	},
-	getIssuesFromJQL: function(filter){
+	getIssuesFromJQL: function(filter, callback){
 				var pl = new SOAPClientParameters();
 				pl.add("in0", loader.token);
 				pl.add("in1", filter.jql);
@@ -220,6 +223,9 @@ var loader = {
 							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 						}
 						loader.issuesFromFilter[filter.id] = loader.parseXml(xhr);
+						if(callback){
+							callback(loader.issuesFromFilter[filter.id]);
+						}
 						if(filter.id == '0'){
 							loader.showNotifications("keys", loader.issuesFromFilter[filter.id]);
 							loader.saveKeys("keys", loader.issuesFromFilter[filter.id] );
