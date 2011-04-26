@@ -1,3 +1,55 @@
+function FiltersArray(){
+	this.load();
+}
+FiltersArray.prototype = new Array;
+FiltersArray.prototype.get = function (id){
+	var res = null;
+	var i = this.index(id);
+	if(i>=0){
+		res = this[id];
+	}
+}
+FiltersArray.prototype.index = function (id){
+	var res = -1;
+	$.each(this, function(i, el){
+		if (el.id.toString() == id.toString()){
+			res = i;
+			return false;
+		}
+	});
+	return res;
+}
+
+FiltersArray.prototype.save = function (){
+	localStorage.setItem('filters', JSON.stringify(this));
+}
+
+FiltersArray.prototype.load = function (){
+	var self = this;
+	if(localStorage.getItem('filters')){
+		$.each(JSON.parse(localStorage.getItem('filters')), function(i, data){
+				self.push(new Filter(data));
+			}
+		);
+	} else {
+		this.push(new Filter({
+			id:"0", 
+			enabled: true,
+			name:"Assigned to me",
+			type: 'jql',
+			jql: "assignee = currentUser() AND resolution = unresolved ORDER BY priority DESC, created ASC"
+		}));
+		this.save();
+	}
+}
+FiltersArray.prototype.swap = function (x,y) {
+  var b = this[x];
+  this[x] = this[y];
+  this[y] = b;
+  return this;
+}
+
+
 function Filter(param){
 
 	function randomId(){
