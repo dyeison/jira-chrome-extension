@@ -100,7 +100,7 @@ var jira = {
 				"bJQueryUI": false,
 				"sPaginationType ": "full_numbers",
 				"aaData": chrome.extension.getBackgroundPage().loader.issuesFromFilter[id],
-				"aaSorting": [[4, "asc"],[ 5, "asc" ]],
+				"aaSorting": [],
 				"aoColumns": [
 						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { 
 							return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
@@ -127,10 +127,13 @@ var jira = {
 						},
 						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
-							return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
-								"<a href='#' onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><img src='images/stop.png' />"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</a>":
-								"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><img src='images/start.png' /></a>");
-								
+							if(obj.aData[ 6 ].toLowerCase().indexOf("unresolved")>=0){
+								return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
+									"<a href='#' onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><img src='images/stop.png' />"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</a>":
+									"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><img src='images/start.png' /></a>");
+							} else {
+								return '';
+							}
 						}}
 					]
 				} );	

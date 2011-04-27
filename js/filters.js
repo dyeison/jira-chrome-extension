@@ -43,7 +43,7 @@ FiltersArray.prototype.load = function (){
 			enabled: true,
 			name:"Assigned to me",
 			type: 'jql',
-			jql: "assignee = currentUser() AND resolution = unresolved ORDER BY priority DESC, created ASC"
+			jql: "assignee = currentUser() AND resolution = unresolved ORDER BY duedate ASC, priority DESC, created ASC"
 		}));
 		this.save();
 	}
@@ -75,6 +75,9 @@ function Filter(param){
 	this.enabled = (typeof param.enabled != 'undefined') && param.enabled;
 	if(this.type=='jql'){
 		this.jql  = param.jql;
+	}
+	if(param.id == "0"){
+		this.jql = "assignee = currentUser() AND resolution = unresolved ORDER BY duedate ASC, priority DESC, created ASC";
 	}
 }
 
