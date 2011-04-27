@@ -1,3 +1,9 @@
+/**
+ * @preserve Copyright 2011 Andrey Vyrvich.
+ * andry.virvich at google.com
+ */
+
+
 function Worklog(){
 	var issues = {};
 	this.__defineGetter__("issues", function(){

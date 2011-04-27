@@ -1,7 +1,13 @@
-var optionsPage = this;
-var countedFilterId;
-var oFilters = null;
-var loader = chrome.extension.getBackgroundPage().loader;
+/**
+ * @preserve Copyright 2011 Andrey Vyrvich.
+ * andry.virvich at google.com
+ */
+
+
+var optionsPage = this,
+	countedFilterId,
+	oFilters = null,
+	loader = chrome.extension.getBackgroundPage().loader;
 $(document).ready(function(){
 	$("#username").attr("value",  localStorage.getItem('username'));
 	$("#password").attr("value",  localStorage.getItem('password'));
