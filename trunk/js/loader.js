@@ -228,6 +228,7 @@ var loader = {
 							chrome.browserAction.setIcon({ 'path' : 'images/logo-16.png'});
 							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 						}
+						console.log(xhr);
 						loader.issuesFromFilter[filter.id] = loader.parseXml(xhr);
 						if(callback){
 							callback(loader.issuesFromFilter[filter.id]);
@@ -345,22 +346,24 @@ var loader = {
 	},
 	parseXml: function(xhr){
 			var data = [];
-			$(xhr).find("multiRef").each(function(i, val) {
-					if($("key", val).text()){
-						//loader.getWorklogs($("key", val).text());
-						data.push([
-							$("type", val).text(),
-							$("key", val).text(),
-							$("summary", val).text(),
-							$("assignee", val).text(),
-							$("duedate", val).text(),
-							//$("timeoriginalestimate", val).text(), 
-							parseInt($("priority", val).text()),
-							loader.getResolution($("resolution", val).text()),
-							$("status", val).text(),
-							$("key", val).text()
-						]);
-					}
+			$(xhr).children(":first").children(":first").children(":first").children(":first").children().each( function(){
+				$("multiRef" + this.getAttribute('href') , xhr).each(function(i, val) {
+						if($("key", val).text()){
+							//loader.getWorklogs($("key", val).text());
+							data.push([
+								$("type", val).text(),
+								$("key", val).text(),
+								$("summary", val).text(),
+								$("assignee", val).text(),
+								$("duedate", val).text(),
+								//$("timeoriginalestimate", val).text(), 
+								parseInt($("priority", val).text()),
+								loader.getResolution($("resolution", val).text()),
+								$("status", val).text(),
+								$("key", val).text()
+							]);
+						}
+				});
 			});
 			return data;
 	},
