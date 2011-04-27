@@ -1,3 +1,8 @@
+/**
+ * @preserve Copyright 2011 Andrey Vyrvich.
+ * andry.virvich at google.com
+ */
+
 var jira = {
 		serverUrl:null,
 		resolutions: null,
@@ -87,7 +92,7 @@ var jira = {
 		},
 		renderTableFromXml: function(id){
 		
-				$("#table_"+id).dataTable( {
+			$("#table_"+id).dataTable( {
 				"bLengthChange": false,
 				"bFilter": false,
 				"bSort": true,
@@ -124,7 +129,7 @@ var jira = {
 						{"sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
 							return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
 								"<a href='#' onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><img src='images/stop.png' />"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</a>":
-								"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');window.location.reload();\"><img src='images/start.png' /></a>");
+								"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><img src='images/start.png' /></a>");
 								
 						}}
 					]
@@ -201,8 +206,7 @@ var jira = {
 					}).text(chrome.i18n.getMessage('options')).button({icons: {primary: "ui-icon-wrench"},text: false})
 				).append(
 					$("<button />").click(function(){
-						chrome.extension.getBackgroundPage().loader.update();
-						window.close();
+						jira.updateCurrentTable(true);
 					}).text(chrome.i18n.getMessage('reload')).button({icons: {primary: "ui-icon-refresh"},text: false})
 				).append(
 					$("<button />").click(function(){
@@ -214,6 +218,23 @@ var jira = {
 						window.close();
 					}).text("Contribute").button({icons: {primary: "ui-icon-heart"},text: false})
 				);*/
+		},
+		updateCurrentTable: function(bReload){
+			var currentFilter = chrome.extension.getBackgroundPage().loader.filters[$("#tabs").tabs( "option", "selected" )];
+			if(bReload){
+				chrome.extension.getBackgroundPage().loader.getIssuesFromFilter(
+					currentFilter,
+					function(issues){
+						var dt = $("#table_"+currentFilter.id).dataTable();
+						dt.fnClearTable();
+						dt.fnAddData(issues);
+					}
+				);
+			} else {
+				var dt = $("#table_"+currentFilter.id).dataTable();
+				dt.fnClearTable();
+				dt.fnAddData(hrome.extension.getBackgroundPage().loader.issuesFromFilter[currentFilter.id]);
+			}
 		},
 		url: function(str){
 			return (jira.serverUrl + str);
@@ -239,6 +260,7 @@ var jira = {
 						if(opt.bAssignee){
 							chrome.extension.getBackgroundPage().loader.assigneIssue(opt.issueId, opt.assignee);
 						}
+						jira.updateCurrentTable(true);
 						window.close();
 					}
 				});
@@ -301,6 +323,7 @@ var jira = {
 							} else {
 								$("#assigneeDlg").dialog('close');
 							}
+							jira.updateCurrentTable(true);
 						});
 					}
 				},{
@@ -330,6 +353,7 @@ var jira = {
 							} else {
 								$("#resolveDlg").dialog('close');
 							}
+							jira.updateCurrentTable(true);
 						});
 					}
 				},{
