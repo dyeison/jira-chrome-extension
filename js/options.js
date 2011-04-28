@@ -36,14 +36,14 @@ $(document).ready(function(){
 });
 
 	function createFiltersTable(){
-		console.log(loader.filters.length)
+		console.log(loader.filters)
 		if(loader.filters.length){
 			oFilters = $("#filters").dataTable( {
 				"bLengthChange": false,
 				"bPaginate": false,
 				"bFilter": false,
 				"bSort": false,
-				"aaData": loader.filters,
+				"aaData": loader.filters?loader.filters:[],
 				"aoColumns": [
 						{	"sTitle": chrome.i18n.getMessage( "optionsFilterCounter"), 
 							"sClass": "center ShortField",
