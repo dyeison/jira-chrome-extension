@@ -66,11 +66,15 @@ $(document).ready(function(){
 
 	function toggleSelectedFilter(){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
-		$("#optionsFilterDisable").button({disabled:
-			loader.filters[iSelectedFilter].id.toString()=="0" || loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId
-		});
-		$("#optionsFilterShowCounter").button({disabled:loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId});
-		$("#optionsFilterEdit").button({disabled:loader.filters[iSelectedFilter].type!='jql'});
+			if(iSelectedFilter>=0){
+				if(loader.filters[iSelectedFilter]){
+				$("#optionsFilterDisable").button({disabled:
+					loader.filters[iSelectedFilter].id.toString()=="0" || loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId
+				});
+				$("#optionsFilterShowCounter").button({disabled:loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId});
+				$("#optionsFilterEdit").button({disabled:loader.filters[iSelectedFilter].type!='jql'});
+			}
+		}
 	}
 	
 	function updateFilterTable(iSelectedFilter){
