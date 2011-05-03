@@ -91,7 +91,7 @@ var jira = {
 			});
 		},
 		renderTableFromXml: function(id){
-		
+			console.log(chrome.extension.getBackgroundPage().loader.filters.get(id).issues);
 			$("#table_"+id).dataTable( {
 				"bLengthChange": false,
 				"bFilter": false,
@@ -99,7 +99,7 @@ var jira = {
 				//"bInfo": false,
 				"bJQueryUI": false,
 				"sPaginationType ": "full_numbers",
-				"aaData": chrome.extension.getBackgroundPage().loader.issuesFromFilter[id],
+				"aaData": chrome.extension.getBackgroundPage().loader.filters.get(id).issues,
 				"aaSorting": [],
 				"aoColumns": [
 						{"sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { 
@@ -145,8 +145,8 @@ var jira = {
 							.attr("filterId", filter.id)
 							.attr("type", filter.type)
 							.text(filter.name +
-								((typeof(chrome.extension.getBackgroundPage().loader.issuesFromFilter[filter.id]) != "string")?
-									("(" + chrome.extension.getBackgroundPage().loader.issuesFromFilter[filter.id].length + ")"):''))
+								((typeof(chrome.extension.getBackgroundPage().loader.filters.get(id).issues) != "string")?
+									("(" + chrome.extension.getBackgroundPage().loader.filters.get(id).issues.length + ")"):''))
 							.dblclick(function(){
 								if(this.getAttribute("type") == "filter")
 									chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
@@ -236,7 +236,7 @@ var jira = {
 			} else {
 				var dt = $("#table_"+currentFilter.id).dataTable();
 				dt.fnClearTable();
-				dt.fnAddData(hrome.extension.getBackgroundPage().loader.issuesFromFilter[currentFilter.id]);
+				dt.fnAddData(hrome.extension.getBackgroundPage().loader.filters.get(id).issues);
 			}
 		},
 		url: function(str){
