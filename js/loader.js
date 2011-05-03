@@ -55,7 +55,6 @@ var loader = {
 	statuses: {},
 	users: {},
 	filters:new FiltersArray(),
-	issuesFromFilter:{},
 	token: null,
 	url:null,
 	countedFilterId: ((typeof localStorage.getItem('countedFilterId') == 'string')?localStorage.getItem('countedFilterId'):"0"),
@@ -191,9 +190,7 @@ var loader = {
 	},
 	getSavedFilters: function(){
 				$.each(loader.filters, function(i, filter){
-					if(filter.enabled){
-						loader.getIssuesFromFilter(filter);
-					}
+					filter.update();
 				});
 	},
 	getIssuesFromFilter: function(filter, callback){
@@ -208,9 +205,9 @@ var loader = {
 					chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
 					chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 				}
-				loader.issuesFromFilter[filter.id] = loader.parseXml(xhr);
+				filter.issues = loader.parseXml(xhr);
 				if(callback){
-					callback(loader.issuesFromFilter[filter.id]);
+					callback(filter.issues);
 				}
 			});
 		}
@@ -222,20 +219,19 @@ var loader = {
 				pl.add("in2",100);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromJqlSearch", pl, true, function(r, xhr){
 					if($("Fault", xhr).size()>=1){
-						loader.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
+						//loader.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
 					} else {
 						if(loader.countedFilterId == filter.id){
 							chrome.browserAction.setIcon({ 'path' : 'images/logo-16.png'});
 							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
 						}
-						console.log(xhr);
-						loader.issuesFromFilter[filter.id] = loader.parseXml(xhr);
+						filter.issues = loader.parseXml(xhr);
 						if(callback){
-							callback(loader.issuesFromFilter[filter.id]);
+							callback(filter.issues);
 						}
 						if(filter.id == '0'){
-							loader.showNotifications("keys", loader.issuesFromFilter[filter.id]);
-							loader.saveKeys("keys", loader.issuesFromFilter[filter.id] );
+							loader.showNotifications("keys", filter.issues);
+							loader.saveKeys("keys", filter.issues );
 						}
 					}
 				});

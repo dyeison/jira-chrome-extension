@@ -12,8 +12,9 @@ FiltersArray.prototype.get = function (id){
 	var res = null;
 	var i = this.index(id);
 	if(i>=0){
-		res = this[id];
+		res = this[i];
 	}
+	return res;
 }
 FiltersArray.prototype.index = function (id){
 	var res = -1;
@@ -55,6 +56,16 @@ FiltersArray.prototype.swap = function (x,y) {
   return this;
 }
 
+FiltersArray.prototype.update = function(id, callback){
+	if(typeof id != undefined){
+		this.get(id).update(callback);
+	} else {
+		$.each(this, function(i, filter){
+			filter.update(callback);
+		});
+	}
+}
+
 
 function Filter(param){
 
@@ -73,6 +84,7 @@ function Filter(param){
 	this.name = param.name;
 	this.type = (typeof param.type != 'undefined')?param.type:'filter';
 	this.enabled = (typeof param.enabled != 'undefined') && param.enabled;
+	this.updateInterval = (typeof param.updateInterval != 'undefined')?parseInt(param.updateInterval):10;
 	if(this.type=='jql'){
 		this.jql  = param.jql;
 	}
@@ -84,3 +96,11 @@ function Filter(param){
 Filter.prototype.toArray = function(){
 	return [this.id, this.enabled, this.name, this.jql?this.jql:''];
 }
+
+Filter.prototype.update = function(callback){
+	if(this.enabled){
+		loader.getIssuesFromFilter(this.id, callback);
+	}
+}
+Filter.prototype.issues = new Array;
+
