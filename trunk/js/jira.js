@@ -78,6 +78,7 @@ var jira = {
 		getIssuesFromFilter: function(){
 			var filters = chrome.extension.getBackgroundPage().loader.filters;
 			//filters = filters.sort(function(a,b){return (a.id-b.id)});
+			console.log(filters);
 			var str = '';
 			$.each(filters, function(i, filter){
 				if(filter.enabled)
@@ -139,14 +140,15 @@ var jira = {
 				} );	
 		},
 		addTab: function(filter){
+			console.log(filter)
 			$("#tabHeader").append(
 				$("<LI />").append(
 					$("<A />").attr("href", "#div_"+filter.id)
 							.attr("filterId", filter.id)
 							.attr("type", filter.type)
 							.text(filter.name +
-								((typeof(chrome.extension.getBackgroundPage().loader.filters.get(id).issues) != "string")?
-									("(" + chrome.extension.getBackgroundPage().loader.filters.get(id).issues.length + ")"):''))
+								((typeof(chrome.extension.getBackgroundPage().loader.filters.get(filter.id).issues) != "string")?
+									("(" + chrome.extension.getBackgroundPage().loader.filters.get(filter.id).issues.length + ")"):''))
 							.dblclick(function(){
 								if(this.getAttribute("type") == "filter")
 									chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
