@@ -99,7 +99,7 @@ Filter.prototype.toArray = function(){
 
 Filter.prototype.update = function(callback){
 	if(this.enabled){
-		loader.getIssuesFromFilter(this.id, callback);
+		loader.getIssuesFromFilter(this, callback);
 	}
 }
 Filter.prototype.issues = new Array;
