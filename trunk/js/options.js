@@ -36,7 +36,6 @@ $(document).ready(function(){
 });
 
 	function createFiltersTable(){
-		console.log(loader.filters)
 		if(loader.filters.length){
 			oFilters = $("#filters").dataTable( {
 				"bLengthChange": false,
