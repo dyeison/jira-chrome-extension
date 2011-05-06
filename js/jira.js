@@ -78,7 +78,6 @@ var jira = {
 		getIssuesFromFilter: function(){
 			var filters = chrome.extension.getBackgroundPage().loader.filters;
 			//filters = filters.sort(function(a,b){return (a.id-b.id)});
-			console.log(filters);
 			var str = '';
 			$.each(filters, function(i, filter){
 				if(filter.enabled)
