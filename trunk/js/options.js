@@ -8,6 +8,7 @@ var optionsPage = this,
 	countedFilterId,
 	oFilters = null,
 	loader = chrome.extension.getBackgroundPage().loader;
+	
 $(document).ready(function(){
 	$("#username").attr("value",  localStorage.getItem('username'));
 	$("#password").attr("value",  localStorage.getItem('password'));
@@ -30,7 +31,6 @@ $(document).ready(function(){
 	});
 	$("#updateinterval").val(curval).combobox({autocomplete:false});
 	$("input[type=button]").button();
-	
 	updateFilterTable();
 
 });
@@ -72,6 +72,7 @@ $(document).ready(function(){
 				});
 				$("#optionsFilterShowCounter").button({disabled:loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId});
 				$("#optionsFilterEdit").button({disabled:loader.filters[iSelectedFilter].type!='jql'});
+				$("#optionsFilterColumns").button({disabled:false});
 			}
 		}
 	}
@@ -195,3 +196,38 @@ $(document).ready(function(){
 	})
   }
   
+  function setFilterColumnsSettings(filter){
+	if (!filter){
+		var iSelectedFilter = oFilters.fnGetSelectedPosition();
+		filter = loader.filters[iSelectedFilter];
+	}  
+	if(filter && filter.columns){
+		$("#dlgFilterColumns").empty().attr("filterid", filter.id);
+		$.each(filter.columns, function(column, isVisible){
+			$("#dlgFilterColumns").append(
+				$("<input />").attr("type", "checkbox").attr("id", column)
+			).append(
+				$("<span />").text(column)
+			).append("<br />");
+			if(isVisible){
+				$("#dlgFilterColumns #"+column).attr("checked", true);
+			}
+		});
+	}
+	
+	$("#dlgFilterColumns").dialog({
+		title: chrome.i18n.getMessage("optionsFilterColumnsDialog"),
+		buttons:[{
+			text: chrome.i18n.getMessage("save"),
+			click: function(){	
+				var filter = loader.filters.get($("#dlgFilterColumns").attr("filterid"));
+				$.each(filter.columns, function(c, v){
+					filter.columns[c] = $("#dlgFilterColumns #"+c).is(":checked");
+				});
+				loader.filters.save();
+			}
+		}]
+	
+	});
+  
+  }
