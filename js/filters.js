@@ -68,7 +68,19 @@ FiltersArray.prototype.update = function(id, callback){
 
 
 function Filter(param){
-
+	this.columns = {
+		type: true,
+		key: true,
+		summary: true,
+		assignee: true,
+		duedate: true,
+		priority: true,
+		resolution: true,
+		status: true,
+		key: true,
+		worklog: true
+	}
+	$.extend(this.columns, param.columns);
 	function randomId(){
 		var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
 		var string_length = 8;
@@ -103,4 +115,7 @@ Filter.prototype.update = function(callback){
 	}
 }
 Filter.prototype.issues = new Array;
+
+function Issue(param){
+}
 
