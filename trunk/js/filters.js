@@ -97,6 +97,7 @@ function Filter(param){
 	this.type = (typeof param.type != 'undefined')?param.type:'filter';
 	this.enabled = (typeof param.enabled != 'undefined') && param.enabled;
 	this.updateInterval = (typeof param.updateInterval != 'undefined')?parseInt(param.updateInterval):10;
+	this.notify = (typeof param.notify != 'undefined')?param.notify:(param.id == "0");
 	if(this.type=='jql'){
 		this.jql  = param.jql;
 	}
