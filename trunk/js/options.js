@@ -50,7 +50,9 @@ $(document).ready(function(){
 							"sClass": "center ShortField",
 							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ])?"<img src='images/bullet_tick.png'>":"";}},
 						{"sTitle": chrome.i18n.getMessage('optionsFilterName')},
-						{"sTitle": chrome.i18n.getMessage('optionsFilterJQL')}
+						{"sTitle": chrome.i18n.getMessage('optionsUpdateInterval'), "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?obj.aData[ obj.iDataColumn ]:chrome.i18n.getMessage('optionsManualUpdateInterval');}},
+						{"sTitle": chrome.i18n.getMessage('optionsNotify'), "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?"<img src='images/bullet_tick.png'>":'';}},
+						{"sTitle": chrome.i18n.getMessage('optionsFilterJQL'), "sClass": "Summary"}
 					]
 			})
 			$("#filters tbody tr").live('click', function () {
@@ -161,7 +163,7 @@ $(document).ready(function(){
 	$("#filterJQL").val(filter.jql).attr("disabled", filter.type!='jql');
 	$("#filterUpdate").val(filter.jql);
 	$("#filterNotify").val(filter.notify);
-	$("#filterUpdate").val(parseInt(filter.updateInterval/(1000*60))).combobox({autocomplete:false});
+	$("#filterUpdate").combobox('value', filter.updateInterval);
 	
 	$("#dlgAddFilter").dialog({
 		modal:true,
@@ -182,7 +184,7 @@ $(document).ready(function(){
 					filter.jql = $("#filterJQL").val();
 					filter.name = $("#filterName").val();
 					filter.notify = $("#filterNotify").val();
-					filter.updateInterval = parseInt($("#updateinterval").attr("value"))*60000;
+					filter.updateInterval = parseInt($("#filterUpdate").attr("value"));
 					
 					updateFilterTable(iSelectedFilter);
 					loader.updateFavoritesFilters(function(){

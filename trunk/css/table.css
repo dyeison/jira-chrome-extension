@@ -94,8 +94,17 @@ table.display thead th {
 	cursor: default;
 }
 
+table#filters {
+	max-width:500px !important;
+}
+table#filters tbody td {
+    white-space: nowrap;
+    overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 table.display tfoot th {
-	padding: 3px 10px;
+	padding: 3px 3px;
 	border-top: 1px solid black;
 	font-weight: bold;
 	

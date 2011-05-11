@@ -3,7 +3,9 @@ body {
 	padding:0px;
 	font-family: 'Segoe UI', Arial, sans-serif;
 }
-
+td.buttonsContainer button{
+	width: 200px;
+}
 #proxySelectionTable{
 	border:1px solid #ccc;
 	

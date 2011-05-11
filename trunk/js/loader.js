@@ -60,6 +60,7 @@ var loader = {
 	countedFilterId: ((typeof localStorage.getItem('countedFilterId') == 'string')?localStorage.getItem('countedFilterId'):"0"),
 	omnibox: ((typeof localStorage.getItem('countedFilterId') == 'string')?(localStorage.getItem('countedFilterId') == "true"):false),
 	worklog: new Worklog(),
+	icon: new AnimatedIcon('images/logo-19.png'),
 	login: function(username, password, callback){
 		
 			var pl = new SOAPClientParameters();
@@ -87,9 +88,6 @@ var loader = {
 		if(loader.timer)
 			window.clearTimeout(loader.timer);
 		loader.timer = window.setTimeout(loader.update, localStorage.getItem('updateinterval'));
-		if(!loader.icon)
-			loader.icon = new AnimatedIcon('images/logo-19.png');
-		loader.icon.play();
 		loader.updateFavoritesFilters(function(){
 			loader.getSavedFilters();
 			if(callback)
@@ -194,6 +192,9 @@ var loader = {
 				});
 	},
 	getIssuesFromFilter: function(filter, callback){
+		if(filter.notify){
+			loader.icon.play();
+		}
 		if(filter.type == 'jql'){
 			loader.getIssuesFromJQL(filter, callback);
 		} else {

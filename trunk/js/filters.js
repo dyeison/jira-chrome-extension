@@ -107,7 +107,7 @@ function Filter(param){
 }
 
 Filter.prototype.toArray = function(){
-	return [this.id, this.enabled, this.name, this.jql?this.jql:''];
+	return [this.id, this.enabled, this.name, this.updateInterval, this.notify, this.jql?this.jql:''];
 }
 
 Filter.prototype.update = function(callback){
