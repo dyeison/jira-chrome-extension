@@ -7,7 +7,8 @@
 var optionsPage = this,
 	countedFilterId,
 	oFilters = null,
-	loader = chrome.extension.getBackgroundPage().loader;
+	loader = chrome.extension.getBackgroundPage().loader,
+	updateIntervalValues = [0, 1, 3, 5, 10, 30, 60];
 	
 $(document).ready(function(){
 	$("#username").attr("value",  localStorage.getItem('username'));
@@ -24,12 +25,10 @@ $(document).ready(function(){
 		value:localStorage.getItem('url')?localStorage.getItem('url'):"http://jira.atlassian.com/"
 	});//
 
-	var vals = [1, 3, 5, 10, 30, 60];
-	var curval = parseInt(localStorage.getItem('updateinterval'))/(1000*60);
-	$.map(vals,function(val){
-		$("#updateinterval").append($("<OPTION  />").attr("value", val).text(val));
+	$.map(updateIntervalValues,function(val){
+		$("#filterUpdate").append($("<OPTION  />").attr("value", val).text(val?val:chrome.i18n.getMessage( "optionsManualUpdateInterval")));
 	});
-	$("#updateinterval").val(curval).combobox({autocomplete:false});
+	$("#filterUpdate").combobox({autocomplete:false});
 	$("input[type=button]").button();
 	updateFilterTable();
 
@@ -71,7 +70,7 @@ $(document).ready(function(){
 					loader.filters[iSelectedFilter].id.toString()=="0" || loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId
 				});
 				$("#optionsFilterShowCounter").button({disabled:loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId});
-				$("#optionsFilterEdit").button({disabled:loader.filters[iSelectedFilter].type!='jql'});
+				$("#optionsFilterEdit").button({disabled:false});//loader.filters[iSelectedFilter].type!='jql'});
 				$("#optionsFilterColumns").button({disabled:false});
 			}
 		}
@@ -104,7 +103,6 @@ $(document).ready(function(){
 	}
 
   function saveOptions(){
-	localStorage.setItem('updateinterval', parseInt($("#updateinterval").attr("value"))*60000);
 	if(
 		localStorage.getItem('username')!=$("#username").attr("value") || 
 		localStorage.getItem('password') != $("#password").attr("value") ||
@@ -160,7 +158,10 @@ $(document).ready(function(){
 	}
 	$("#filterId").val(filter.id);
 	$("#filterName").val(filter.name);
-	$("#filterJQL").val(filter.jql);
+	$("#filterJQL").val(filter.jql).attr("disabled", filter.type!='jql');
+	$("#filterUpdate").val(filter.jql);
+	$("#filterNotify").val(filter.notify);
+	$("#filterUpdate").val(parseInt(filter.updateInterval/(1000*60))).combobox({autocomplete:false});
 	
 	$("#dlgAddFilter").dialog({
 		modal:true,
@@ -180,6 +181,9 @@ $(document).ready(function(){
 					}
 					filter.jql = $("#filterJQL").val();
 					filter.name = $("#filterName").val();
+					filter.notify = $("#filterNotify").val();
+					filter.updateInterval = parseInt($("#updateinterval").attr("value"))*60000;
+					
 					updateFilterTable(iSelectedFilter);
 					loader.updateFavoritesFilters(function(){
 						loader.getIssuesFromFilter(filter);
@@ -200,7 +204,7 @@ $(document).ready(function(){
 	if (!filter){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
 		filter = loader.filters[iSelectedFilter];
-	}  
+	}
 	if(filter && filter.columns){
 		$("#dlgFilterColumns").empty().attr("filterid", filter.id);
 		$.each(filter.columns, function(column, isVisible){

@@ -142,5 +142,8 @@
 	},
 	"optionsFilterColumnsDialog":{
 		"message": "Настройки столбцов для фильтра"
+	},
+	"optionsManualUpdateInterval":{
+		"message": "Вручную"
 	}
 }

@@ -142,5 +142,11 @@
 	},
 	"optionsFilterColumnsDialog":{
 		"message": "Configure filter columns"
+	},
+	"optionsManualUpdateInterval":{
+		"message": "Manual"
+	},
+	"optionsFilterNotify":{
+		"message": "Notify for filter updating (icon will rotate)"
 	}
 }
