@@ -103,7 +103,10 @@
 	},
 	"optionsFilterDisable": { 
 		"message": "Disable/Enable"
-	},
+	},	
+	"optionsFilterDelete": { 
+		"message": "Delete"
+	}
 	"optionsFilterShowCounter": { 
 		"message": "Show counter for this filter"
 	},
@@ -149,8 +152,13 @@
 	"optionsFilterNotify":{
 		"message": "Notify for filter updating (icon will rotate)"
 	},
-	
 	"optionsNotify":{
 		"message": "Notify"
+	},
+	"optionsFilterColor":{
+		"message": "Badge color"
+	},
+	"optionsFilterBadge":{
+		"message": "Show issues count on the badge"
 	}
 }

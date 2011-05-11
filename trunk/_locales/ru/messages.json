@@ -103,7 +103,10 @@
 	},
 	"optionsFilterDisable": { 
 		"message": "Включить/Выключить"
-	},
+	},	
+	"optionsFilterDelete": { 
+		"message": "Удалить"
+	}
 	"optionsFilterShowCounter": { 
 		"message": "Показывать счетчик задач для этого фильтра"
 	},
@@ -149,8 +152,13 @@
 	"optionsFilterNotify":{
 		"message": "Сообщать о процессе обновления (врощать иконку)"
 	},
-	
 	"optionsNotify":{
 		"message": "Увеомления"
+	},
+	"optionsFilterColor":{
+		"message": "Badge color"
+	},
+	"optionsFilterBadge":{
+		"message": "Show issues count on the badge"
 	}
 }
