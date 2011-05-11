@@ -101,11 +101,16 @@
 					});
 				this.disable(select.attr("disabled"))
 			},
-			value: function() {
-				if(this.options.editable){
-					return this.input.val();
+			value: function(newValue) {
+				if(typeof newValue === 'undefined'){
+					if(this.options.editable){
+						return this.input.val();
+					} else {
+						return this.element.val();
+					}
 				} else {
-					return this.element.val();
+					this.input.val(newValue);
+					this.element.val(newValue)
 				}
 		   },
 		   disable: function(state){

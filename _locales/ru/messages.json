@@ -145,5 +145,12 @@
 	},
 	"optionsManualUpdateInterval":{
 		"message": "Вручную"
+	},
+	"optionsFilterNotify":{
+		"message": "Сообщать о процессе обновления (врощать иконку)"
+	},
+	
+	"optionsNotify":{
+		"message": "Увеомления"
 	}
 }

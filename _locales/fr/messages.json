@@ -145,5 +145,12 @@
 	},
 	"optionsManualUpdateInterval":{
 		"message": "Manual"
+	},
+	"optionsFilterNotify":{
+		"message": "Notify for filter updating (icon will rotate)"
+	},
+	
+	"optionsNotify":{
+		"message": "Notify"
 	}
 }
