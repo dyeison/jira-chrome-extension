@@ -30,6 +30,26 @@ $(document).ready(function(){
 	});
 	$("#filterUpdate").combobox({autocomplete:false});
 	$("input[type=button]").button();
+	$('#filterBadge').click(function(){
+		if(this.checked)
+			$('#optionsFilterColorRow').show();
+		else
+			$('#optionsFilterColorRow').hide();
+	});
+	$('#colorSelector').ColorPicker({
+		color: '#00ff00',
+		onShow: function (colpkr) {
+			$(colpkr).fadeIn(500);
+			return false;
+		},
+		onHide: function (colpkr) {
+			$(colpkr).fadeOut(500);
+			return false;
+		},
+		onChange: function (hsb, hex, rgb) {
+			$('#colorSelector div').css('backgroundColor', '#' + hex);
+		}
+	});
 	updateFilterTable();
 
 });
@@ -52,6 +72,7 @@ $(document).ready(function(){
 						{"sTitle": chrome.i18n.getMessage('optionsFilterName')},
 						{"sTitle": chrome.i18n.getMessage('optionsUpdateInterval'), "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?obj.aData[ obj.iDataColumn ]:chrome.i18n.getMessage('optionsManualUpdateInterval');}},
 						{"sTitle": chrome.i18n.getMessage('optionsNotify'), "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?"<img src='images/bullet_tick.png'>":'';}},
+						{"sTitle": chrome.i18n.getMessage('optionsFilterColor'), "fnRender": function(obj) { var c = obj.aData[ obj.iDataColumn ]; return c?"<span class='colorbox' style='background-color: "+c+"'></span>":"";}},
 						{"sTitle": chrome.i18n.getMessage('optionsFilterJQL'), "sClass": "Summary"}
 					]
 			})
@@ -73,6 +94,7 @@ $(document).ready(function(){
 				});
 				$("#optionsFilterShowCounter").button({disabled:loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId});
 				$("#optionsFilterEdit").button({disabled:false});//loader.filters[iSelectedFilter].type!='jql'});
+				$("#optionsFilterDelete").button({disabled:loader.filters[iSelectedFilter].type!='jql' || loader.filters[iSelectedFilter].id.toString()=="0" });
 				$("#optionsFilterColumns").button({disabled:false});
 			}
 		}
@@ -160,11 +182,30 @@ $(document).ready(function(){
 	}
 	$("#filterId").val(filter.id);
 	$("#filterName").val(filter.name);
-	$("#filterJQL").val(filter.jql).attr("disabled", filter.type!='jql');
+	$("#filterJQL").val(filter.jql);
+	$("#optionsFilterJQLRow").setVisibility(filter.type=='jql');
 	$("#filterUpdate").val(filter.jql);
-	$("#filterNotify").val(filter.notify);
+	$("#filterNotify").setChecked(filter.notify);
 	$("#filterUpdate").combobox('value', filter.updateInterval);
+	$("#filterBadge").setChecked(filter.badge);
+	$('#optionsFilterColorRow').setVisibility(filter.badge);
+
+	$('#colorSelector').ColorPickerSetColor(filter.color);
+	$('#colorSelector div').css('backgroundColor',filter.color);
 	
+	$("#filterColumns").empty().attr("filterid", filter.id);
+	$.each(filter.columns, function(column, isVisible){
+		$("#filterColumns").append(
+			$("<span />").css({"width":"120px","display":"inline-block"}).append(
+				$("<input />").attr("type", "checkbox").attr("id", column)
+			).append(
+				$("<span />").text(column)
+			)
+		);
+		if(isVisible){
+			$("#filterColumns #"+column).attr("checked", true);
+		}
+	});
 	$("#dlgAddFilter").dialog({
 		modal:true,
 		width: 420,
@@ -183,9 +224,13 @@ $(document).ready(function(){
 					}
 					filter.jql = $("#filterJQL").val();
 					filter.name = $("#filterName").val();
-					filter.notify = $("#filterNotify").val();
 					filter.updateInterval = parseInt($("#filterUpdate").attr("value"));
-					
+					filter.notify = $("#filterNotify").is(":checked");
+					filter.badge = $("#filterBadge").is(":checked");
+					filter.color = filter.badge?$('#colorSelector div').css('backgroundColor'):filter.color;
+					$.each(filter.columns, function(c, v){
+						filter.columns[c] = $("#filterColumns #"+c).is(":checked");
+					});
 					updateFilterTable(iSelectedFilter);
 					loader.updateFavoritesFilters(function(){
 						loader.getIssuesFromFilter(filter);
@@ -202,38 +247,19 @@ $(document).ready(function(){
 	})
   }
   
-  function setFilterColumnsSettings(filter){
-	if (!filter){
-		var iSelectedFilter = oFilters.fnGetSelectedPosition();
-		filter = loader.filters[iSelectedFilter];
-	}
-	if(filter && filter.columns){
-		$("#dlgFilterColumns").empty().attr("filterid", filter.id);
-		$.each(filter.columns, function(column, isVisible){
-			$("#dlgFilterColumns").append(
-				$("<input />").attr("type", "checkbox").attr("id", column)
-			).append(
-				$("<span />").text(column)
-			).append("<br />");
-			if(isVisible){
-				$("#dlgFilterColumns #"+column).attr("checked", true);
-			}
-		});
-	}
-	
-	$("#dlgFilterColumns").dialog({
-		title: chrome.i18n.getMessage("optionsFilterColumnsDialog"),
-		buttons:[{
-			text: chrome.i18n.getMessage("save"),
-			click: function(){	
-				var filter = loader.filters.get($("#dlgFilterColumns").attr("filterid"));
-				$.each(filter.columns, function(c, v){
-					filter.columns[c] = $("#dlgFilterColumns #"+c).is(":checked");
-				});
-				loader.filters.save();
-			}
-		}]
-	
-	});
-  
-  }
+(function($)  {
+   $.fn.extend({
+      setChecked : function(state)  {
+		if (state)
+			return this.filter(":radio, :checkbox").attr("checked", true);
+		else 
+			return this.filter(":radio, :checkbox").removeAttr("checked");
+      },
+      setVisibility : function(state)  {
+		if (state)
+			return this.show();
+		else 
+			return this.hide();
+      }
+   });
+}(jQuery));

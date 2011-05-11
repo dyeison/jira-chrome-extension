@@ -35,6 +35,7 @@ FiltersArray.prototype.load = function (){
 	var self = this;
 	if(localStorage.getItem('filters')){
 		$.each(JSON.parse(localStorage.getItem('filters')), function(i, data){
+			console.log(data);
 				self.push(new Filter(data));
 			}
 		);
@@ -98,6 +99,9 @@ function Filter(param){
 	this.enabled = (typeof param.enabled != 'undefined') && param.enabled;
 	this.updateInterval = (typeof param.updateInterval != 'undefined')?parseInt(param.updateInterval):10;
 	this.notify = (typeof param.notify != 'undefined')?param.notify:(param.id == "0");
+	this.badge = (typeof param.badge != 'undefined')?param.badge:(param.id == "0");
+	this.color = (typeof param.color != 'undefined')?param.color:'#00ff00';
+	
 	if(this.type=='jql'){
 		this.jql  = param.jql;
 	}
@@ -107,7 +111,7 @@ function Filter(param){
 }
 
 Filter.prototype.toArray = function(){
-	return [this.id, this.enabled, this.name, this.updateInterval, this.notify, this.jql?this.jql:''];
+	return [this.id, this.enabled, this.name, this.updateInterval, this.notify, this.badge?this.color:'', this.jql?this.jql:''];
 }
 
 Filter.prototype.update = function(callback){
