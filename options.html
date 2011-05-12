@@ -28,6 +28,7 @@
 			
 			if(chrome.extension.getBackgroundPage().loader.loggedIn){
 				$("#tabPageFilters").show();
+				$("#tabPageFilters").click();
 			}
 			
 			$("#pageFilters  button").button();
@@ -92,11 +93,11 @@
 					</select>
 					</td>
 				</tr>
-				<tr>
+				<!--tr>
 					<td align="right"><span i18n-content="optionsUpdateInterval"></td>
 					<td><select id="updateinterval" ></select>, min</td>
 				</tr>
-				<!--tr>
+				<tr>
 					<td align="right">&nbsp;</td>
 					<td><input type="checkbox" id="omniboxEnabled" /><span i18n-content="optionsOmniboxEnabled"></td>
 				</tr-->				
@@ -133,15 +134,30 @@
 						</td>
 					</tr>
 				</table>
+				<p />
+				<!--div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em; font-size:0.8em;"> 
+					<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+						<strong>Badge color</strong> is a color for badge over JIRA assistant icon for specified filter. You can set badge for set of filters to show count on the badge carusel
+					</p>
+				</div-->
 		</div>
 		
 	</div>
 	
 
 	<div id="dlgCnnecting" style="display: none;"></div>
+	<div id="dlgAlert" style="display: none;">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+			<span i18n-content="optionsDlgDeleteFilterConfirmation"></span>
+		</p>
+	</div>
 	<div id="dlgAddFilter" style="display: none;">
 				<input id="filterId" type="hidden" />
 				<table>
+					<tr>
+						<td align="right"></td>
+						<td><input type="checkbox" id="filterEnabed" ><span i18n-content="optionsFilterEnabled" /></td>
+					</tr>				
 					<tr>
 						<td class="label" i18n-content="optionsFilterName"></td>
 						<td><input id="filterName" type="text" class="ui-widget-content ui-corner-all" />

@@ -35,6 +35,12 @@
 	"cancel": {
 		"message": "Cancel"
 	},
+	"yes": {
+		"message": "Yes"
+	},
+	"no": {
+		"message": "No"
+	},
 	"close": {
 		"message": "Close"
 	},
@@ -106,6 +112,12 @@
 	},	
 	"optionsFilterDelete": { 
 		"message": "Delete"
+	},	
+	"optionsDlgDeleteFilter": { 
+		"message": "Delete filter"
+	},
+	"optionsDlgDeleteFilterConfirmation": { 
+		"message": "Are you sure you want to delete selected filter?"
 	},
 	"optionsFilterShowCounter": { 
 		"message": "Show counter for this filter"

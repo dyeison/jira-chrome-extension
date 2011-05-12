@@ -30,12 +30,7 @@ $(document).ready(function(){
 	});
 	$("#filterUpdate").combobox({autocomplete:false});
 	$("input[type=button]").button();
-	$('#filterBadge').click(function(){
-		if(this.checked)
-			$('#optionsFilterColorRow').show();
-		else
-			$('#optionsFilterColorRow').hide();
-	});
+	$('#filterBadge').click(function(){		$('#optionsFilterColorRow').setVisibility(this.checked);	});
 	$('#colorSelector').ColorPicker({
 		color: '#00ff00',
 		onShow: function (colpkr) {
@@ -63,7 +58,7 @@ $(document).ready(function(){
 				"bSort": false,
 				"aaData": loader.filters?loader.filters:[],
 				"aoColumns": [
-						{	"sTitle": chrome.i18n.getMessage( "optionsFilterCounter"), 
+						{	"bVisible":false,"sTitle": chrome.i18n.getMessage( "optionsFilterCounter"), 
 							"sClass": "center ShortField",
 							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ].toString() == loader.countedFilterId)?"<img src='images/counter.png'>":"";}},
 						{	"sTitle": chrome.i18n.getMessage( "optionsFilterEnabled"), 
@@ -89,10 +84,7 @@ $(document).ready(function(){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
 			if(iSelectedFilter>=0){
 				if(loader.filters[iSelectedFilter]){
-				$("#optionsFilterDisable").button({disabled:
-					loader.filters[iSelectedFilter].id.toString()=="0" || loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId
-				});
-				$("#optionsFilterShowCounter").button({disabled:loader.filters[iSelectedFilter].id.toString()==loader.countedFilterId});
+				$("#optionsFilterDisable").button({disabled:false});
 				$("#optionsFilterEdit").button({disabled:false});//loader.filters[iSelectedFilter].type!='jql'});
 				$("#optionsFilterDelete").button({disabled:loader.filters[iSelectedFilter].type!='jql' || loader.filters[iSelectedFilter].id.toString()=="0" });
 				$("#optionsFilterColumns").button({disabled:false});
@@ -118,13 +110,29 @@ $(document).ready(function(){
 		updateFilterTable(iSelectedFilter);
 	}
 	
-	function setCounterForFilter(){
-		var iSelectedFilter = oFilters.fnGetSelectedPosition();
-		loader.countedFilterId = loader.filters[iSelectedFilter].id.toString();
-		localStorage.setItem('countedFilterId', loader.countedFilterId);
-		updateFilterTable(iSelectedFilter);
-		loader.getIssuesFromFilter(loader.filters[iSelectedFilter]);
+	function deleteFilter(){
+		
+		$("#dlgAlert").dialog({
+			title: chrome.i18n.getMessage("optionsDlgDeleteFilter"),
+			buttons:[{
+				text: chrome.i18n.getMessage("yes"),
+				click: function(){
+					var iSelectedFilter = oFilters.fnGetSelectedPosition();
+					if(loader.filters[iSelectedFilter].type != 'filter'){
+						loader.filters.splice(iSelectedFilter, 1);
+						updateFilterTable(iSelectedFilter);
+					}
+					$("#dlgAlert").dialog('close');
+				}
+			},{
+				text: chrome.i18n.getMessage("no"),
+				click: function(){
+					$("#dlgAlert").dialog('close');
+				}			
+			}]
+		});
 	}
+
 
   function saveOptions(){
 	if(
@@ -181,6 +189,7 @@ $(document).ready(function(){
 		filter = loader.filters[iSelectedFilter];
 	}
 	$("#filterId").val(filter.id);
+	$("#filterEnabed").setChecked(filter.enabled);	
 	$("#filterName").val(filter.name);
 	$("#filterJQL").val(filter.jql);
 	$("#optionsFilterJQLRow").setVisibility(filter.type=='jql');
@@ -225,6 +234,7 @@ $(document).ready(function(){
 					filter.jql = $("#filterJQL").val();
 					filter.name = $("#filterName").val();
 					filter.updateInterval = parseInt($("#filterUpdate").attr("value"));
+					filter.enabled = $("#filterEnabed").is(":checked");
 					filter.notify = $("#filterNotify").is(":checked");
 					filter.badge = $("#filterBadge").is(":checked");
 					filter.color = filter.badge?$('#colorSelector div').css('backgroundColor'):filter.color;

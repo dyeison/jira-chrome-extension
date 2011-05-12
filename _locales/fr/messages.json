@@ -35,6 +35,12 @@
 	"cancel": {
 		"message": "Annuler"
 	},
+	"yes": {
+		"message": "Yes"
+	},
+	"no": {
+		"message": "No"
+	},
 	"close": {
 		"message": "Fermer"
 	},
@@ -96,7 +102,7 @@
 		"message": "Password"
 	},
 	"optionsFilterName": { 
-		"message": "Filter name"
+		"message": "Filtre name"
 	},
 	"optionsFilterEnabled": { 
 		"message": "Enabled"
@@ -105,10 +111,16 @@
 		"message": "Disable/Enable"
 	},	
 	"optionsFilterDelete": { 
-		"message": "Delete"
-	}
+		"message": "Supprimer"
+	},
+	"optionsDlgDeleteFilterConfirmation": { 
+		"message": "Etes-vous sûr de vouloir supprimer le filtre sélectionné"
+	},
+	"optionsDlgDeleteFilter": { 
+		"message": "Supprimer filtre"
+	},
 	"optionsFilterShowCounter": { 
-		"message": "Show counter for this filter"
+		"message": "Afficher contre pour ce filtre"
 	},
 	"optionsDlgLoading": { 
 		"message": "Authorization..."
@@ -117,13 +129,13 @@
 		"message": "JIRA Query"
 	},
 	"optionsFilterAdd": { 
-		"message": "Add filter"
+		"message": "Ajouter le filtre"
 	},
 	"optionsFilterSave": { 
-		"message": "Save filter"
+		"message": "Enregistrer le filtre"
 	},	
 	"optionsFilterEdit": { 
-		"message": "Edit filter"
+		"message": "Modifier le filtre"
 	},
 	"optionsOmniboxEnabled": { 
 		"message": "Enable omnibox handler"
@@ -141,16 +153,16 @@
 		"message": "Create issue"
 	},
 	"optionsFilterColumns":{
-		"message": "Configure filter columns"
+		"message": "Configure filtre columns"
 	},
 	"optionsFilterColumnsDialog":{
-		"message": "Configure filter columns"
+		"message": "Configure filtre columns"
 	},
 	"optionsManualUpdateInterval":{
 		"message": "Manual"
 	},
 	"optionsFilterNotify":{
-		"message": "Notify for filter updating (icon will rotate)"
+		"message": "Notify for filtre updating (icon will rotate)"
 	},
 	"optionsNotify":{
 		"message": "Notify"

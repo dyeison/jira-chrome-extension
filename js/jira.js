@@ -142,7 +142,8 @@ var jira = {
 			console.log(filter)
 			$("#tabHeader").append(
 				$("<LI />").append(
-					$("<A />").attr("href", "#div_"+filter.id)
+					$("<A />")//-webkit-linear-gradient(top, #fff, #eaeef3 50%, #d3d7db);}
+							.attr("href", "#div_"+filter.id)
 							.attr("filterId", filter.id)
 							.attr("type", filter.type)
 							.text(filter.name +
@@ -152,7 +153,7 @@ var jira = {
 								if(this.getAttribute("type") == "filter")
 									chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
 							})
-				)
+				).css("background-image",(filter.badge?"-webkit-linear-gradient(bottom, transparent 75%, "+filter.color+")":""))
 			);
 			$("#tabs").append(
 				$("<DIV />").attr("id", "div_"+filter.id).append(
