@@ -89,6 +89,7 @@ var loader = {
 			loader.getSavedFilters();
 			if(callback)
 				callback();
+			loader.filters.statrBadgeAnimation();				
 		});
 		//loader.getCustomFields();
 	},

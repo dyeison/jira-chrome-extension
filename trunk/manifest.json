@@ -1,6 +1,6 @@
 {
 	"name": "JIRA assistant for Google Chrome",
-	"version": "1.4.0",
+	"version": "1.6.0",
 	"description": "With this extension you'll get simple access to all your issues or task from Atlassian  JIRA.",
 	"background_page": "background.html",
 	"icons": {
