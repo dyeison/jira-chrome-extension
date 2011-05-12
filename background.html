@@ -1,5 +1,9 @@
+<!--
+ * Copyright 2011 Andrey Vyrvich.
+ * andry.virvich at google.com
+ -->
+
 <html>
-<!-- Copyright 2010 andry.virvich@gmail.com. All Rights Reserved. -->
   <head>
 	<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
     <script type="text/javascript" src="js/soapclient.js"></script>
@@ -8,9 +12,6 @@
     <script type="text/javascript" src="js/filters.js"></script>
     <script type="text/javascript" src="js/loader.js"></script>
 	<script>
-
-	localStorage.setItem('updateinterval', localStorage.getItem('updateinterval')?localStorage.getItem('updateinterval'):600000);
-	chrome.browserAction.setBadgeBackgroundColor({color: [0, 255,0, 255]});
 	//localStorage.setItem('omniboxEnabled', (typeof localStorage.getItem('omniboxEnabled') == 'boolean')?localStorage.getItem('omniboxEnabled'):false);
 	function Auth(){
 		if(localStorage.getItem("url"))

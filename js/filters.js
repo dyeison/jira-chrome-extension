@@ -6,11 +6,19 @@
 function FiltersArray(){
 	this.load();
 	var self = this,
-		badgeItem = 0;
+		badgeItem = 0,
+		timer = null;
 	
 	this.statrBadgeAnimation = function(){
-		self.updateBadge();
-		window.setInterval(function(){
+		console.log('start');
+		if(timer){
+			badgeItem = 0;
+			window.clearInterval(timer);
+		}
+		window.setTimeout(function(){
+			self.updateBadge();
+		}, 1000);
+		timer = window.setInterval(function(){
 				self.updateBadge();
 			}, 10000);
 	}
@@ -23,15 +31,11 @@ function FiltersArray(){
 			var hex = parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
 			return [hex >> 16, (hex & 0x00FF00) >> 8,  (hex & 0x0000FF), 255];
 		}
-	}	
-	this.updateBadge = function(){
-		if(this[badgeItem].badge){
-			if(this[badgeItem].issues.length == 0){
-				window.setTimeout(function(){
-					self.updateBadge();
-				}, 50);
-			}
+	}
 
+	this.updateBadge = function(){
+		console.log('update');
+		if(this[badgeItem].badge){
 			chrome.browserAction.setBadgeBackgroundColor({color: hex2rgb(this[badgeItem].color)})
 			chrome.browserAction.setBadgeText({text: this[badgeItem].issues.length.toString()});
 			badgeItem = badgeItem+1>=this.length?0:badgeItem+1;
@@ -39,7 +43,6 @@ function FiltersArray(){
 			badgeItem = badgeItem+1>=this.length?0:badgeItem+1;
 		}
 	}
-	this.statrBadgeAnimation();
 }
 FiltersArray.prototype = new Array;
 FiltersArray.prototype.get = function (id){
