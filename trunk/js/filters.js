@@ -3,9 +3,43 @@
  * andry.virvich at google.com
  */
 
-
 function FiltersArray(){
 	this.load();
+	var self = this,
+		badgeItem = 0;
+	
+	this.statrBadgeAnimation = function(){
+		self.updateBadge();
+		window.setInterval(function(){
+				self.updateBadge();
+			}, 10000);
+	}
+	function hex2rgb(hex) {
+		var rx=/rgb\((\d+), (\d+), (\d+)\)/;
+		if(rx.test(hex)){
+			var res = rx.exec(hex);
+			return [parseInt(res[1]), parseInt(res[2]), parseInt(res[3]), 255];
+		} else {
+			var hex = parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
+			return [hex >> 16, (hex & 0x00FF00) >> 8,  (hex & 0x0000FF), 255];
+		}
+	}	
+	this.updateBadge = function(){
+		if(this[badgeItem].badge){
+			if(this[badgeItem].issues.length == 0){
+				window.setTimeout(function(){
+					self.updateBadge();
+				}, 50);
+			}
+
+			chrome.browserAction.setBadgeBackgroundColor({color: hex2rgb(this[badgeItem].color)})
+			chrome.browserAction.setBadgeText({text: this[badgeItem].issues.length.toString()});
+			badgeItem = badgeItem+1>=this.length?0:badgeItem+1;
+		} else {
+			badgeItem = badgeItem+1>=this.length?0:badgeItem+1;
+		}
+	}
+	this.statrBadgeAnimation();
 }
 FiltersArray.prototype = new Array;
 FiltersArray.prototype.get = function (id){
@@ -35,7 +69,6 @@ FiltersArray.prototype.load = function (){
 	var self = this;
 	if(localStorage.getItem('filters')){
 		$.each(JSON.parse(localStorage.getItem('filters')), function(i, data){
-			console.log(data);
 				self.push(new Filter(data));
 			}
 		);
@@ -108,19 +141,28 @@ function Filter(param){
 	if(param.id == "0"){
 		this.jql = "assignee = currentUser() AND resolution = unresolved ORDER BY duedate ASC, priority DESC, created ASC";
 	}
+	
+	var timer = null,
+		self = this;
+	this.update = function(callback){
+		if(timer){
+			clearTimeout(timer);
+		}
+		if(this.enabled){
+			loader.getIssuesFromFilter(this, callback);
+		}
+		if(this.updateInterval){
+			setTimeout(function(){
+				self.update();
+			},this.updateInterval*60000);
+		}
+	}
 }
 
 Filter.prototype.toArray = function(){
 	return [this.id, this.enabled, this.name, this.updateInterval, this.notify, this.badge?this.color:'', this.jql?this.jql:''];
 }
 
-Filter.prototype.update = function(callback){
-	if(this.enabled){
-		loader.getIssuesFromFilter(this, callback);
-	}
-}
 Filter.prototype.issues = new Array;
 
-function Issue(param){
-}
 

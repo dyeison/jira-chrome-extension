@@ -85,9 +85,6 @@ var loader = {
 				});
 	},
 	update: function(callback){
-		if(loader.timer)
-			window.clearTimeout(loader.timer);
-		loader.timer = window.setTimeout(loader.update, localStorage.getItem('updateinterval'));
 		loader.updateFavoritesFilters(function(){
 			loader.getSavedFilters();
 			if(callback)
@@ -202,10 +199,7 @@ var loader = {
 			pl.add("in0", loader.token);
 			pl.add("in1", filter.id);
 			SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromFilter", pl, true, function(r, xhr){
-				if(loader.countedFilterId.toString() == filter.id){
-					chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
-					chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
-				}
+				chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
 				filter.issues = loader.parseXml(xhr);
 				if(callback){
 					callback(filter.issues);
@@ -222,10 +216,7 @@ var loader = {
 					if($("Fault", xhr).size()>=1){
 						//loader.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
 					} else {
-						if(loader.countedFilterId == filter.id){
-							chrome.browserAction.setIcon({ 'path' : 'images/logo-16.png'});
-							chrome.browserAction.setBadgeText({text: $("assignee", xhr).size().toString()});
-						}
+						chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
 						filter.issues = loader.parseXml(xhr);
 						if(callback){
 							callback(filter.issues);

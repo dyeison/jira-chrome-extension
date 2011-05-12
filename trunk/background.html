@@ -9,8 +9,8 @@
     <script type="text/javascript" src="js/loader.js"></script>
 	<script>
 
-	localStorage.setItem('updateinterval', localStorage.getItem('updateinterval')?localStorage.getItem('updateinterval'):600000)
-	chrome.browserAction.setBadgeBackgroundColor({color: [0, 255,0, 255]})
+	localStorage.setItem('updateinterval', localStorage.getItem('updateinterval')?localStorage.getItem('updateinterval'):600000);
+	chrome.browserAction.setBadgeBackgroundColor({color: [0, 255,0, 255]});
 	//localStorage.setItem('omniboxEnabled', (typeof localStorage.getItem('omniboxEnabled') == 'boolean')?localStorage.getItem('omniboxEnabled'):false);
 	function Auth(){
 		if(localStorage.getItem("url"))

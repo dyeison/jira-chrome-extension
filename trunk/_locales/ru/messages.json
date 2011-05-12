@@ -35,6 +35,12 @@
 	"cancel": {
 		"message": "Отмена"
 	},
+	"yes": {
+		"message": "Да"
+	},
+	"no": {
+		"message": "Нет"
+	},
 	"close": {
 		"message": "Закрыть"
 	},
@@ -106,7 +112,13 @@
 	},	
 	"optionsFilterDelete": { 
 		"message": "Удалить"
-	}
+	},
+	"optionsDlgDeleteFilter": { 
+		"message": "Удалить фильтр"
+	},
+	"optionsDlgDeleteFilterConfirmation": { 
+		"message": "Вы уверены что хотите удалить выбранный фильтр?"
+	},
 	"optionsFilterShowCounter": { 
 		"message": "Показывать счетчик задач для этого фильтра"
 	},
@@ -153,7 +165,7 @@
 		"message": "Сообщать о процессе обновления (врощать иконку)"
 	},
 	"optionsNotify":{
-		"message": "Увеомления"
+		"message": "Уведомления"
 	},
 	"optionsFilterColor":{
 		"message": "Badge color"
