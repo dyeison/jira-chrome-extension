@@ -9,6 +9,7 @@ var jira = {
 		issuetypes: null,
 		priorities: null,
 		statuses: null,
+		isDetached: location.search == '?detached',
 		init: function(){
 			
 			jira.serverUrl = localStorage.getItem("url");
@@ -217,7 +218,15 @@ var jira = {
 					$("<button />").click(function(){
 						jira.createIssue();
 					}).text(chrome.i18n.getMessage('createIssue')).button({icons: {primary: "ui-icon-plusthick"},text: false})
-				);/*.append(
+				);
+				if (!jira.isDetached){
+					$("#HeaderLink").append(
+						$("<button />").click(function(){
+							jira.detach();
+						}).text(chrome.i18n.getMessage('detachWindow')).button({icons: {primary: "ui-icon-newwin"},text: false})
+					)
+				}
+				/*.append(
 					$("<button />").click(function(){
 						chrome.extension.getBackgroundPage().loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QAWCRPFR2FW8S&lc=RU&item_name=JIRA%20Chrome%20extension&item_number=jira%2dchrome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
 						window.close();
@@ -243,6 +252,20 @@ var jira = {
 		},
 		url: function(str){
 			return (jira.serverUrl + str);
+		},
+		detach: function() {
+			var detachedPos = {
+				top: 100,
+				left: 100,
+				width: window.innerWidth,
+				height: window.innerHeight
+			}
+			
+			window.open(chrome.extension.getURL('jira.html?detached'), 'jira_popup_window',
+			  'left=' + detachedPos.left + ',top=' + (detachedPos.top - 22) + // Magic 22...
+			  ',width=' + detachedPos.width + ',height=' + detachedPos.height +
+			  'location=no,menubar=no,resizable=yes,status=no,titlebar=yes,toolbar=no');
+			window.close();
 		},
 		stopProgress: function(issueId){
 			var timeSpent = chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(issueId);
