@@ -93,7 +93,7 @@
 		"message": "Интервал обновления"
 	},
 	"optionsServerUrl": { 
-		"message": "JIRA Server URL"
+		"message": "Адрес сервера JIRA"
 	},
 	"optionsUsername": { 
 		"message": "Username"
@@ -168,9 +168,12 @@
 		"message": "Уведомления"
 	},
 	"optionsFilterColor":{
-		"message": "Badge color"
+		"message": "Цвет фона"
 	},
 	"optionsFilterBadge":{
-		"message": "Show issues count on the badge"
+		"message": "Показывать количество задач на иконке"
+	},
+	"detachWindow":{
+		"message": "Отсоединить окно"
 	}
 }
