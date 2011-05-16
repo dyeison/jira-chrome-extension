@@ -185,9 +185,7 @@ var loader = {
 				})
 	},
 	getSavedFilters: function(){
-				$.each(loader.filters, function(i, filter){
-					filter.update();
-				});
+		loader.filters.update();
 	},
 	getIssuesFromFilter: function(filter, callback){
 		if(filter.notify){
@@ -200,11 +198,13 @@ var loader = {
 			pl.add("in0", loader.token);
 			pl.add("in1", filter.id);
 			SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "getIssuesFromFilter", pl, true, function(r, xhr){
-				chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
 				filter.issues = loader.parseXml(xhr);
+				loader.filters.updateBadge();
+				chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
 				if(callback){
 					callback(filter.issues);
 				}
+				filter.showNotifications();
 			});
 		}
 	},
@@ -217,15 +217,13 @@ var loader = {
 					if($("Fault", xhr).size()>=1){
 						//loader.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
 					} else {
-						chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
 						filter.issues = loader.parseXml(xhr);
+						loader.filters.updateBadge();
+						chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
 						if(callback){
 							callback(filter.issues);
 						}
-						if(filter.id == '0'){
-							loader.showNotifications("keys", filter.issues);
-							loader.saveKeys("keys", filter.issues );
-						}
+						filter.showNotifications();
 					}
 				});
 	},	
@@ -399,12 +397,6 @@ var loader = {
 			return loader.resolutions[id];
 		}
 	},
-	saveKeys: function(id, data){
-		var keys = $.map(data, function(n, i){
-			return n[1];
-		});
-		localStorage.setItem(id, keys.toString());
-	},
 	addTab: function(url){
 		chrome.tabs.create({
 			url: url,
@@ -417,42 +409,6 @@ var loader = {
 				url: url
 			});
 		})
-	},	
-	showNotifications: function(id, data){
-		var keys = localStorage.getItem(id)?localStorage.getItem(id).split(","):[];
-		var newKeys = [];
-		$.each(data, function(i, val){
-				if($.inArray(val[1], keys)<0){
-					newKeys.push(val);
-				}
-		});
-
-		if(newKeys.length>0 && newKeys.length<=5){
-			$.each(newKeys, function(i, val){
-						var notification = webkitNotifications.createNotification(
-						  'images/logo-48.png',  // icon url - can be relative
-						  val[1],  // notification title
-						  val[2] // notification body text
-						);
-						notification.onclick = function(event){
-							loader.addTab(loader.url +"/browse/"+val[1]); 
-							event.currentTarget.cancel(); 
-						}
-						notification.ondisplay = function(event){
-							setTimeout((function (notif){return function(){notif.cancel();}})(event.currentTarget), 10000);
-						}
-						notification.onclose = function(event){
-							loader.notifications = $.map(loader.notifications,function(notif){
-								if (notif == event.currentTarget)
-									return null;
-								else 
-									return notif;
-							});
-						}						
-						notification.show();
-						loader.notifications.push(notification);
-			});
-		}
 	},
 	options:function(){
 		var bOptionsPageFound = false;

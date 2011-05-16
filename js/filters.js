@@ -34,7 +34,6 @@ function FiltersArray(){
 	}
 
 	this.updateBadge = function(){
-		console.log('update');
 		if(this[badgeItem].badge){
 			chrome.browserAction.setBadgeBackgroundColor({color: hex2rgb(this[badgeItem].color)})
 			chrome.browserAction.setBadgeText({text: this[badgeItem].issues.length.toString()});
@@ -94,7 +93,7 @@ FiltersArray.prototype.swap = function (x,y) {
 }
 
 FiltersArray.prototype.update = function(id, callback){
-	if(typeof id != undefined){
+	if(typeof id != 'undefined'){
 		this.get(id).update(callback);
 	} else {
 		$.each(this, function(i, filter){
@@ -135,9 +134,11 @@ function Filter(param){
 	this.enabled = (typeof param.enabled != 'undefined') && param.enabled;
 	this.updateInterval = (typeof param.updateInterval != 'undefined')?parseInt(param.updateInterval):10;
 	this.notify = (typeof param.notify != 'undefined')?param.notify:(param.id == "0");
+	this.desktopNotify = (typeof param.desktopNotify != 'undefined')?param.desktopNotify:(param.id == "0");
 	this.badge = (typeof param.badge != 'undefined')?param.badge:(param.id == "0");
 	this.color = (typeof param.color != 'undefined')?param.color:'#00ff00';
 	
+	this.keys = (typeof param.keys != 'undefined')?param.keys:[];
 	if(this.type=='jql'){
 		this.jql  = param.jql;
 	}
@@ -164,6 +165,43 @@ function Filter(param){
 
 Filter.prototype.toArray = function(){
 	return [this.id, this.enabled, this.name, this.updateInterval, this.notify, this.badge?this.color:'', this.jql?this.jql:''];
+}
+Filter.prototype.showNotifications = function(){
+	if(this.desktopNotify){
+		var newKeys = [];
+		$.each(this.issues, function(i, val){
+				if($.inArray(val[1], this.keys)<0){
+					newKeys.push(i);
+				}
+		});
+
+		if(newKeys.length>0 && newKeys.length<=5){
+			$.each(newKeys, function(j, i){
+						var notification = webkitNotifications.createNotification(
+						  'images/logo-48.png', // icon url - can be relative
+						  this.issues[i][1],  	// notification title
+						  this.issues[i][2] 	// notification body text
+						);
+						notification.onclick = function(event){
+							loader.addTab(loader.url +"/browse/"+val[1]); 
+							event.currentTarget.cancel(); 
+						}
+						notification.ondisplay = function(event){
+							setTimeout((function (notif){return function(){notif.cancel();}})(event.currentTarget), 10000);
+						}
+						notification.onclose = function(event){
+							loader.notifications = $.map(loader.notifications,function(notif){
+								if (notif == event.currentTarget)
+									return null;
+								else 
+									return notif;
+							});
+						}						
+						notification.show();
+						loader.notifications.push(notification);
+			});
+		}
+	}
 }
 
 Filter.prototype.issues = new Array;
