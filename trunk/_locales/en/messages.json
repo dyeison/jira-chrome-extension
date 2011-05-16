@@ -161,6 +161,9 @@
 	"optionsManualUpdateInterval":{
 		"message": "Manual"
 	},
+	"optionsFilterDesktopNotification":{
+		"message": "Show desktop notification of new issues"
+	},
 	"optionsFilterNotify":{
 		"message": "Notify for filter updating (icon will rotate)"
 	},

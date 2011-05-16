@@ -161,6 +161,9 @@
 	"optionsManualUpdateInterval":{
 		"message": "Вручную"
 	},
+	"optionsFilterDesktopNotification":{
+		"message": "Показывать сообщения о новых задачах"
+	},
 	"optionsFilterNotify":{
 		"message": "Сообщать о процессе обновления (врощать иконку)"
 	},
