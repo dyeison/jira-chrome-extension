@@ -6,15 +6,23 @@ body {
 td.buttonsContainer button{
 	width: 150px;
 }
-#proxySelectionTable{
-	border:1px solid #ccc;
+#filters{
+
 	
 }
-#proxySelectionTable tbody td{
-	border-top: 1px solid #ccc;
+#filters thead th{
+	white-space: nowrap;
+    overflow: hidden;
+	text-overflow: ellipsis;
 }
-#proxySelectionTable tbody tr:not(.selected_row):hover{
-	background: #eaeaea;
+#filters tbody tr{
+	padding: .8em 0 .8em 0
+}
+#filters .icon{
+	max-width:40px;
+}
+#filters tbody tr:not(.selected_row):hover{
+	background-image:   -webkit-linear-gradient(bottom, rgba(20,132,230,0.1), rgba(20,132,230,0.3));
 }
 
 #navbar-container {

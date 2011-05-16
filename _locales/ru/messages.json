@@ -168,8 +168,11 @@
 		"message": "Сообщать о процессе обновления (врощать иконку)"
 	},
 	"optionsNotify":{
-		"message": "Уведомления"
+		"message": "Уведомления обновления"
 	},
+	"optionsDesktopNotify":{
+		"message": "Показывать новые сообщения"
+	},	
 	"optionsFilterColor":{
 		"message": "Цвет фона"
 	},

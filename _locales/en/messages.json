@@ -168,7 +168,10 @@
 		"message": "Notify for filter updating (icon will rotate)"
 	},
 	"optionsNotify":{
-		"message": "Notify"
+		"message": "Notify Update"
+	},
+	"optionsDesktopNotify":{
+		"message": "Desktop notifications"
 	},
 	"optionsFilterColor":{
 		"message": "Badge color"
