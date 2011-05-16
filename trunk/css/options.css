@@ -21,9 +21,6 @@ td.buttonsContainer button{
 #filters .icon{
 	max-width:40px;
 }
-#filters tbody tr:not(.selected_row):hover{
-	background-image:   -webkit-linear-gradient(bottom, rgba(20,132,230,0.1), rgba(20,132,230,0.3));
-}
 
 #navbar-container {
   -webkit-border-end: 1px solid #c6c9ce;

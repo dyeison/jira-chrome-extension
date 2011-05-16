@@ -103,7 +103,7 @@ var jira = {
 				"aaData": filter.issues,
 				"aaSorting": [],
 				"aoColumns": [
-						{"bVisible": filter.columns.type, "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { 
+						{"bVisible": filter.columns.type, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { 
 							return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
 						{"bVisible": filter.columns.key, "sTitle": chrome.i18n.getMessage('Key'), "bUseRendered":false,  "fnRender": function(obj) { 
 							return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
@@ -118,7 +118,7 @@ var jira = {
 							return obj.aData[ obj.iDataColumn ]?chrome.extension.getBackgroundPage().loader.getDate(obj.aData[ obj.iDataColumn ]):"";
 						}, "sClass": "Date"},
 						//{ "sTitle": "Est.", "sClass": "Date"},
-						{"bVisible": filter.columns.priority, "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+						{"bVisible": filter.columns.priority, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"bVisible": filter.columns.resolution, "sTitle": chrome.i18n.getMessage('Res'), "sClass": "ShortField","fnRender": function(obj) { 
 								if(obj.aData[ obj.iDataColumn ].toLowerCase().indexOf("unresolved")>=0)
 									return "<a href=\"javascript:{jira.resolve('"+obj.aData[1]+"')}\">" + obj.aData[ obj.iDataColumn ] + "</a>";
@@ -126,12 +126,12 @@ var jira = {
 									return obj.aData[ obj.iDataColumn ];
 							}
 						},
-						{"bVisible": filter.columns.status, "sTitle": "", "sClass": "Icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
-						{"bVisible": filter.columns.worklog, "sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
+						{"bVisible": filter.columns.status, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+						{"bVisible": filter.columns.worklog, "sClass":"icon","sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
 							if(obj.aData[ 6 ].toLowerCase().indexOf("unresolved")>=0){
 								return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
-									"<a href='#' onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><img src='images/stop.png' />"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</a>":
-									"<a href='#' onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><img src='images/start.png' /></a>");
+									"<div onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</span></div>":
+									"<div onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><span class=\"ui-icon ui-icon-clock\"></span></div>");
 							} else {
 								return '';
 							}
@@ -251,7 +251,7 @@ var jira = {
 			} else {
 				var dt = $("#table_"+currentFilter.id).dataTable();
 				dt.fnClearTable();
-				dt.fnAddData(hrome.extension.getBackgroundPage().loader.filters.get(id).issues);
+				dt.fnAddData(chrome.extension.getBackgroundPage().loader.filters.get(currentFilter.id).issues);
 			}
 		},
 		url: function(str){
@@ -323,6 +323,7 @@ var jira = {
 					text: chrome.i18n.getMessage('cancelProgress'),
 					click: function(){
 						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(issueId);
+						jira.updateCurrentTable(false);
 						$("#stopProggresDlg").dialog('close');
 					}
 				},{					
