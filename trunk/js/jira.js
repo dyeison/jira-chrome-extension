@@ -188,7 +188,11 @@ var jira = {
 					localStorage.setItem('lastOpenedTab', ui.index);
 				},
 				selected: (localStorage.getItem('lastOpenedTab')?localStorage.getItem('lastOpenedTab'):0)
-			}).find( ".ui-tabs-nav" ).sortable({ 
+			}).find( ".ui-tabs-nav" ).removeClass("ui-corner-all").css({
+				"border-width": "0 0 1px 0",
+				"padding": ".4em .4em 0 .4em",
+				"margin": "-.2em -.2em 0 -.2em"
+			}).sortable({ 
 				axis: "x" ,  
 				update: function(event, ui) {
 					var i = chrome.extension.getBackgroundPage().loader.filters.index($("a", ui.item).attr("filterid"));
