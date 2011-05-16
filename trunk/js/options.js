@@ -62,15 +62,17 @@ $(document).ready(function(){
 							"sClass": "center ShortField",
 							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ].toString() == loader.countedFilterId)?"<img src='images/counter.png'>":"";}},
 						{	"sTitle": chrome.i18n.getMessage( "optionsFilterEnabled"), 
+							"sClass":"icon",
 							"sClass": "center ShortField",
 							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ])?"<img src='images/bullet_tick.png'>":"";}},
 						{"sTitle": chrome.i18n.getMessage('optionsFilterName')},
-						{"sTitle": chrome.i18n.getMessage('optionsUpdateInterval'), "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?obj.aData[ obj.iDataColumn ]:chrome.i18n.getMessage('optionsManualUpdateInterval');}},
-						{"sTitle": chrome.i18n.getMessage('optionsNotify'), "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?"<img src='images/bullet_tick.png'>":'';}},
-						{"sTitle": chrome.i18n.getMessage('optionsFilterColor'), "fnRender": function(obj) { var c = obj.aData[ obj.iDataColumn ]; return c?"<span class='colorbox' style='background-color: "+c+"'></span>":"";}},
+						{"sTitle": chrome.i18n.getMessage('optionsUpdateInterval'), "sClass":"icon", "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?obj.aData[ obj.iDataColumn ]:chrome.i18n.getMessage('optionsManualUpdateInterval');}},
+						{"sTitle": chrome.i18n.getMessage('optionsNotify'), "sClass":"icon", "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?"<img src='images/bullet_tick.png'>":'';}},
+						{"sTitle": chrome.i18n.getMessage('optionsDesktopNotify'), "sClass":"icon", "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?"<img src='images/bullet_tick.png'>":'';}},
+						{"sTitle": chrome.i18n.getMessage('optionsFilterColor'), "sClass":"icon", "fnRender": function(obj) { var c = obj.aData[ obj.iDataColumn ]; return c?"<span class='colorbox' style='background-color: "+c+"'></span>":"";}},
 						{"sTitle": chrome.i18n.getMessage('optionsFilterJQL'), "sClass": "Summary"}
 					]
-			})
+			});
 			$("#filters tbody tr").live('click', function () {
 				oFilters.fnSelect(this);
 				toggleSelectedFilter();

@@ -164,7 +164,7 @@ function Filter(param){
 }
 
 Filter.prototype.toArray = function(){
-	return [this.id, this.enabled, this.name, this.updateInterval, this.notify, this.badge?this.color:'', this.jql?this.jql:''];
+	return [this.id, this.enabled, this.name, this.updateInterval, this.notify, this.desktopNotify, this.badge?this.color:'', this.jql?this.jql:''];
 }
 Filter.prototype.showNotifications = function(){
 	if(this.desktopNotify){
