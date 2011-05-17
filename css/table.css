@@ -162,24 +162,49 @@ table.display td.ShortField {
  * DataTables sorting
  */
 
-.sorting_asc {
-	background: url('../images/sort_asc.png') no-repeat center right;
+.sorting_asc div{
+	display: inline-block;
+	float:right;
+	width: 16px;
+	height:	16px;
+    background-image: url(custom-theme/images/ui-icons_ffffff_256x240.png);
+	background-position: 0 -16px;
 }
 
-.sorting_desc {
-	background: url('../images/sort_desc.png') no-repeat center right;
+.sorting_desc div{
+	display: inline-block;
+	float:right;
+	width: 16px;
+	height:	16px;
+    background-image: url(custom-theme/images/ui-icons_ffffff_256x240.png);
+	background-position: -64px -16px;
 }
 
-.sorting {
-	background: url('../images/sort_both.png') no-repeat center right;
+.sorting div{
+	display: inline-block;
+	float:right;
+	width: 16px;
+	height:	16px;
+    background-image: url(custom-theme/images/ui-icons_ffffff_256x240.png);
+	background-position: -128px -16px;
 }
 
-.sorting_asc_disabled {
-	background: url('../images/sort_asc_disabled.png') no-repeat center right;
+.sorting_asc_disabled div{
+	display: inline-block;
+	float:right;
+	width: 16px;
+	height:	16px;
+    background-image: url(custom-theme/images/ui-icons_2694e8_256x240.png);
+	background-position: 0 -16px;
 }
 
-.sorting_desc_disabled {
-	background: url('../images/sort_desc_disabled.png') no-repeat center right;
+.sorting_desc_disabled div{
+	display: inline-block;
+	float:right;
+	width: 16px;
+	height:	16px;
+    background-image: url(custom-theme/images/ui-icons_2694e8_256x240.png);
+	background-position: -64px -16px;
 }
 
 

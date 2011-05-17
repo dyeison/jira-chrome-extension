@@ -137,7 +137,7 @@ var jira = {
 							}
 						}}
 					]
-				} );	
+				} ).find("th").append("<div />");
 		},
 		addTab: function(filter){
 			console.log(filter)
