@@ -222,6 +222,11 @@ var jira = {
 					$("<button />").click(function(){
 						jira.createIssue();
 					}).text(chrome.i18n.getMessage('createIssue')).button({icons: {primary: "ui-icon-plusthick"},text: false})
+				).append(
+					$("<button />").click(function(){
+						chrome.extension.getBackgroundPage().loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRSCE62LWTWT6");
+						window.close();
+					}).text("Contribute").button({icons: {primary: "ui-icon-heart"},text: false})
 				);
 				if (!jira.isDetached){
 					$("#HeaderLink").append(
@@ -230,12 +235,6 @@ var jira = {
 						}).text(chrome.i18n.getMessage('detachWindow')).button({icons: {primary: "ui-icon-newwin"},text: false})
 					)
 				}
-				/*.append(
-					$("<button />").click(function(){
-						chrome.extension.getBackgroundPage().loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=QAWCRPFR2FW8S&lc=RU&item_name=JIRA%20Chrome%20extension&item_number=jira%2dchrome&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
-						window.close();
-					}).text("Contribute").button({icons: {primary: "ui-icon-heart"},text: false})
-				);*/
 		},
 		updateCurrentTable: function(bReload){
 			var currentFilter = chrome.extension.getBackgroundPage().loader.filters[$("#tabs").tabs( "option", "selected" )];
