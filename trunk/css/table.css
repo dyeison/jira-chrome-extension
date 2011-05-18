@@ -96,7 +96,7 @@ table.display thead th {
 	font-size:11px;
 	margin:6px;
 	white-space:nowrap;
-	padding: 3px 18px 5px 3px;
+	padding: 3px;
 	background-color: #7db0dd;
 	vertical-align:middle;
 	font-weight: bold;
@@ -145,7 +145,7 @@ table.display td.Summary {
 }
 
 table.display td.icon {
-	max-width:40px;
+	max-width:24px;
 }
 
 table.display td.Date {
