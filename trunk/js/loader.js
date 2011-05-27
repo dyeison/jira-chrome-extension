@@ -62,7 +62,7 @@ var loader = {
 	worklog: new Worklog(),
 	icon: new AnimatedIcon('images/logo-19.png'),
 	login: function(username, password, callback){
-		
+			chrome.tabs.onUpdated.removeListener(loader.onTabUpdated);
 			var pl = new SOAPClientParameters();
 			pl.add("username", username);
 			pl.add("password", password);
@@ -81,8 +81,26 @@ var loader = {
 						loader.token = $(xhr).text();
 						loader.getSettings();
 						callback(loader);
+						chrome.tabs.onUpdated.addListener(loader.onTabUpdated);
+						chrome.extension.onRequest.addListener(function(request, sender){
+							if(request.action == 'subscribe'){
+								loader.options(escape(JSON.stringify(request)));
+							}
+						});
 					}
 				});
+	},
+	onTabUpdated: function(tabId, changeInfo, tab){	
+		console.log(changeInfo,loader);
+		if(changeInfo.status == 'complete' && tab.url.indexOf(loader.url)>=0){
+			chrome.tabs.executeScript(tabId, {
+				file: 'js/jquery-1.5.1.min.js'
+				}, function(){
+					chrome.tabs.executeScript(tabId, {
+						file: 'js/content.subscribe.js'
+					});
+			});
+		}
 	},
 	update: function(callback){
 		loader.updateFavoritesFilters(function(){
@@ -410,18 +428,21 @@ var loader = {
 			});
 		})
 	},
-	options:function(){
+	options:function(param){
 		var bOptionsPageFound = false;
 		chrome.tabs.getAllInWindow(null, function (tabs){
 			$.each(tabs, function(i, tab){
 				if(tab.url.indexOf(chrome.extension.getURL("options.html")) ==0){
 					bOptionsPageFound = true;
-					chrome.tabs.update(tab.id, {selected : true});						
+					chrome.tabs.update(tab.id, {
+						url: chrome.extension.getURL("options.html")+(param?'?'+param:''),
+						selected : true
+					});						
 				}
 			});
 			if(!bOptionsPageFound){
 				chrome.tabs.create({
-					url: chrome.extension.getURL("options.html"),
+					url: chrome.extension.getURL("options.html")+(param?'?'+param:''),
 					selected : true
 				});
 			}					
