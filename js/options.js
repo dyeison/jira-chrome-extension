@@ -46,7 +46,17 @@ $(document).ready(function(){
 		}
 	});
 	updateFilterTable();
-
+	if(location.search){
+		var request = JSON.parse(unescape(location.search.replace(/^\?/,'')));
+		if(request.action == 'subscribe'){
+			editFilter(new Filter({
+				type: "jql",
+				enabled: true,
+				jql: request.jql,
+				name: request.jql.substr(0,20)+'...'
+			}));		
+		}
+	}
 });
 
 	function createFiltersTable(){
