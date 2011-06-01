@@ -8,6 +8,9 @@
 	"timeSpent": {
 		"message": "Затрачено времени:"
 	},
+	"date": {
+		"message": "Дата:"
+	},
 	"resolveIssue": {
 		"message": "Закрыть задачу"
 	},

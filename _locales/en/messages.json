@@ -8,6 +8,9 @@
 	"timeSpent": {
 		"message": "Time spent:"
 	},
+	"date": {
+		"message": "Date:"
+	},
 	"resolveIssue": {
 		"message": "Resolve issue"
 	},

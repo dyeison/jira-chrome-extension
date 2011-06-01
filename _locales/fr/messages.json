@@ -8,6 +8,9 @@
 	"timeSpent": {
 		"message": "Consigné:"
 	},
+	"date": {
+		"message": "Date:"
+	},
 	"resolveIssue": {
 		"message": "Traiter la demande"
 	},
