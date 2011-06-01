@@ -207,6 +207,7 @@ $(document).ready(function(){
 	$("#optionsFilterJQLRow").setVisibility(filter.type=='jql');
 	$("#filterUpdate").val(filter.jql);
 	$("#filterNotify").setChecked(filter.notify);
+	$("#filterDesktopNotify").setChecked(filter.desktopNotify);
 	$("#filterUpdate").combobox('value', filter.updateInterval);
 	$("#filterBadge").setChecked(filter.badge);
 	$('#optionsFilterColorRow').setVisibility(filter.badge);
@@ -248,6 +249,7 @@ $(document).ready(function(){
 					filter.updateInterval = parseInt($("#filterUpdate").attr("value"));
 					filter.enabled = $("#filterEnabed").is(":checked");
 					filter.notify = $("#filterNotify").is(":checked");
+					filter.desktopNotify = $("#filterDesktopNotify").is(":checked");
 					filter.badge = $("#filterBadge").is(":checked");
 					filter.color = filter.badge?$('#colorSelector div').css('backgroundColor'):filter.color;
 					$.each(filter.columns, function(c, v){

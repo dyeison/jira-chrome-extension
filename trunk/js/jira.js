@@ -207,12 +207,16 @@ var jira = {
 				$("#HeaderLink").append(
 					$("<button />").click(function(){
 						chrome.extension.getBackgroundPage().loader.addTab(jira.url('/secure/ManageFilters.jspa'));
-						window.close();
+						if(!jira.isDetached){
+							window.close();
+						}
 					}).text(chrome.i18n.getMessage('manageFilters')).button({icons: {primary: "ui-icon-flag"},text: false})
 				).append(
 					$("<button />").click(function(){
 						chrome.extension.getBackgroundPage().loader.addTab(chrome.extension.getURL('options.html'));
-						window.close();
+						if(!jira.isDetached){
+							window.close();
+						}
 					}).text(chrome.i18n.getMessage('options')).button({icons: {primary: "ui-icon-wrench"},text: false})
 				).append(
 					$("<button />").click(function(){
@@ -225,7 +229,9 @@ var jira = {
 				).append(
 					$("<button />").click(function(){
 						chrome.extension.getBackgroundPage().loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRSCE62LWTWT6");
-						window.close();
+						if(!jira.isDetached){
+							window.close();
+						}
 					}).text("Contribute").button({icons: {primary: "ui-icon-heart"},text: false})
 				);
 				if (!jira.isDetached){
@@ -268,14 +274,16 @@ var jira = {
 			  'left=' + detachedPos.left + ',top=' + (detachedPos.top - 22) + // Magic 22...
 			  ',width=' + detachedPos.width + ',height=' + detachedPos.height +
 			  'location=no,menubar=no,resizable=yes,status=no,titlebar=yes,toolbar=no');
-			window.close();
+			if(!jira.isDetached){
+				window.close();
+			}
 		},
 		stopProgress: function(issueId){
 			var timeSpent = chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(issueId);
 			var bResolve = false;
 			
 			function stop(opt){
-				chrome.extension.getBackgroundPage().loader.addWorkLog(opt.issueId, opt.timeSpent, opt.log, function(data){
+				chrome.extension.getBackgroundPage().loader.addWorkLog(opt.issueId, opt.timeSpent, opt.log, opt.date, function(data){
 					console.log(data);
 					if($("faultstring:first", data).length){
 						$("#alertDlg").text($("faultstring:first", data).text()).dialog({
@@ -291,13 +299,21 @@ var jira = {
 						if(opt.bAssignee){
 							chrome.extension.getBackgroundPage().loader.assigneIssue(opt.issueId, opt.assignee);
 						}
-						jira.updateCurrentTable(true);
-						window.close();
+						if(!jira.isDetached){
+							window.close();
+						} else {
+							jira.updateCurrentTable(true);
+							$("#stopProggresDlg").dialog('close');
+						}
 					}
 				});
 			}
 			
 			$("#progressTimeSpent").val(timeSpent);
+			$("#progressDate").datepicker({
+				defaultDate: new Date(),
+				firstDay: 1
+			});
 
 			$("#stopProggresDlg").dialog({
 				width: "500px",
@@ -311,6 +327,7 @@ var jira = {
 						stop({
 							issueId: issueId, 
 							timeSpent: $("#progressTimeSpent").val(), 
+							date: $("#progressDate").datepicker( "getDate" ), 
 							log: $("#progressLog").val(), 
 							bResolve: $("#progressIsResolved").is(":checked"), 
 							resolution: $("#progressResolution").val(),
@@ -410,7 +427,9 @@ var jira = {
 						var type = $("#createIssueType").val();
 						chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/CreateIssue.jspa?pid="+pid+"&issuetype="+type+"&Create=Create"));
 						$(this).dialog('close');
-						window.close();
+						if(!jira.isDetached){
+							window.close();
+						}
 					}
 				},{
 					text: chrome.i18n.getMessage('cancel'),

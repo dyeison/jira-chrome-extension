@@ -286,14 +286,14 @@ var loader = {
 							callback(xhr);
 				});
 	},	
-	addWorkLog: function(issue, timeSpent, log, callback){
+	addWorkLog: function(issue, timeSpent, log, createdDate, callback){
 		var pl = new SOAPClientParameters();
 		pl.add("in0", loader.token);
 		pl.add("in1", issue);
 		pl.add("in2", {
-			"startDate":this.getXsdDateTime(new Date()),
-			"comment":log,
-			"timeSpent":timeSpent
+			"startDate": loader.getXsdDateTime(createdDate?createdDate:new Date()),
+			"comment": log,
+			"timeSpent": timeSpent
 		});
 		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addWorklogAndAutoAdjustRemainingEstimate", pl, true, function(r, xhr){
 			if(callback)
@@ -354,14 +354,12 @@ var loader = {
 			$(xhr).children(":first").children(":first").children(":first").children(":first").children().each( function(){
 				$("multiRef" + this.getAttribute('href') , xhr).each(function(i, val) {
 						if($("key", val).text()){
-							//loader.getWorklogs($("key", val).text());
 							data.push([
 								$("type", val).text(),
 								$("key", val).text(),
 								$("summary", val).text(),
 								$("assignee", val).text(),
 								$("duedate", val).text(),
-								//$("timeoriginalestimate", val).text(), 
 								parseInt($("priority", val).text()),
 								loader.getResolution($("resolution", val).text()),
 								$("status", val).text(),
@@ -380,9 +378,8 @@ var loader = {
 	getDate: function(str){
 		if(str!='' && typeof(str)!="undefined"){
 			try{
-				var date= parseXSDDateString(str);
+				var date=parseXSDDateString(str);
 					date.setUTCDate(date.getUTCDate()+1);
-				  //console.log(str+": "+d.getFullYear()+"-"+(d.getMonth()+1) + "-" +d.getDate());
 				  var m = date.getUTCMonth()+1; m=(m.toString().length==1)?"0"+m:m;
 				  var d = date.getUTCDate(); d=(d.toString().length==1)?"0"+d:d;
 				return date.getUTCFullYear()+"-"+m+ "-" +d;
