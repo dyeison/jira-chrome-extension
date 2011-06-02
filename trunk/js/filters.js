@@ -148,6 +148,7 @@ function Filter(param){
 	
 	var timer = null,
 		self = this;
+		
 	this.update = function(callback){
 		if(timer){
 			clearTimeout(timer);
@@ -156,9 +157,14 @@ function Filter(param){
 			loader.getIssuesFromFilter(this, callback);
 		}
 		if(this.updateInterval){
-			setTimeout(function(){
+			timer = setTimeout(function(){
 				self.update();
 			},this.updateInterval*60000);
+		}
+	}
+	this.stop = function(){
+		if (timer){
+			clearTimeout(timer);
 		}
 	}
 }

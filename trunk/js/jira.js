@@ -94,7 +94,7 @@ var jira = {
 		renderTableFromXml: function(id){
 			var filter = chrome.extension.getBackgroundPage().loader.filters.get(id);
 			$("#table_"+id).dataTable( {
-				"bLengthChange": false,
+				"bLengthChange": jira.isDetached,
 				"bFilter": false,
 				"bSort": true,
 				//"bInfo": false,
@@ -267,7 +267,7 @@ var jira = {
 				top: 100,
 				left: 100,
 				width: window.innerWidth,
-				height: window.innerHeight
+				height: window.innerHeight + 20
 			}
 			
 			window.open(chrome.extension.getURL('jira.html?detached'), 'jira_popup_window',
