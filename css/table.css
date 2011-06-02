@@ -109,7 +109,7 @@ table.display thead th {
 }
 
 table#filters {
-	max-width:500px !important;
+	/*max-width:500px !important;*/
 }
 table#filters tbody td {
     white-space: nowrap;

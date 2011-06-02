@@ -129,6 +129,7 @@ $(document).ready(function(){
 				click: function(){
 					var iSelectedFilter = oFilters.fnGetSelectedPosition();
 					if(loader.filters[iSelectedFilter].type != 'filter'){
+						loader.filters[iSelectedFilter].stop();
 						loader.filters.splice(iSelectedFilter, 1);
 						loader.filters.save();
 						updateFilterTable(iSelectedFilter);
