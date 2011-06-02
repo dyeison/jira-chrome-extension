@@ -1,8 +1,9 @@
 {
 	"name": "JIRA assistant for Google Chrome",
-	"version": "1.6.0",
-	"description": "With this extension you'll get simple access to all your issues or task from Atlassian  JIRA.",
+	"version": "1.7.0",
+	"description": "JIRA assistant for Google Chrome is a useful extension wich allow you to manage your JIRA issues, bugs or tasks right in your browser with just one click.",
 	"background_page": "background.html",
+	"omnibox": { "keyword" : "jira" },
 	"icons": {
 		"16": "images/logo-16.png",
 		"48": "images/logo-48.png",
@@ -14,7 +15,6 @@
 		"<all_urls>"
 	],
 	"default_locale" : "en",
-	"homepage_url": "http://code.google.com/p/jira-chrome-extension/",
 	"key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBWxO6VfwT0VkjeVYjw7wCIuBoRUuX873l2rDHt5FzthPsVSKZSLSpjs4Qoh+ObxP+5FI+S6fxA6KyTpcuJDKO7IxDb2Y3rLV9IMWzXJcXsx2cDNjxnFns593TdQq8PUW7XVOiOLi79EO/uTpaURxY911ZJcQTZfr1f15fDwKvlQIDAQAB",
 	"options_page": "options.html",
 	"browser_action": {

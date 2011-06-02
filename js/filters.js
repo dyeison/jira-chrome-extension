@@ -118,9 +118,9 @@ function Filter(param){
 	}
 	$.extend(this.columns, param.columns);
 	function randomId(){
-		var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-		var string_length = 8;
-		var randomstring = '';
+		var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
+			string_length = 8,
+			randomstring = '';
 		for (var i=0; i<string_length; i++) {
 			var rnum = Math.floor(Math.random() * chars.length);
 			randomstring += chars.substring(rnum,rnum+1);
@@ -167,6 +167,7 @@ Filter.prototype.toArray = function(){
 	return [this.id, this.enabled, this.name, this.updateInterval, this.notify, this.desktopNotify, this.badge?this.color:'', this.jql?this.jql:''];
 }
 Filter.prototype.showNotifications = function(){
+	var self = this;
 	if(this.desktopNotify){
 		var newKeys = [];
 		$.each(this.issues, function(i, val){
@@ -179,8 +180,8 @@ Filter.prototype.showNotifications = function(){
 			$.each(newKeys, function(j, i){
 						var notification = webkitNotifications.createNotification(
 						  'images/logo-48.png', // icon url - can be relative
-						  this.issues[i][1],  	// notification title
-						  this.issues[i][2] 	// notification body text
+						  self.name + ":  " + self.issues[i][1],  	// notification title
+						  self.issues[i][2] 	// notification body text
 						);
 						notification.onclick = function(event){
 							loader.addTab(loader.url +"/browse/"+val[1]); 
