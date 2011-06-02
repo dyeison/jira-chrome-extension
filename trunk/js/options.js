@@ -68,9 +68,7 @@ $(document).ready(function(){
 				"bSort": false,
 				"aaData": loader.filters?loader.filters:[],
 				"aoColumns": [
-						{	"bVisible":false,"sTitle": chrome.i18n.getMessage( "optionsFilterCounter"), 
-							"sClass": "center ShortField",
-							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ].toString() == loader.countedFilterId)?"<img src='images/counter.png'>":"";}},
+						{	"bVisible": false },
 						{	"sTitle": chrome.i18n.getMessage( "optionsFilterEnabled"), 
 							"sClass":"icon",
 							"sClass": "center ShortField",
@@ -132,6 +130,7 @@ $(document).ready(function(){
 					var iSelectedFilter = oFilters.fnGetSelectedPosition();
 					if(loader.filters[iSelectedFilter].type != 'filter'){
 						loader.filters.splice(iSelectedFilter, 1);
+						loader.filters.save();
 						updateFilterTable(iSelectedFilter);
 					}
 					$("#dlgAlert").dialog('close');
