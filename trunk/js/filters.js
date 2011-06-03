@@ -138,7 +138,8 @@ function Filter(param){
 	this.badge = (typeof param.badge != 'undefined')?param.badge:(param.id == "0");
 	this.color = (typeof param.color != 'undefined')?param.color:'#00ff00';
 	
-	this.keys = (typeof param.keys != 'undefined')?param.keys:[];
+	this.__defineGetter__('keys', function(){ var sKeys = localStorage.getItem(this.id+".keys"); return (sKeys)?sKeys.split(","):[];});
+	this.__defineSetter__('keys', function(keys){ localStorage.setItem(this.id+".keys", keys.toString()); });
 	if(this.type=='jql'){
 		this.jql  = param.jql;
 	}
@@ -175,15 +176,10 @@ Filter.prototype.toArray = function(){
 Filter.prototype.showNotifications = function(){
 	var self = this;
 	if(this.desktopNotify){
-		var newKeys = [];
+		var keys = [];
 		$.each(this.issues, function(i, val){
-				if($.inArray(val[1], this.keys)<0){
-					newKeys.push(i);
-				}
-		});
-
-		if(newKeys.length>0 && newKeys.length<=5){
-			$.each(newKeys, function(j, i){
+				keys.push(val[1]);
+				if(self.keys.length && $.inArray(val[1], self.keys)<0){
 						var notification = webkitNotifications.createNotification(
 						  'images/logo-48.png', // icon url - can be relative
 						  self.name + ":  " + self.issues[i][1],  	// notification title
@@ -206,8 +202,9 @@ Filter.prototype.showNotifications = function(){
 						}						
 						notification.show();
 						loader.notifications.push(notification);
-			});
-		}
+				}
+		});
+		this.keys = keys;
 	}
 }
 
