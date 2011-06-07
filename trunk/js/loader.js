@@ -67,7 +67,6 @@ var loader = {
 			pl.add("username", username);
 			pl.add("password", password);
 				SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "login", pl, true, function(r, xhr){
-					console.log(xhr);
 					if($("faultstring",xhr).text() != '')
 					{
 						loader.loggedIn = false;
@@ -82,22 +81,23 @@ var loader = {
 						loader.getSettings();
 						callback(loader);
 						chrome.tabs.onUpdated.addListener(loader.onTabUpdated);
-						chrome.extension.onRequest.addListener(function(request, sender){
+						chrome.extension.onRequest.addListener(function(request, sender, callback){
 							if(request.action == 'subscribe'){
 								loader.options(escape(JSON.stringify(request)));
+							} else if (request.action == 'attach'){
+								loader.addAttachmentsToIssue(request.key, request.files, callback);
 							}
 						});
 					}
 				});
 	},
 	onTabUpdated: function(tabId, changeInfo, tab){	
-		console.log(changeInfo,loader);
 		if(changeInfo.status == 'complete' && tab.url.indexOf(loader.url)>=0){
 			chrome.tabs.executeScript(tabId, {
 				file: 'js/jquery-1.5.1.min.js'
 				}, function(){
 					chrome.tabs.executeScript(tabId, {
-						file: 'js/content.subscribe.js'
+						file: 'js/content.js'
 					});
 			});
 		}
@@ -347,6 +347,18 @@ var loader = {
 		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addComment", pl, true, function(r, xhr){
 			if(callback)
 				callback(xhr);
+		});
+	},
+	addAttachmentsToIssue: function(issue, files, callback){
+		//console.log(files, $.map(files, function(f){return f.fileName}),  $.map(files, function(f){return f.data}));
+		var pl = new SOAPClientParameters();
+		pl.add("in0", loader.token);
+		pl.add("in1", issue);
+		pl.add("in2", $.map(files, function(f){return f.fileName}));
+		pl.add("in3", $.map(files, function(f){return $.base64.encode(f.data);}));
+		SOAPClient.invoke(loader.url + "/rpc/soap/jirasoapservice-v2", "addBase64EncodedAttachmentsToIssue", pl, true, function(r, xhr){
+			if(callback)
+				callback();
 		});
 	},
 	parseXml: function(xhr){
