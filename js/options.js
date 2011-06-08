@@ -13,17 +13,15 @@ var optionsPage = this,
 $(document).ready(function(){
 	$("#username").attr("value",  localStorage.getItem('username'));
 	$("#password").attr("value",  localStorage.getItem('password'));
-	/*
-	if(localStorage.getItem('omniboxEnabled') =='true' )
-		$("#omniboxEnabled").attr("checked", 'true');
-	$("#omniboxEnabled").click(function(){
-		localStorage.setItem('omniboxEnabled', this.checked);
-	});
-	*/
+
+	
+	$("#attachmentEnabled").setChecked(chrome.extension.getBackgroundPage().loader.attachments);	
+	$("#quickaddEnabled").setChecked(chrome.extension.getBackgroundPage().loader.quickadd);	
+	
 	$("#url").combobox({
 		editable:true, 
 		value:localStorage.getItem('url')?localStorage.getItem('url'):"http://jira.atlassian.com/"
-	});//
+	});
 
 	$.map(updateIntervalValues,function(val){
 		$("#filterUpdate").append($("<OPTION  />").attr("value", val).text(val?val:chrome.i18n.getMessage( "optionsManualUpdateInterval")));
@@ -147,6 +145,9 @@ $(document).ready(function(){
 
 
   function saveOptions(){
+		chrome.extension.getBackgroundPage().loader.attachments = $("#attachmentEnabled").is(":checked");
+		chrome.extension.getBackgroundPage().loader.quickadd = $("#quickaddEnabled").is(":checked");
+
 	if(
 		localStorage.getItem('username')!=$("#username").attr("value") || 
 		localStorage.getItem('password') != $("#password").attr("value") ||

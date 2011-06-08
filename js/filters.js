@@ -8,7 +8,6 @@ function FiltersArray(){
 	var self = this,
 		badgeItem = 0,
 		timer = null;
-	
 	this.statrBadgeAnimation = function(){
 		console.log('start');
 		if(timer){
@@ -22,20 +21,9 @@ function FiltersArray(){
 				self.updateBadge();
 			}, 10000);
 	}
-	function hex2rgb(hex) {
-		var rx=/rgb\((\d+), (\d+), (\d+)\)/;
-		if(rx.test(hex)){
-			var res = rx.exec(hex);
-			return [parseInt(res[1]), parseInt(res[2]), parseInt(res[3]), 255];
-		} else {
-			var hex = parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
-			return [hex >> 16, (hex & 0x00FF00) >> 8,  (hex & 0x0000FF), 255];
-		}
-	}
-
 	this.updateBadge = function(){
 		if(this[badgeItem].badge){
-			chrome.browserAction.setBadgeBackgroundColor({color: hex2rgb(this[badgeItem].color)})
+			chrome.browserAction.setBadgeBackgroundColor({color: this[badgeItem].rgb})
 			chrome.browserAction.setBadgeText({text: this[badgeItem].issues.length.toString()});
 			badgeItem = badgeItem+1>=this.length?0:badgeItem+1;
 		} else {
@@ -117,6 +105,9 @@ function Filter(param){
 		worklog: true
 	}
 	$.extend(this.columns, param.columns);
+	
+	this.__defineGetter__("rgb", function(){return hex2rgb(this.color);});
+	
 	function randomId(){
 		var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
 			string_length = 8,
@@ -168,6 +159,16 @@ function Filter(param){
 			clearTimeout(timer);
 		}
 	}
+	function hex2rgb(hex) {
+		var rx=/rgb\((\d+), (\d+), (\d+)\)/;
+		if(rx.test(hex)){
+			var res = rx.exec(hex);
+			return [parseInt(res[1]), parseInt(res[2]), parseInt(res[3]), 255];
+		} else {
+			var hex = parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
+			return [hex >> 16, (hex & 0x00FF00) >> 8,  (hex & 0x0000FF), 255];
+		}
+	}	
 }
 
 Filter.prototype.toArray = function(){

@@ -143,6 +143,18 @@
 	"optionsOmniboxEnabled": { 
 		"message": "Enable omnibox handler"
 	},	
+	"optionsFileAttachmentsEnabled": { 
+		"message": "Включить drag&drop вложения"
+	},	
+	"optionsFileAttachmentsLabel": { 
+		"message": "Перетащите файлы в эту область для добавления вложения"
+	},	
+	"optionsQuickAddEnabled": { 
+		"message": "Включить Быстрое добавление фильтров"
+	},	
+	"optionsQuickAddLabel": { 
+		"message": "Добавить этот фильтр в JIRA Assistant"
+	},	
 	"issueType": { 
 		"message": "Тип"
 	},	

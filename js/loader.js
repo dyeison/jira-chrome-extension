@@ -58,7 +58,6 @@ var loader = {
 	token: null,
 	url:null,
 	countedFilterId: ((typeof localStorage.getItem('countedFilterId') == 'string')?localStorage.getItem('countedFilterId'):"0"),
-	omnibox: ((typeof localStorage.getItem('countedFilterId') == 'string')?(localStorage.getItem('countedFilterId') == "true"):false),
 	worklog: new Worklog(),
 	icon: new AnimatedIcon('images/logo-19.png'),
 	login: function(username, password, callback){
@@ -98,6 +97,18 @@ var loader = {
 				}, function(){
 					chrome.tabs.executeScript(tabId, {
 						file: 'js/content.js'
+					}, function(){
+						if(loader.attachments){
+							console.log('init file drop');
+							chrome.tabs.executeScript(tabId, {
+								code: 'ja.initFileDrop();'
+							});
+						}
+						if(loader.quickadd){
+							chrome.tabs.executeScript(tabId, {
+								code: 'ja.initQuickAdd();'
+							});
+						}
 					});
 			});
 		}
@@ -458,3 +469,14 @@ var loader = {
 		});
 	}
 }
+	$.each(['omnibox', 'attachments', 'quickadd'], function(i, param){
+		loader.__defineGetter__(param, function(){
+			console.log('get', param);
+			return localStorage.getItem(param)?(localStorage.getItem(param)=="true"):true;
+		});
+		loader.__defineSetter__(param, function(val){
+			console.log(param, val);
+			localStorage.setItem(param, val.toString());
+		});
+	});
+

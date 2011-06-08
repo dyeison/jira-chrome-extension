@@ -90,6 +90,7 @@ table.display {
 	margin: 0 0;
 	width: 100%;
 	clear: both;
+	border-radius: 3px;
 }
 
 table.display thead th {
@@ -97,7 +98,7 @@ table.display thead th {
 	margin:6px;
 	white-space:nowrap;
 	padding: 3px;
-	background-color: #7db0dd;
+	background-image: -webkit-linear-gradient(bottom, #7db0dd, #5597d1);
 	vertical-align:middle;
 	font-weight: bold;
 	border-bottom:1px solid #3672a8;
