@@ -106,7 +106,7 @@ var jira = {
 						{"bVisible": filter.columns.type, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { 
 							return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
 						{"bVisible": filter.columns.key, "sTitle": chrome.i18n.getMessage('Key'), "bUseRendered":false,  "fnRender": function(obj) { 
-							return "<a target='_blank' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+							return "<a target='_main' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 						{"bVisible": filter.columns.summary, "sTitle": chrome.i18n.getMessage('Summary'), "sClass": "Summary"},
 						{"bVisible": filter.columns.assignee, "sTitle": chrome.i18n.getMessage('assigne'),  "fnRender": function(obj) { 
 								return "<a href=\"javascript:{jira.assignee('"+obj.aData[1]+"')}\">" + 
@@ -140,22 +140,34 @@ var jira = {
 				} ).find("th").append("<div />");
 		},
 		addTab: function(filter){
-			console.log(filter)
+			function transp(rgba, trnasp){
+				rgba[3] = trnasp;
+				return rgba;
+			}
+			console.log(1)
 			$("#tabHeader").append(
 				$("<LI />").append(
-					$("<A />")//-webkit-linear-gradient(top, #fff, #eaeef3 50%, #d3d7db);}
-							.attr("href", "#div_"+filter.id)
-							.attr("filterId", filter.id)
-							.attr("type", filter.type)
-							.text(filter.name +
-								((typeof(chrome.extension.getBackgroundPage().loader.filters.get(filter.id).issues) != "string")?
-									("(" + chrome.extension.getBackgroundPage().loader.filters.get(filter.id).issues.length + ")"):''))
-							.dblclick(function(){
-								if(this.getAttribute("type") == "filter")
-									chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
-							})
-				).css("background-image",(filter.badge?"-webkit-linear-gradient(bottom, transparent 75%, "+filter.color+")":""))
+					$("<A />")
+						.attr("href", "#div_"+filter.id)
+						.attr("filterId", filter.id)
+						.attr("title", filter.jql?filter.jql:'')
+						.attr("type", filter.type)
+						.text(filter.name +
+							((typeof(chrome.extension.getBackgroundPage().loader.filters.get(filter.id).issues) != "string")?
+								("(" + chrome.extension.getBackgroundPage().loader.filters.get(filter.id).issues.length + ")"):''))
+						.dblclick(function(){
+							if(this.getAttribute("type") == "filter")
+								chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
+							else if(this.getAttribute("type") == 'jql')
+								chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator!executeAdvanced.jspa?runQuery=true&jqlQuery=" + escape(this.getAttribute("title"))));
+						})
+				)
+				.css({
+					"background-image": (filter.badge?("-webkit-linear-gradient(bottom, rgba("+transp(filter.rgb, .01)+"), rgba("+transp(filter.rgb, .4)+"))"):""),
+					"text-shadow": "#fff 0px 0px 1px"
+				})
 			);
+			console.log(2)
 			$("#tabs").append(
 				$("<DIV />").attr("id", "div_"+filter.id).append(
 					$("<TABLE />").attr({

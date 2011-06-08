@@ -4,6 +4,25 @@ var ja = {
 			'action': 'subscribe',
 			'jql': jql});
 	},
+	initQuickAdd: function(){
+		$(".jqlQuickLink").before(
+			$("<img />").attr({
+				"src": chrome.extension.getURL("images/logo-16.png"),
+				"title": chrome.i18n.getMessage('optionsQuickAddLabel')
+			}).css({"display":"inline-block"}).click(function(){
+				ja.subscribe($(this).parent().children('a').attr('title'));
+			})
+		).css({"display":"inline-block"});
+
+		$("#jqlform .help-lnk").after(
+			$("<img />").attr({
+				"src": chrome.extension.getURL("images/logo-16.png"),
+				"title": chrome.i18n.getMessage('optionsQuickAddLabel')
+			}).click(function(){
+				ja.subscribe($('#jqltext').val());
+			})
+		);
+	},
 	initFileDrop: function(){
 		var rx = /\/(\w+-\d+)$/;
 		if(rx.test(document.location.pathname)){
@@ -15,9 +34,10 @@ var ja = {
 					'padding': '20px',
 					'background': '-webkit-linear-gradient(bottom, #fff, #eaeef3 50%, #d3d7db)',
 					'-webkit-box-shadow':' inset 0px 0px 5px #888',
-					'text-align': 'center'
+					'text-align': 'center',
+					'min-height': '48px'
 				})
-				.text("Drag file into this area to make an attachment")
+				.text(chrome.i18n.getMessage('optionsFileAttachmentsLabel'))
 				.prepend($("<div />").css({
 						'background-image': 'url('+chrome.extension.getURL("images/logo-48.png")+')',
 						'width': '48px',
@@ -77,19 +97,6 @@ var ja = {
 								};
 								reader.readAsBinaryString(file);
 							});
-					
-					// var files = e.originalEvent.dataTransfer.files;
-					// console.log($("a.issueaction-attach-file"));
-					// var e = document.createEvent('MouseEvents');
-					// e.initEvent( 'click', true, true );
-					// $("a.issueaction-attach-file").get(0).dispatchEvent(e);
-					// setTimeout(function(){
-						// console.log($('input.upfile').get(0), files);
-						// $('input.upfile').get(0).files = files;
-					// }, 1000);
-					// $.each(files, function(i, file){
-						// console.log(file);
-					// })
 					return false;
 				})
 			);
@@ -97,22 +104,3 @@ var ja = {
 	}
 }
 
-$(".jqlQuickLink").before(
-	$("<img />").attr({
-		"src": chrome.extension.getURL("images/logo-16.png"),
-		"title": "Add this query to JIRA Assistant"
-	}).css({"display":"inline-block"}).click(function(){
-		ja.subscribe($(this).parent().children('a').attr('title'));
-	})
-).css({"display":"inline-block"});
-
-$("#jqlform .help-lnk").after(
-	$("<img />").attr({
-		"src": chrome.extension.getURL("images/logo-16.png"),
-		"title": "Add this query to JIRA Assistant"
-	}).click(function(){
-		ja.subscribe($('#jqltext').val());
-	})
-);
-
-ja.initFileDrop();

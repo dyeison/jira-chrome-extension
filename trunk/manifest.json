@@ -3,7 +3,7 @@
 	"version": "1.7.0",
 	"description": "Useful extension which allow you to manage your JIRA issues, bugs or tasks just in one click",
 	"background_page": "background.html",
-	"omnibox": { "keyword" : "jira" },
+	//"omnibox": { "keyword" : "jira" },
 	"icons": {
 		"16": "images/logo-16.png",
 		"48": "images/logo-48.png",
