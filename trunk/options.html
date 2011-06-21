@@ -11,8 +11,8 @@
 		<script type="text/javascript" src="js/jquery.combobox.js"></script>
 		<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
 		<script type="text/javascript" src="js/jquery.dataTables.utils.js"></script> 
+		<script type="text/javascript" src="js/jquery.md5.js"></script>		
 		<script type="text/javascript" src="js/colorpicker.js"></script>
-		<script type="text/javascript" src="js/filters.js"></script>
 		<script type="text/javascript" src="js/options.js"></script>
 		<script>
 
@@ -32,6 +32,7 @@
 			}
 			
 			$("#pageFilters  button").button();
+			$("#pageMain  button").button();
 		});
 		
 		</script>
@@ -52,7 +53,8 @@
 		
 			<ul id="navbar">
 			  <li id="tabPpageMain" class="navbar-item navbar-item-selected" pagename="pageMain" tabindex="0"><span><span i18n-content="optionsPpageMain"></span></li>
-			  <li id="tabPageFilters" class="navbar-item" pagename="pageFilters" tabindex="1" style="display: none;"><span><span i18n-content="optionsPageFilters"></span></li>
+			  <li id="tabPpageServers" class="navbar-item" pagename="pageServers" tabindex="1"><span><span i18n-content="optionsPpageServers"></span></li>
+			  <li id="tabPageFilters" class="navbar-item" pagename="pageFilters" tabindex="2" style="display: none;"><span><span i18n-content="optionsPageFilters"></span></li>
 			</ul>
 			<p style="padding:5px;text-align:left;">
 				<iframe src="http://www.facebook.com/plugins/like.php?app_id=192138857499789&amp;href=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fafpofdeegmmclngjmadpjaajacebkege&amp;send=false&amp;layout=button_count&amp;width=180&amp;show_faces=true&amp;action=recommend&amp;colorscheme=light&amp;font=segoe+ui&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:180px; height:21px;" allowTransparency="true"></iframe>
@@ -66,7 +68,7 @@
 	<div id="mainview-content">
 	
 	
-		<!-- Proxies list page --------------------------------------------------------------------------------------------------------->
+		<!-- Servers list page --------------------------------------------------------------------------------------------------------->
 		<div id="pageMain" class="tabPage">
 				<h1 id="headerLabel"><span i18n-content="optionsPpageMain"></h1>
 				<p />
@@ -75,52 +77,67 @@
 		<table style="width:100%;height:100%;">
 			<tr>
 			<td valign="center">
-				<table width="100%">
-				<tr>
-					<td align="right" width="200"><span i18n-content="optionsUsername"></td>
-					<td><input id="username" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
-				</tr>
-				<tr>
-					<td align="right"><span i18n-content="optionsPassword"></td>
-					<td><input type="password" id="password" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
-				</tr>
-				<tr>
-					<td align="right"><span i18n-content="optionsServerUrl"></td>
-					<td style="vertical-align:text-top;"><select id="url">
-						<option value="http://jira.jboss.org/">http://jira.jboss.org/</option>
-						<option value="https://jira.springframework.org/">https://jira.springframework.org/</option>
-						<option value="http://framework.zend.com/issues/">http://framework.zend.com/issues/</option>
-						<option value="http://framework.zend.com/issues/">http://framework.zend.com/issues/</option>
-						<option value="http://jira.opensymphony.com/">http://jira.opensymphony.com/</option>
-						<option value="https://fedora-commons.org/jira/">https://fedora-commons.org/jira/</option>
-						<option value="http://jira.codehaus.org/">http://jira.codehaus.org/</option>
-						<option value="https://developer.skype.com/jira/">https://developer.skype.com/jira/</option>
-						<option value="https://issues.apache.org/jira/">https://issues.apache.org/jira/</option>
-						<option value="http://www.softomate.net/jira/">http://www.softomate.net/jira/</option>
-					</select>
-					</td>
-				</tr>
-				<!--tr>
-					<td align="right"><span i18n-content="optionsUpdateInterval"></td>
-					<td><select id="updateinterval" ></select>, min</td>
-				</tr>
-				<tr>
-					<td align="right">&nbsp;</td>
-					<td><input type="checkbox" id="omniboxEnabled" /><span i18n-content="optionsOmniboxEnabled"></td>
-				</tr-->	
-				<tr>
-					<td align="right">&nbsp;</td>
-					<td><input type="checkbox" id="attachmentEnabled" /><span i18n-content="optionsFileAttachmentsEnabled"></td>
-				</tr>	
-				<tr>
-					<td align="right">&nbsp;</td>
-					<td><input type="checkbox" id="quickaddEnabled" /><span i18n-content="optionsQuickAddEnabled"></td>
-				</tr>					
-				<tr>
-					<td colspan="2" align="right"><hr/><input type="button" onclick="saveOptions();" value="Save Options" /></td>
-				</tr>
+				<table cellspacing=0 cellpadding=10>
+					<tr>
+						<td width="500" valign="top">
+							<table width="500" class="display" id="servers" cellspacing=0 cellpadding=0>
+							
+							</table>
+						</td>
+						<td valign="top" class="buttonsContainer">
+							<button id="optionsServerAdd" onclick="addServer()" i18n-content="optionsServerAdd"></button><br/>
+							<button id="optionsServerEdit" onclick="editServer()" disabled=true i18n-content="optionsServerEdit"></button><br/>
+							<br/>
+							<button id="optionsServerDelete" onclick="deleteServer()" disabled=true i18n-content="optionsServerDelete"></button><br/>
+							
+						</td>
+					</tr>
 				</table>
-				</center>
+				
+				<div id="dlgAddServer" style="display: none;">
+					<table width="100%">
+					<tr>
+						<td align="right" width="120"><span i18n-content="optionsUsername"></td>
+						<td><input id="username" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
+					</tr>
+					<tr>
+						<td align="right"><span i18n-content="optionsPassword"></td>
+						<td><input type="password" id="password" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
+					</tr>
+					<tr>
+						<td align="right"><span i18n-content="optionsServerUrl"></td>
+						<td style="vertical-align:text-top;"><select id="url">
+							<option value="http://jira.jboss.org/">http://jira.jboss.org/</option>
+							<option value="https://jira.springframework.org/">https://jira.springframework.org/</option>
+							<option value="http://framework.zend.com/issues/">http://framework.zend.com/issues/</option>
+							<option value="http://framework.zend.com/issues/">http://framework.zend.com/issues/</option>
+							<option value="http://jira.opensymphony.com/">http://jira.opensymphony.com/</option>
+							<option value="https://fedora-commons.org/jira/">https://fedora-commons.org/jira/</option>
+							<option value="http://jira.codehaus.org/">http://jira.codehaus.org/</option>
+							<option value="https://developer.skype.com/jira/">https://developer.skype.com/jira/</option>
+							<option value="https://issues.apache.org/jira/">https://issues.apache.org/jira/</option>
+							<option value="http://www.softomate.net/jira/">http://www.softomate.net/jira/</option>
+						</select>
+						</td>
+					</tr>
+					<!--tr>
+						<td align="right"><span i18n-content="optionsUpdateInterval"></td>
+						<td><select id="updateinterval" ></select>, min</td>
+					</tr>
+					<tr>
+						<td align="right">&nbsp;</td>
+						<td><input type="checkbox" id="omniboxEnabled" /><span i18n-content="optionsOmniboxEnabled"></td>
+					</tr-->	
+					<tr>
+						<td align="right">&nbsp;</td>
+						<td><input type="checkbox" id="attachmentEnabled" /><span i18n-content="optionsFileAttachmentsEnabled"></td>
+					</tr>	
+					<tr>
+						<td align="right">&nbsp;</td>
+						<td><input type="checkbox" id="quickaddEnabled" /><span i18n-content="optionsQuickAddEnabled"></td>
+					</tr>					
+					</table>
+				</div>
 			</td>
 		</tr>
 	</table>

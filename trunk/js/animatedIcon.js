@@ -8,7 +8,7 @@ function AnimatedIcon(_src){
 		self = this;
 	image.src = _src;
 
-	this.play = function(bInAction) {
+	self.play = function(bInAction) {
 		if(rotation==0 || bInAction){
 			
 		  rotation += 1/animationFrames;
@@ -24,7 +24,7 @@ function AnimatedIcon(_src){
 		 }
 	};
 
-	this.drawIconAtRotation = function() {
+	self.drawIconAtRotation = function() {
 		function ease(x) {
 		  return (1-Math.sin(Math.PI/2+x*Math.PI))/2;
 		}

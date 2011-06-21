@@ -92,6 +92,9 @@
 	"optionsPageFilters": { 
 		"message": "Configure filters"
 	},
+	"optionsPageServers": { 
+		"message": "Configure servers"
+	},
 	"optionsUpdateInterval": { 
 		"message": "Update interval"
 	},
@@ -196,5 +199,17 @@
 	},
 	"detachWindow":{
 		"message": "Detach window"
+	},
+	"optionsServerAdd": {
+		"message": "Add JIRA server"
+	},
+	"optionsServerEdit": {
+		"message": "Add server settings"
+	},
+	"optionsServerDelete": {
+		"message": "Delete server"
+	},
+	"optionsServerSave": {
+		"message": "Save server"
 	}
 }

@@ -226,7 +226,7 @@ tr.selected_row {
 	color: #ffffff; 
 }
 
-table.display tr:not(.selected_row):hover{
+table.display tr:not(.selected_row || .dataTables_empty):hover{
 	background-image:   -webkit-linear-gradient(top, rgba(20,132,230,0.3), rgba(20,132,230,0.1));
 }
 

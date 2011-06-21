@@ -7,22 +7,26 @@
 var optionsPage = this,
 	countedFilterId,
 	oFilters = null,
-	loader = chrome.extension.getBackgroundPage().loader,
+	oServers = null,
+	bg = chrome.extension.getBackgroundPage(),
+	loader = bg.loader,
 	updateIntervalValues = [0, 1, 3, 5, 10, 30, 60];
 	
 $(document).ready(function(){
+	/*
 	$("#username").attr("value",  localStorage.getItem('username'));
 	$("#password").attr("value",  localStorage.getItem('password'));
 
 	
 	$("#attachmentEnabled").setChecked(chrome.extension.getBackgroundPage().loader.attachments);	
 	$("#quickaddEnabled").setChecked(chrome.extension.getBackgroundPage().loader.quickadd);	
-	
+	*/
 	$("#url").combobox({
 		editable:true, 
 		value:localStorage.getItem('url')?localStorage.getItem('url'):"http://jira.atlassian.com/"
 	});
 
+	
 	$.map(updateIntervalValues,function(val){
 		$("#filterUpdate").append($("<OPTION  />").attr("value", val).text(val?val:chrome.i18n.getMessage( "optionsManualUpdateInterval")));
 	});
@@ -43,11 +47,13 @@ $(document).ready(function(){
 			$('#colorSelector div').css('backgroundColor', '#' + hex);
 		}
 	});
+	updateServersTable();
 	updateFilterTable();
+	
 	if(location.search){
 		var request = JSON.parse(unescape(location.search.replace(/^\?/,'')));
 		if(request.action == 'subscribe'){
-			editFilter(new Filter({
+			editFilter(new bg.JiraFilter({
 				type: "jql",
 				enabled: true,
 				jql: request.jql,
@@ -57,6 +63,28 @@ $(document).ready(function(){
 	}
 });
 
+	function createServersTable(){
+
+			oServers = $("#servers").dataTable( {
+				"bLengthChange": false,
+				"bPaginate": false,
+				"bFilter": false,
+				"bSort": false,
+				"aaData": loader.servers?loader.servers:[],
+				"aoColumns": [
+						{"bVisible": false },
+						{"sTitle": chrome.i18n.getMessage('optionsServerUrl')},
+						{"sTitle": chrome.i18n.getMessage('optionsUsername')}
+					]
+			});
+			$("#servers tbody tr").live('click', function () {
+				oServers.fnSelect(this);
+				toggleSelectedServer();
+			} );
+
+	
+	}
+	
 	function createFiltersTable(){
 		if(loader.filters.length){
 			oFilters = $("#filters").dataTable( {
@@ -98,6 +126,10 @@ $(document).ready(function(){
 				$("#optionsFilterColumns").button({disabled:false});
 			}
 		}
+	}	
+	
+	function toggleSelectedServer(){
+		$("#optionsServerDelete").button({disabled:false});
 	}
 	
 	function updateFilterTable(iSelectedFilter){
@@ -109,6 +141,17 @@ $(document).ready(function(){
 			if(typeof iSelectedFilter == 'number')
 				oFilters.fnSelectRow(iSelectedFilter);
 			toggleSelectedFilter();
+		}
+	}
+	function updateServersTable(iSelectedServer){
+		if(!oServers){
+			createServersTable();
+		} else {
+			oServers.fnClearTable();
+			oServers.fnAddData(loader.servers);
+			if(typeof iSelectedServer == 'number')
+				oServers.fnSelectRow(iSelectedServer);
+			toggleSelectedServer();
 		}
 	}
 	
@@ -190,7 +233,7 @@ $(document).ready(function(){
   }
   
   function addFilter(){
-	editFilter(new Filter({
+	editFilter(new bg.JiraFilter({
 						type: "jql",
 						enabled: true
 					}));
@@ -239,7 +282,7 @@ $(document).ready(function(){
 				click: function(){
 					var filter = loader.filters.get($("#filterId").val());
 					if(!filter){
-						filter = new Filter({type:'jql', enabled: true});
+						filter = new bg.JiraFilter({type:'jql', enabled: true});
 						loader.filters.push(filter);
 						var iSelectedFilter = loader.filters.length-1;
 					} else {
@@ -270,6 +313,54 @@ $(document).ready(function(){
 				}
 		}]
 	})
+  }
+  function addServer(){
+	editServer(new bg.JiraServer('',loader));
+  }
+  
+  function editServer(server){
+	if (!server){
+		var iSelectedServer = oServers.fnGetSelectedPosition();
+		server = loader.servers[iSelectedServer];
+	}
+	$("#dlgAddServer").dialog({
+		modal:true,
+		width: 420,
+		resizable: false,
+		title: chrome.i18n.getMessage("optionsServerAdd"),
+		buttons: [{
+				text: chrome.i18n.getMessage("optionsServerSave"),
+				click: function(){
+					server.url = $("#url").combobox('value');
+					var param = {
+						username: $("#username").attr("value"),
+						password: $("#password").attr("value"),
+						success: function(server){
+							console.log('success', server);
+							loader.servers.push(server);
+							loader.servers.save();
+							updateServersTable();
+							$("#dlgAddServer").dialog('close');
+						},
+						error: function(e){
+							alert(e);
+						}
+					};
+					server.login(param);	
+				}
+		},{
+				text: chrome.i18n.getMessage("cancel"),
+				click: function(){
+					$("#dlgAddServer").dialog('close');
+				}
+		}]
+	});
+  }
+  
+  function deleteServer(){
+		var iSelectedServer = oServers.fnGetSelectedPosition();
+		loader.servers.splice(iSelectedServer, 1);
+		updateServersTable();
   }
   
 (function($)  {
