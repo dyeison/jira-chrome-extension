@@ -1,0 +1,200 @@
+﻿{
+	"title": {
+		"message": "JIRA assistant pour Google Chrome"
+	},
+	"quickSearch": {
+		"message": "Recherche rapide"
+	},
+	"timeSpent": {
+		"message": "Consigné:"
+	},
+	"date": {
+		"message": "Date:"
+	},
+	"resolveIssue": {
+		"message": "Traiter la demande"
+	},
+	"assignIssue": {
+		"message": "Attribuer la demande"
+	},
+	"issue": {
+		"message": "Demande"
+	},
+	"assigne": {
+		"message": "Attribuer"
+	},
+	"comment": {
+		"message": "Commentaire"
+	},
+	"resolution": {
+		"message": "Résolution"
+	},
+	"log": {
+		"message": "Commentaire"
+	},
+	"save": {
+		"message": "Sauver"
+	},
+	"cancel": {
+		"message": "Annuler"
+	},
+	"yes": {
+		"message": "Yes"
+	},
+	"no": {
+		"message": "No"
+	},
+	"close": {
+		"message": "Fermer"
+	},
+	"logWork": {
+		"message": "Connexion de travail"
+	},
+	"cancelProgress": {
+		"message": "Annuler de travail"
+	},
+	"reload": {
+		"message": "Recharger la demande"
+	},
+	"manageFilters": {
+		"message": "Gérer les filtres"
+	},
+	"options": {
+		"message": "Options"
+	},
+	"Key": {
+		"message": "Clé"
+	},
+	"Worklog": {
+		"message": "En cours"
+	},
+	"Summary": {
+		"message": "Echéance"
+	},
+	"duedate": {
+		"message": "Echéance"
+	},
+	"Res": {
+		"message": "Res."
+	},
+	"assignedToMe": {
+		"message": "Qui me sont attribuées"
+	},
+	"configError": {
+		"message": "Configure first!"
+	},
+	"optionsTitle": { 
+		"message": "JIRA assistant settings"
+	},
+	"optionsPpageMain": { 
+		"message": "Main settings"
+	},
+	"optionsPageFilters": { 
+		"message": "Configure filters"
+	},
+	"optionsUpdateInterval": { 
+		"message": "Update interval"
+	},
+	"optionsServerUrl": { 
+		"message": "JIRA Server URL"
+	},
+	"optionsUsername": { 
+		"message": "Username"
+	},
+	"optionsPassword": { 
+		"message": "Password"
+	},
+	"optionsFilterName": { 
+		"message": "Filtre name"
+	},
+	"optionsFilterEnabled": { 
+		"message": "Enabled"
+	},
+	"optionsFilterDisable": { 
+		"message": "Disable/Enable"
+	},	
+	"optionsFilterDelete": { 
+		"message": "Supprimer"
+	},
+	"optionsDlgDeleteFilterConfirmation": { 
+		"message": "Etes-vous sûr de vouloir supprimer le filtre sélectionné"
+	},
+	"optionsDlgDeleteFilter": { 
+		"message": "Supprimer filtre"
+	},
+	"optionsFilterShowCounter": { 
+		"message": "Afficher contre pour ce filtre"
+	},
+	"optionsDlgLoading": { 
+		"message": "Authorization..."
+	},
+	"optionsFilterJQL": { 
+		"message": "JIRA Query"
+	},
+	"optionsFilterAdd": { 
+		"message": "Ajouter le filtre"
+	},
+	"optionsFilterSave": { 
+		"message": "Enregistrer le filtre"
+	},	
+	"optionsFilterEdit": { 
+		"message": "Modifier le filtre"
+	},
+	"optionsOmniboxEnabled": { 
+		"message": "Enable omnibox handler"
+	},	
+	"optionsFileAttachmentsEnabled": { 
+		"message": "Enable drag&drop file attachments"
+	},	
+	"optionsFileAttachmentsLabel": { 
+		"message": "Drag file into this area to make an attachment"
+	},	
+	"optionsQuickAddEnabled": { 
+		"message": "Enable QuickAdd filter"
+	},	
+	"optionsQuickAddLabel": { 
+		"message": "Add this query to JIRA Assistant"
+	},	
+	"issueType": { 
+		"message": "Issue type"
+	},	
+	"project": { 
+		"message": "Project"
+	},	
+	"create": { 
+		"message": "Create"
+	},	
+	"createIssue": { 
+		"message": "Create issue"
+	},
+	"optionsFilterColumns":{
+		"message": "Configure filtre columns"
+	},
+	"optionsFilterColumnsDialog":{
+		"message": "Configure filtre columns"
+	},
+	"optionsManualUpdateInterval":{
+		"message": "Manual"
+	},
+	"optionsFilterDesktopNotification":{
+		"message": "Show desktop notification for new issues"
+	},
+	"optionsFilterNotify":{
+		"message": "Notify for filtre updating (icon will rotate)"
+	},
+	"optionsNotify":{
+		"message": "Notify Update"
+	},
+	"optionsDesktopNotify":{
+		"message": "Desktop notifications"
+	},
+	"optionsFilterColor":{
+		"message": "Badge color"
+	},
+	"optionsFilterBadge":{
+		"message": "Show issues count on the badge"
+	},
+	"detachWindow":{
+		"message": "Detach window"
+	}
+}

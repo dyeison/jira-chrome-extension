@@ -1,0 +1,26 @@
+{
+	"name": "JIRA assistant for Google Chrome",
+	"version": "1.7.0",
+	"description": "Useful extension which allow you to manage your JIRA issues, bugs or tasks just in one click",
+	"background_page": "background.html",
+	//"omnibox": { "keyword" : "jira" },
+	"icons": {
+		"16": "images/logo-16.png",
+		"48": "images/logo-48.png",
+        "128": "images/logo-128.png"
+	},
+	"permissions": [
+		"tabs",
+		"notifications",
+		"<all_urls>"
+	],
+	"default_locale" : "en",
+	"key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBWxO6VfwT0VkjeVYjw7wCIuBoRUuX873l2rDHt5FzthPsVSKZSLSpjs4Qoh+ObxP+5FI+S6fxA6KyTpcuJDKO7IxDb2Y3rLV9IMWzXJcXsx2cDNjxnFns593TdQq8PUW7XVOiOLi79EO/uTpaURxY911ZJcQTZfr1f15fDwKvlQIDAQAB",
+	"options_page": "options.html",
+	"browser_action": {
+		"default_title": "JIRA issues viewer",
+		"default_icon": "images/logo-19.png",
+		"popup": "jira.html"
+	}
+	
+}

@@ -1,0 +1,214 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title i18n-content="optionsTitle"></title>
+		<link type="text/css" href="css/custom-theme/jquery-ui-1.8.11.custom.css" rel="stylesheet" />	
+		<link type="text/css" href="css/colorpicker.css" rel="stylesheet" />
+		<link type="text/css" href="css/options.css" rel="stylesheet" />
+		<link type="text/css" href="css/table.css" rel="stylesheet" />
+		<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.12.custom.min.js"></script>
+		<script type="text/javascript" src="js/jquery.combobox.js"></script>
+		<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
+		<script type="text/javascript" src="js/jquery.dataTables.utils.js"></script> 
+		<script type="text/javascript" src="js/colorpicker.js"></script>
+		<script type="text/javascript" src="js/filters.js"></script>
+		<script type="text/javascript" src="js/options.js"></script>
+		<script>
+
+		$(document).ready(function(){
+
+			$(".navbar-item").click(function(){
+				$(".navbar-item").removeClass("navbar-item-selected");
+				var tab = $(this);
+				$(".tabPage").hide();
+				tab.addClass("navbar-item-selected");
+				$(document.getElementById(tab.attr("pagename"))).show();
+			});
+			
+			if(chrome.extension.getBackgroundPage().loader.loggedIn){
+				$("#tabPageFilters").show();
+				$("#tabPageFilters").click();
+			}
+			
+			$("#pageFilters  button").button();
+		});
+		
+		</script>
+		<script type="text/javascript" src="http://apis.google.com/js/plusone.js"></script>
+	</head>
+	<body>
+
+	
+	
+	
+	<div id="navbar-container">
+		<center>
+			<img src="images/logo-128.png">
+			<p>
+				<span class="title" i18n-content="optionsTitle"></span>
+			</p>
+		</center>		
+		
+			<ul id="navbar">
+			  <li id="tabPpageMain" class="navbar-item navbar-item-selected" pagename="pageMain" tabindex="0"><span><span i18n-content="optionsPpageMain"></span></li>
+			  <li id="tabPageFilters" class="navbar-item" pagename="pageFilters" tabindex="1" style="display: none;"><span><span i18n-content="optionsPageFilters"></span></li>
+			</ul>
+			<p style="padding:5px;text-align:left;">
+				<iframe src="http://www.facebook.com/plugins/like.php?app_id=192138857499789&amp;href=https%3A%2F%2Fchrome.google.com%2Fwebstore%2Fdetail%2Fafpofdeegmmclngjmadpjaajacebkege&amp;send=false&amp;layout=button_count&amp;width=180&amp;show_faces=true&amp;action=recommend&amp;colorscheme=light&amp;font=segoe+ui&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:180px; height:21px;" allowTransparency="true"></iframe>
+				<br />
+				<a href="http://twitter.com/share" class="twitter-share-button" data-url="https://chrome.google.com/webstore/detail/afpofdeegmmclngjmadpjaajacebkege" data-text="JIRA assistant for Google Chrome" data-count="horizontal"></a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+				<br />
+					<g:plusone size="small" href="https://chrome.google.com/webstore/detail/afpofdeegmmclngjmadpjaajacebkege"></g:plusone>
+			</p>
+	</div>
+	
+	<div id="mainview-content">
+	
+	
+		<!-- Proxies list page --------------------------------------------------------------------------------------------------------->
+		<div id="pageMain" class="tabPage">
+				<h1 id="headerLabel"><span i18n-content="optionsPpageMain"></h1>
+				<p />
+				
+				
+		<table style="width:100%;height:100%;">
+			<tr>
+			<td valign="center">
+				<table width="100%">
+				<tr>
+					<td align="right" width="200"><span i18n-content="optionsUsername"></td>
+					<td><input id="username" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
+				</tr>
+				<tr>
+					<td align="right"><span i18n-content="optionsPassword"></td>
+					<td><input type="password" id="password" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
+				</tr>
+				<tr>
+					<td align="right"><span i18n-content="optionsServerUrl"></td>
+					<td style="vertical-align:text-top;"><select id="url">
+						<option value="http://jira.jboss.org/">http://jira.jboss.org/</option>
+						<option value="https://jira.springframework.org/">https://jira.springframework.org/</option>
+						<option value="http://framework.zend.com/issues/">http://framework.zend.com/issues/</option>
+						<option value="http://framework.zend.com/issues/">http://framework.zend.com/issues/</option>
+						<option value="http://jira.opensymphony.com/">http://jira.opensymphony.com/</option>
+						<option value="https://fedora-commons.org/jira/">https://fedora-commons.org/jira/</option>
+						<option value="http://jira.codehaus.org/">http://jira.codehaus.org/</option>
+						<option value="https://developer.skype.com/jira/">https://developer.skype.com/jira/</option>
+						<option value="https://issues.apache.org/jira/">https://issues.apache.org/jira/</option>
+						<option value="http://www.softomate.net/jira/">http://www.softomate.net/jira/</option>
+					</select>
+					</td>
+				</tr>
+				<!--tr>
+					<td align="right"><span i18n-content="optionsUpdateInterval"></td>
+					<td><select id="updateinterval" ></select>, min</td>
+				</tr>
+				<tr>
+					<td align="right">&nbsp;</td>
+					<td><input type="checkbox" id="omniboxEnabled" /><span i18n-content="optionsOmniboxEnabled"></td>
+				</tr-->	
+				<tr>
+					<td align="right">&nbsp;</td>
+					<td><input type="checkbox" id="attachmentEnabled" /><span i18n-content="optionsFileAttachmentsEnabled"></td>
+				</tr>	
+				<tr>
+					<td align="right">&nbsp;</td>
+					<td><input type="checkbox" id="quickaddEnabled" /><span i18n-content="optionsQuickAddEnabled"></td>
+				</tr>					
+				<tr>
+					<td colspan="2" align="right"><hr/><input type="button" onclick="saveOptions();" value="Save Options" /></td>
+				</tr>
+				</table>
+				</center>
+			</td>
+		</tr>
+	</table>
+				
+				
+		</div>
+		
+		
+		<div id="pageFilters" class="tabPage" style="display: none;">
+				<h1 id="headerLabel"><span i18n-content="optionsPageFilters"></h1>
+				<p />
+				<table cellspacing=0 cellpadding=10>
+					<tr>
+						<td width="500" valign="top">
+							<table width="500" class="display" id="filters" cellspacing=0 cellpadding=0>
+							
+							</table>
+						</td>
+						<td valign="top" class="buttonsContainer">
+							<button id="optionsFilterAdd" onclick="addFilter()" i18n-content="optionsFilterAdd"></button><br/>
+							<button id="optionsFilterEdit" onclick="editFilter()" disabled=true i18n-content="optionsFilterEdit"></button><br/>
+							<br/>
+							<button id="optionsFilterDisable" onclick="disableFilter()" disabled=true i18n-content="optionsFilterDisable"></button><br/>
+							<button id="optionsFilterDelete" onclick="deleteFilter()" disabled=true i18n-content="optionsFilterDelete"></button><br/>
+							
+						</td>
+					</tr>
+				</table>
+				<p />
+				<!--div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em; font-size:0.8em;"> 
+					<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+						<strong>Badge color</strong> is a color for badge over JIRA assistant icon for specified filter. You can set badge for set of filters to show count on the badge carusel
+					</p>
+				</div-->
+		</div>
+		
+	</div>
+	
+
+	<div id="dlgCnnecting" style="display: none;"></div>
+	<div id="dlgAlert" style="display: none;">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+			<span i18n-content="optionsDlgDeleteFilterConfirmation"></span>
+		</p>
+	</div>
+	<div id="dlgAddFilter" style="display: none;">
+				<input id="filterId" type="hidden" />
+				<table>
+					<tr>
+						<td align="right"></td>
+						<td><input type="checkbox" id="filterEnabed" ><span i18n-content="optionsFilterEnabled" /></td>
+					</tr>				
+					<tr>
+						<td class="label" i18n-content="optionsFilterName"></td>
+						<td><input id="filterName" type="text" class="ui-widget-content ui-corner-all" />
+					</tr>
+					<tr id="optionsFilterJQLRow">
+						<td class="label" i18n-content="optionsFilterJQL"></td>
+						<td><textarea id="filterJQL" type="text" class="ui-widget-content ui-corner-all" style="width:300px;max-width:300px;" ></textarea></td>
+					</tr>
+					<tr>
+						<td align="right"><span i18n-content="optionsUpdateInterval"></td>
+						<td><select id="filterUpdate" ></select>, min</td>
+					</tr>
+					<tr>
+						<td align="right"></td>
+						<td><input type="checkbox" id="filterNotify" ><span i18n-content="optionsFilterNotify" /></td>
+					</tr>
+					<tr>
+						<td align="right"></td>
+						<td><input type="checkbox" id="filterDesktopNotify" ><span i18n-content="optionsFilterDesktopNotification" /></td>
+					</tr>
+					<tr>
+						<td align="right"></td>
+						<td><input type="checkbox" id="filterBadge" ><span i18n-content="optionsFilterBadge" /></td>
+					</tr>
+					<tr id="optionsFilterColorRow">
+						<td align="right"><span i18n-content="optionsFilterColor" /></td>
+						<td><div id="colorSelector"><div style="background-color: #0000ff" ></div></div></td>
+					</tr>
+				</table>  
+				<hr />
+				<b><span i18n-content="optionsFilterColumnsDialog" /></b>
+				<div id="filterColumns"></div>
+	</div>
+	<script type="text/javascript">
+	var i18n=function(){function i(b){b=b.querySelectorAll(l);for(var d,f=0;d=b[f];f++)for(var e=0;e<h.length;e++){var c=h[e],a=d.getAttribute(c);a!=null&&j[c](d,a)}}var j={"i18n-content":function(b,d){b.textContent=chrome.i18n.getMessage(d)},"i18n-values":function(b,d){for(var f=d.replace(/\s/g,"").split(/;/),e=0;e<f.length;e++){var c=f[e].match(/^([^:]+):(.+)$/);if(c){var a=c[1];c=chrome.i18n.getMessage(c[2]);if(a.charAt(0)=="."){a=a.slice(1).split(".");for(var g=b;g&&a.length>1;)g=g[a.shift()];if(g){g[a]=c;a=="innerHTML"&&i(b)}}else b.setAttribute(a,c)}}}},h=[],k;for(k in j)h.push(k);var l="["+h.join("],[")+"]";return{process:i}}();
+	i18n.process(document)
+	</script>
+	</body>
+</html>

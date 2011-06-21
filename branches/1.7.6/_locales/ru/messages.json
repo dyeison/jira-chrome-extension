@@ -1,0 +1,200 @@
+﻿{
+	"title": {
+		"message": "JIRA assistant for Google Chrome"
+	},
+	"quickSearch": {
+		"message": "Быстрый поиск"
+	},
+	"timeSpent": {
+		"message": "Затрачено времени:"
+	},
+	"date": {
+		"message": "Дата:"
+	},
+	"resolveIssue": {
+		"message": "Закрыть задачу"
+	},
+	"assignIssue": {
+		"message": "Назанчить исполнителя"
+	},
+	"issue": {
+		"message": "Задача"
+	},
+	"assigne": {
+		"message": "Испольнитель"
+	},
+	"comment": {
+		"message": "Комментарий"
+	},
+	"resolution": {
+		"message": "Статус"
+	},
+	"log": {
+		"message": "Лог"
+	},
+	"save": {
+		"message": "Сохранить"
+	},
+	"cancel": {
+		"message": "Отмена"
+	},
+	"yes": {
+		"message": "Да"
+	},
+	"no": {
+		"message": "Нет"
+	},
+	"close": {
+		"message": "Закрыть"
+	},
+	"logWork": {
+		"message": "Логировать"
+	},
+	"cancelProgress": {
+		"message": "Отменить прогресс"
+	},
+	"reload": {
+		"message": "Перезагрузить список задач"
+	},
+	"manageFilters": {
+		"message": "Управление фильтрами"
+	},
+	"options": {
+		"message": "Опции"
+	},
+	"Key": {
+		"message": "#"
+	},
+	"Worklog": {
+		"message": "Worklog"
+	},
+	"Summary": {
+		"message": "Описание"
+	},
+	"duedate": {
+		"message": "Дата"
+	},
+	"Res": {
+		"message": "Res."
+	},
+	"assignedToMe": {
+		"message": "Мои задачи"
+	},
+	"configError": {
+		"message": "Configure first!"
+	},
+	"optionsTitle": { 
+		"message": "JIRA assistant settings"
+	},
+	"optionsPpageMain": { 
+		"message": "Основные настройки"
+	},
+	"optionsPageFilters": { 
+		"message": "Конфигурирование фильтров"
+	},
+	"optionsUpdateInterval": { 
+		"message": "Интервал обновления"
+	},
+	"optionsServerUrl": { 
+		"message": "Адрес сервера JIRA"
+	},
+	"optionsUsername": { 
+		"message": "Username"
+	},
+	"optionsPassword": { 
+		"message": "Password"
+	},
+	"optionsFilterName": { 
+		"message": "Название фильтра"
+	},
+	"optionsFilterEnabled": { 
+		"message": "Включен"
+	},
+	"optionsFilterDisable": { 
+		"message": "Включить/Выключить"
+	},	
+	"optionsFilterDelete": { 
+		"message": "Удалить"
+	},
+	"optionsDlgDeleteFilter": { 
+		"message": "Удалить фильтр"
+	},
+	"optionsDlgDeleteFilterConfirmation": { 
+		"message": "Вы уверены что хотите удалить выбранный фильтр?"
+	},
+	"optionsFilterShowCounter": { 
+		"message": "Показывать счетчик задач для этого фильтра"
+	},
+	"optionsDlgLoading": { 
+		"message": "Авторизация..."
+	},
+	"optionsFilterJQL": { 
+		"message": "Запрос JIRA:"
+	},
+	"optionsFilterAdd": { 
+		"message": "Добавить фильтр"
+	},
+	"optionsFilterEdit": { 
+		"message": "Редактировать фильтр"
+	},
+	"optionsFilterSave": { 
+		"message": "Сохранить фильтр"
+	},
+	"optionsOmniboxEnabled": { 
+		"message": "Enable omnibox handler"
+	},	
+	"optionsFileAttachmentsEnabled": { 
+		"message": "Включить drag&drop вложения"
+	},	
+	"optionsFileAttachmentsLabel": { 
+		"message": "Перетащите файлы в эту область для добавления вложения"
+	},	
+	"optionsQuickAddEnabled": { 
+		"message": "Включить Быстрое добавление фильтров"
+	},	
+	"optionsQuickAddLabel": { 
+		"message": "Добавить этот фильтр в JIRA Assistant"
+	},	
+	"issueType": { 
+		"message": "Тип"
+	},	
+	"project": { 
+		"message": "Проект"
+	},	
+	"create": { 
+		"message": "Создать"
+	},	
+	"createIssue": { 
+		"message": "Создать задачу"
+	},
+	"optionsFilterColumns":{
+		"message": "Настройки столбцов для фильтра"
+	},
+	"optionsFilterColumnsDialog":{
+		"message": "Настройки столбцов для фильтра"
+	},
+	"optionsManualUpdateInterval":{
+		"message": "Вручную"
+	},
+	"optionsFilterDesktopNotification":{
+		"message": "Показывать сообщения о новых задачах"
+	},
+	"optionsFilterNotify":{
+		"message": "Сообщать о процессе обновления (врощать иконку)"
+	},
+	"optionsNotify":{
+		"message": "Уведомления обновления"
+	},
+	"optionsDesktopNotify":{
+		"message": "Показывать новые сообщения"
+	},	
+	"optionsFilterColor":{
+		"message": "Цвет фона"
+	},
+	"optionsFilterBadge":{
+		"message": "Показывать количество задач на иконке"
+	},
+	"detachWindow":{
+		"message": "Отсоединить окно"
+	}
+}
