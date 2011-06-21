@@ -3,14 +3,14 @@
 			input: null,
 			button: null,
 			options: {
-			 editable: false,
-			 value: null
+			 'editable': false,
+			 'value': null
 		   },
 			_create: function() {
 				var self = this,
 					select = this.element.hide(),
 					selected = select.children( ":selected" )?select.children( ":selected" ):select.children( "option:first" ),
-					value = this.options.value?this.options.value:(selected.val() ? selected.text():"");
+					value = this.options['value']?this.options['value']:(selected.val() ? selected.text():"");
 					if(selected && selected.val()!=value){
 						select.children("option").each(function(){
 							if(this.innerText == value)
@@ -28,12 +28,12 @@
 							var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
 							response( select.children( "option" ).map(function() {
 								var text = $( this ).text();
-								if ( this.value && ( !request.term || matcher.test(text) ) )
+								if ( this.value && ( !request['term'] || matcher.test(text) ) )
 									return {
 										label: text.replace(
 											new RegExp(
 												"(?![^&;]+;)(?!<[^<>]*)(" +
-												$.ui.autocomplete.escapeRegex(request.term) +
+												$['ui']['autocomplete']['escapeRegex'](request['term']) +
 												")(?![^<>]*>)(?![^&;]+;)", "gi"
 											), "<strong>$1</strong>" ),
 										value: text,
@@ -59,7 +59,7 @@
 								});
 								if ( !valid ) {
 									// remove invalid value, as it didn't match anything
-									if(!self.options.editable){
+									if(!self.options['editable']){
 										$( this ).val(select.children(":selected").text());
 									}
 									return false;

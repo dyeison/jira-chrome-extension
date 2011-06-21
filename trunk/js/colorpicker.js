@@ -15,15 +15,15 @@
 			visible,
 			tpl = '<div class="colorpicker"><div class="colorpicker_color"><div><div></div></div></div><div class="colorpicker_hue"><div></div></div><div class="colorpicker_new_color"></div><div class="colorpicker_current_color"></div><div class="colorpicker_hex"><input type="text" maxlength="6" size="6" /></div><div class="colorpicker_rgb_r colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_rgb_g colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_rgb_b colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_hsb_h colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_hsb_s colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_hsb_b colorpicker_field"><input type="text" maxlength="3" size="3" /><span></span></div><div class="colorpicker_submit"></div></div>',
 			defaults = {
-				eventName: 'click',
-				onShow: function () {},
-				onBeforeShow: function(){},
-				onHide: function () {},
-				onChange: function () {},
-				onSubmit: function () {},
-				color: 'ff0000',
-				livePreview: true,
-				flat: false
+				'eventName': 'click',
+				'onShow': function () {},
+				'onBeforeShow': function(){},
+				'onHide': function () {},
+				'onChange': function () {},
+				'onSubmit': function () {},
+				'color': 'ff0000',
+				'livePreview': true,
+				'flat': false
 			},
 			fillRGBFields = function  (hsb, cal) {
 				var rgb = HSBToRGB(hsb);
@@ -299,9 +299,6 @@
 				var max = Math.max(rgb.r, rgb.g, rgb.b);
 				var delta = max - min;
 				hsb.b = max;
-				if (max != 0) {
-					
-				}
 				hsb.s = max != 0 ? 255 * delta / max : 0;
 				if (hsb.s != 0) {
 					if (rgb.r == max) {
@@ -476,9 +473,9 @@
 		};
 	}();
 	$.fn.extend({
-		ColorPicker: ColorPicker.init,
-		ColorPickerHide: ColorPicker.hidePicker,
-		ColorPickerShow: ColorPicker.showPicker,
-		ColorPickerSetColor: ColorPicker.setColor
+		'ColorPicker': ColorPicker.init,
+		'ColorPickerHide': ColorPicker.hidePicker,
+		'ColorPickerShow': ColorPicker.showPicker,
+		'ColorPickerSetColor': ColorPicker.setColor
 	});
 })(jQuery)

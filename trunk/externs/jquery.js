@@ -715,4 +715,9 @@ jQuery.fx.off;
  * @return {Object}
  */
 jQuery.ajax = function(param){};
+/**
+ * @param {Object} param
+ * @return {jQueryObject}
+ */
+jQuery.widget = function(param){};
 

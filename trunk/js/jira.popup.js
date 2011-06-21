@@ -2,7 +2,7 @@
  * @preserve Copyright 2011 Andrey Vyrvich.
  * andry.virvich at google.com
  */
-
+var loader = chrome.extension.getBackgroundPage().loader;
 var jira = {
 		serverUrl:null,
 		resolutions: null,
@@ -13,11 +13,11 @@ var jira = {
 		init: function(){
 			
 			jira.serverUrl = localStorage.getItem("url");
-			jira.resolutions = chrome.extension.getBackgroundPage().loader.resolutions;
-			jira.issuetypes = chrome.extension.getBackgroundPage().loader.issuetypes;
-			jira.priorities = chrome.extension.getBackgroundPage().loader.priorities;
-			jira.statuses = chrome.extension.getBackgroundPage().loader.statuses;
-			jira.users = chrome.extension.getBackgroundPage().loader.users;
+			jira.resolutions = loader.resolutions;
+			jira.issuetypes = loader.issuetypes;
+			jira.priorities = loader.priorities;
+			jira.statuses = loader.statuses;
+			jira.users = loader.users;
 			
 			for (i in jira.resolutions){
 				$("#progressResolution, #resolveResolution").append(
@@ -30,10 +30,10 @@ var jira = {
 					$("<option />").val(i).text(jira.users[i].fullname).attr("title", jira.users[i].email)
 				)
 			}
-			$.each(chrome.extension.getBackgroundPage().loader.projects, function(i, p){
+			$.each(loader.projects, function(i, p){
 				$("#createIssueProject").append($("<option />").val(p.id).text(p.name));
 			});
-			$.each(chrome.extension.getBackgroundPage().loader.issuetypes, function(i, type){
+			$.each(loader.issuetypes, function(i, type){
 				$("#createIssueType").append($("<option />").val(i).text(type.text));
 			});
 			$("select").combobox();
@@ -46,7 +46,7 @@ var jira = {
 			});
 			
 			$("span#title").click(function(){
-				chrome.extension.getBackgroundPage().loader.addTab(jira.url(""));
+				loader.addTab(jira.url(""));
 			}).css("cursor", "pointer");
 			
 			jQuery.fn.dataTableExt.oSort['string-date-asc']  = function(x,y) {
@@ -77,7 +77,7 @@ var jira = {
 			}
 		},
 		getIssuesFromFilter: function(){
-			var filters = chrome.extension.getBackgroundPage().loader.filters;
+			var filters = loader.filters;
 			//filters = filters.sort(function(a,b){return (a.id-b.id)});
 			var str = '';
 			$.each(filters, function(i, filter){
@@ -92,7 +92,7 @@ var jira = {
 			});
 		},
 		renderTableFromXml: function(id){
-			var filter = chrome.extension.getBackgroundPage().loader.filters.get(id);
+			var filter = loader.filters.get(id);
 			$("#table_"+id).dataTable( {
 				"bLengthChange": jira.isDetached,
 				"bFilter": false,
@@ -115,7 +115,7 @@ var jira = {
 							}
 						},
 						{"bVisible": filter.columns.duedate, "sType": "string-date","sTitle": chrome.i18n.getMessage('duedate'),  "fnRender": function(obj) {
-							return obj.aData[ obj.iDataColumn ]?chrome.extension.getBackgroundPage().loader.getDate(obj.aData[ obj.iDataColumn ]):"";
+							return obj.aData[ obj.iDataColumn ]?loader.getDate(obj.aData[ obj.iDataColumn ]):"";
 						}, "sClass": "Date"},
 						//{ "sTitle": "Est.", "sClass": "Date"},
 						{"bVisible": filter.columns.priority, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
@@ -129,9 +129,9 @@ var jira = {
 						{"bVisible": filter.columns.status, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"bVisible": filter.columns.worklog, "sClass":"icon","sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
 							if(obj.aData[ 6 ].toLowerCase().indexOf("unresolved")>=0){
-								return (chrome.extension.getBackgroundPage().loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
-									"<div onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>"+chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</span></div>":
-									"<div onclick=\"chrome.extension.getBackgroundPage().loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><span class=\"ui-icon ui-icon-clock\"></span></div>");
+								return (loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
+									"<div onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>"+loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</span></div>":
+									"<div onclick=\"loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><span class=\"ui-icon ui-icon-clock\"></span></div>");
 							} else {
 								return '';
 							}
@@ -153,13 +153,13 @@ var jira = {
 						.attr("title", filter.jql?filter.jql:'')
 						.attr("type", filter.type)
 						.text(filter.name +
-							((typeof(chrome.extension.getBackgroundPage().loader.filters.get(filter.id).issues) != "string")?
-								("(" + chrome.extension.getBackgroundPage().loader.filters.get(filter.id).issues.length + ")"):''))
+							((typeof(loader.filters.get(filter.id).issues) != "string")?
+								("(" + loader.filters.get(filter.id).issues.length + ")"):''))
 						.dblclick(function(){
 							if(this.getAttribute("type") == "filter")
-								chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
+								loader.addTab(jira.url("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
 							else if(this.getAttribute("type") == 'jql')
-								chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/IssueNavigator!executeAdvanced.jspa?runQuery=true&jqlQuery=" + escape(this.getAttribute("title"))));
+								loader.addTab(jira.url("/secure/IssueNavigator!executeAdvanced.jspa?runQuery=true&jqlQuery=" + escape(this.getAttribute("title"))));
 						})
 				)
 				.css({
@@ -207,25 +207,25 @@ var jira = {
 			}).sortable({ 
 				axis: "x" ,  
 				update: function(event, ui) {
-					var i = chrome.extension.getBackgroundPage().loader.filters.index($("a", ui.item).attr("filterid"));
+					var i = loader.filters.index($("a", ui.item).attr("filterid"));
 					var j = $("li", ui.item.parentNode).index(ui.item);
-					var tmp = chrome.extension.getBackgroundPage().loader.filters[i];
-					chrome.extension.getBackgroundPage().loader.filters.swap(i,j);
-					chrome.extension.getBackgroundPage().loader.filters.save();
+					var tmp = loader.filters[i];
+					loader.filters.swap(i,j);
+					loader.filters.save();
 				}
 			});
 		},
 		initHeaderLinks: function(){
 				$("#HeaderLink").append(
 					$("<button />").click(function(){
-						chrome.extension.getBackgroundPage().loader.addTab(jira.url('/secure/ManageFilters.jspa'));
+						loader.addTab(jira.url('/secure/ManageFilters.jspa'));
 						if(!jira.isDetached){
 							window.close();
 						}
 					}).text(chrome.i18n.getMessage('manageFilters')).button({icons: {primary: "ui-icon-flag"},text: false})
 				).append(
 					$("<button />").click(function(){
-						chrome.extension.getBackgroundPage().loader.addTab(chrome.extension.getURL('options.html'));
+						loader.addTab(chrome.extension.getURL('options.html'));
 						if(!jira.isDetached){
 							window.close();
 						}
@@ -240,7 +240,7 @@ var jira = {
 					}).text(chrome.i18n.getMessage('createIssue')).button({icons: {primary: "ui-icon-plusthick"},text: false})
 				).append(
 					$("<button />").click(function(){
-						chrome.extension.getBackgroundPage().loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRSCE62LWTWT6");
+						loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRSCE62LWTWT6");
 						if(!jira.isDetached){
 							window.close();
 						}
@@ -255,9 +255,9 @@ var jira = {
 				}
 		},
 		updateCurrentTable: function(bReload){
-			var currentFilter = chrome.extension.getBackgroundPage().loader.filters[$("#tabs").tabs( "option", "selected" )];
+			var currentFilter = loader.filters[$("#tabs").tabs( "option", "selected" )];
 			if(bReload){
-				chrome.extension.getBackgroundPage().loader.getIssuesFromFilter(
+				loader.getIssuesFromFilter(
 					currentFilter,
 					function(issues){
 						var dt = $("#table_"+currentFilter.id).dataTable();
@@ -268,7 +268,7 @@ var jira = {
 			} else {
 				var dt = $("#table_"+currentFilter.id).dataTable();
 				dt.fnClearTable();
-				dt.fnAddData(chrome.extension.getBackgroundPage().loader.filters.get(currentFilter.id).issues);
+				dt.fnAddData(loader.filters.get(currentFilter.id).issues);
 			}
 		},
 		url: function(str){
@@ -291,11 +291,11 @@ var jira = {
 			}
 		},
 		stopProgress: function(issueId){
-			var timeSpent = chrome.extension.getBackgroundPage().loader.worklog.getTimeSpent(issueId);
+			var timeSpent = loader.worklog.getTimeSpent(issueId);
 			var bResolve = false;
 			
 			function stop(opt){
-				chrome.extension.getBackgroundPage().loader.addWorkLog(opt.issueId, opt.timeSpent, opt.log, opt.date, function(data){
+				loader.addWorkLog(opt.issueId, opt.timeSpent, opt.log, opt.date, function(data){
 					console.log(data);
 					if($("faultstring:first", data).length){
 						$("#alertDlg").text($("faultstring:first", data).text()).dialog({
@@ -304,12 +304,12 @@ var jira = {
 							modal: true
 						});
 					} else {
-						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(opt.issueId);
+						loader.worklog.stopProgress(opt.issueId);
 						if(opt.bResolve){
-							chrome.extension.getBackgroundPage().loader.resolveIssue(opt.issueId, opt.resolution);
+							loader.resolveIssue(opt.issueId, opt.resolution);
 						}
 						if(opt.bAssignee){
-							chrome.extension.getBackgroundPage().loader.assigneIssue(opt.issueId, opt.assignee);
+							loader.assigneIssue(opt.issueId, opt.assignee);
 						}
 						if(!jira.isDetached){
 							window.close();
@@ -350,7 +350,7 @@ var jira = {
 				},{
 					text: chrome.i18n.getMessage('cancelProgress'),
 					click: function(){
-						chrome.extension.getBackgroundPage().loader.worklog.stopProgress(issueId);
+						loader.worklog.stopProgress(issueId);
 						jira.updateCurrentTable(false);
 						$("#stopProggresDlg").dialog('close');
 					}
@@ -363,8 +363,6 @@ var jira = {
 				
 			});
 			$("#progressLog").get(0).focus();
-			//chrome.extension.getBackgroundPage().loader.worklog.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');
-			//window.close();
 		},
 		assignee: function(id){
 			$("#assigneeIssue").text(id);
@@ -376,9 +374,9 @@ var jira = {
 				buttons: [{
 					text: chrome.i18n.getMessage('save'),
 					click: function(){
-						chrome.extension.getBackgroundPage().loader.assigneIssue(id, $("#assigneeUsers").val(), function(data){
+						loader.assigneIssue(id, $("#assigneeUsers").val(), function(data){
 							if($("#assigneeComment").val()){
-								chrome.extension.getBackgroundPage().loader.addComment(id, $("#assigneeComment").val(), function(data){
+								loader.addComment(id, $("#assigneeComment").val(), function(data){
 									$("#assigneeDlg").dialog('close');
 								});
 							} else {
@@ -406,9 +404,9 @@ var jira = {
 				buttons: [{
 					text: chrome.i18n.getMessage('resolveIssue'),
 					click: function(){
-						chrome.extension.getBackgroundPage().loader.resolveIssue(id, $("#resolveResolution").val(), function(data){
+						loader.resolveIssue(id, $("#resolveResolution").val(), function(data){
 							if($("#resolveComment").val()){
-								chrome.extension.getBackgroundPage().loader.addComment(id, $("#resolveComment").val(), function(data){
+								loader.addComment(id, $("#resolveComment").val(), function(data){
 									$("#resolveDlg").dialog('close');
 								});
 							} else {
@@ -437,7 +435,7 @@ var jira = {
 					click: function(){
 						var pid = $("#createIssueProject").val();
 						var type = $("#createIssueType").val();
-						chrome.extension.getBackgroundPage().loader.addTab(jira.url("/secure/CreateIssue.jspa?pid="+pid+"&issuetype="+type+"&Create=Create"));
+						loader.addTab(jira.url("/secure/CreateIssue.jspa?pid="+pid+"&issuetype="+type+"&Create=Create"));
 						$(this).dialog('close');
 						if(!jira.isDetached){
 							window.close();
