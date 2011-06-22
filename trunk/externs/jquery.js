@@ -706,6 +706,8 @@ jQueryObject.prototype.md5 = function(opt_string) {};
  */
 jQueryObject.prototype.stop = function(opt_clearQueue, opt_gotoEnd) {};
 
+jQuery.fn = {};
+
 jQuery.fx = {};
 /** @type {boolean} */
 jQuery.fx.off;

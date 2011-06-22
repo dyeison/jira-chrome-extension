@@ -204,7 +204,7 @@
 		"message": "Add JIRA server"
 	},
 	"optionsServerEdit": {
-		"message": "Add server settings"
+		"message": "Edit server settings"
 	},
 	"optionsServerDelete": {
 		"message": "Delete server"

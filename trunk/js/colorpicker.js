@@ -45,8 +45,8 @@
 			setSelector = function (hsb, cal) {
 				$(cal).data('colorpicker').selector.css('backgroundColor', '#' + HSBToHex({h: hsb.h, s: 100, b: 100}));
 				$(cal).data('colorpicker').selectorIndic.css({
-					left: parseInt(150 * hsb.s/100, 10),
-					top: parseInt(150 * (100-hsb.b)/100, 10)
+					'left': parseInt(150 * hsb.s/100, 10),
+					'top': parseInt(150 * (100-hsb.b)/100, 10)
 				});
 			},
 			setHue = function (hsb, cal) {
@@ -64,7 +64,7 @@
 					return false;
 				}
 				var cal = $(this).parent().parent();
-				if (cal.data('colorpicker').livePreview === true) {
+				if (cal.data('colorpicker')['livePreview'] === true) {
 					change.apply(this);
 				}
 			},
@@ -93,7 +93,7 @@
 				setSelector(col, cal.get(0));
 				setHue(col, cal.get(0));
 				setNewColor(col, cal.get(0));
-				cal.data('colorpicker').onChange.apply(cal, [col, HSBToHex(col), HSBToRGB(col)]);
+				cal.data('colorpicker')['onChange'].apply(cal, [col, HSBToHex(col), HSBToRGB(col)]);
 			},
 			blur = function (ev) {
 				var cal = $(this).parent().parent();
@@ -107,12 +107,12 @@
 			downIncrement = function (ev) {
 				var field = $(this).parent().find('input').focus();
 				var current = {
-					el: $(this).parent().addClass('colorpicker_slider'),
-					max: this.parentNode.className.indexOf('_hsb_h') > 0 ? 360 : (this.parentNode.className.indexOf('_hsb') > 0 ? 100 : 255),
-					y: ev.pageY,
-					field: field,
-					val: parseInt(field.val(), 10),
-					preview: $(this).parent().parent().data('colorpicker').livePreview					
+					'el': $(this).parent().addClass('colorpicker_slider'),
+					'max': this.parentNode.className.indexOf('_hsb_h') > 0 ? 360 : (this.parentNode.className.indexOf('_hsb') > 0 ? 100 : 255),
+					'y': ev.pageY,
+					'field': field,
+					'val': parseInt(field.val(), 10),
+					'preview': $(this).parent().parent().data('colorpicker')['livePreview']				
 				};
 				$(document).bind('mouseup', current, upIncrement);
 				$(document).bind('mousemove', current, moveIncrement);
@@ -136,7 +136,7 @@
 					cal: $(this).parent(),
 					y: $(this).offset().top
 				};
-				current.preview = current.cal.data('colorpicker').livePreview;
+				current.preview = current.cal.data('colorpicker')['livePreview'];
 				$(document).bind('mouseup', current, upHue);
 				$(document).bind('mousemove', current, moveHue);
 			},
@@ -163,7 +163,7 @@
 					cal: $(this).parent(),
 					pos: $(this).offset()
 				};
-				current.preview = current.cal.data('colorpicker').livePreview;
+				current.preview = current.cal.data('colorpicker')['livePreview'];
 				$(document).bind('mouseup', current, upSelector);
 				$(document).bind('mousemove', current, moveSelector);
 			},
@@ -199,11 +199,11 @@
 				var col = cal.data('colorpicker').color;
 				cal.data('colorpicker').origColor = col;
 				setCurrentColor(col, cal.get(0));
-				cal.data('colorpicker').onSubmit(col, HSBToHex(col), HSBToRGB(col), cal.data('colorpicker').el);
+				cal.data('colorpicker')['onSubmit'](col, HSBToHex(col), HSBToRGB(col), cal.data('colorpicker').el);
 			},
 			show = function (ev) {
 				var cal = $('#' + $(this).data('colorpickerId'));
-				cal.data('colorpicker').onBeforeShow.apply(this, [cal.get(0)]);
+				cal.data('colorpicker')['onBeforeShow'].apply(this, [cal.get(0)]);
 				var pos = $(this).offset();
 				var viewPort = getViewport();
 				var top = pos.top + this.offsetHeight;
@@ -215,7 +215,7 @@
 					left -= 356;
 				}
 				cal.css({left: left + 'px', top: top + 'px'});
-				if (cal.data('colorpicker').onShow.apply(this, [cal.get(0)]) != false) {
+				if (cal.data('colorpicker')['onShow'].apply(this, [cal.get(0)]) != false) {
 					cal.show();
 				}
 				$(document).bind('mousedown', {cal: cal}, hide);
@@ -223,7 +223,7 @@
 			},
 			hide = function (ev) {
 				if (!isChildOf(ev.data.cal.get(0), ev.target, ev.data.cal.get(0))) {
-					if (ev.data.cal.data('colorpicker').onHide.apply(this, [ev.data.cal.get(0)]) != false) {
+					if (ev.data.cal.data('colorpicker')['onHide'].apply(this, [ev.data.cal.get(0)]) != false) {
 						ev.data.cal.hide();
 					}
 					$(document).unbind('mousedown', hide);
@@ -371,19 +371,19 @@
 		return {
 			init: function (opt) {
 				opt = $.extend({}, defaults, opt||{});
-				if (typeof opt.color == 'string') {
-					opt.color = HexToHSB(opt.color);
-				} else if (opt.color.r != undefined && opt.color.g != undefined && opt.color.b != undefined) {
-					opt.color = RGBToHSB(opt.color);
-				} else if (opt.color.h != undefined && opt.color.s != undefined && opt.color.b != undefined) {
-					opt.color = fixHSB(opt.color);
+				if (typeof opt['color'] == 'string') {
+					opt['color'] = HexToHSB(opt['color']);
+				} else if (opt['color'].r != undefined && opt['color'].g != undefined && opt['color'].b != undefined) {
+					opt['color'] = RGBToHSB(opt['color']);
+				} else if (opt['color'].h != undefined && opt['color'].s != undefined && opt['color'].b != undefined) {
+					opt['color'] = fixHSB(opt['color']);
 				} else {
 					return this;
 				}
 				return this.each(function () {
 					if (!$(this).data('colorpickerId')) {
 						var options = $.extend({}, opt);
-						options.origColor = opt.color;
+						options.origColor = opt['color'];
 						var id = 'collorpicker_' + parseInt(Math.random() * 1000);
 						$(this).data('colorpickerId', id);
 						var cal = $(tpl).attr('id', id);
@@ -413,20 +413,20 @@
 							.bind('mouseenter', enterSubmit)
 							.bind('mouseleave', leaveSubmit)
 							.bind('click', clickSubmit);
-						fillRGBFields(options.color, cal.get(0));
-						fillHSBFields(options.color, cal.get(0));
-						fillHexFields(options.color, cal.get(0));
-						setHue(options.color, cal.get(0));
-						setSelector(options.color, cal.get(0));
-						setCurrentColor(options.color, cal.get(0));
-						setNewColor(options.color, cal.get(0));
+						fillRGBFields(options['color'], cal.get(0));
+						fillHSBFields(options['color'], cal.get(0));
+						fillHexFields(options['color'], cal.get(0));
+						setHue(options['color'], cal.get(0));
+						setSelector(options['color'], cal.get(0));
+						setCurrentColor(options['color'], cal.get(0));
+						setNewColor(options['color'], cal.get(0));
 						if (options.flat) {
 							cal.css({
 								position: 'relative',
 								display: 'block'
 							});
 						} else {
-							$(this).bind(options.eventName, show);
+							$(this).bind(options['eventName'], show);
 						}
 					}
 				});

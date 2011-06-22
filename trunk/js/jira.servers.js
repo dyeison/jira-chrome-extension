@@ -22,7 +22,7 @@ function JiraServersArray(_loader){
 			return server.url;
 		})));
 	}	
-	
+	self['load']();
 }
 
 JiraServersArray.prototype = Array();
@@ -44,6 +44,7 @@ function JiraServer(_url, _loader, username, password){
 		server = this,
 		url = _url;
 	server.setItem = function(name, val){
+		console.log(server.id+"."+name, val);
 		loader.setItem(server.id+"."+name, val);
 	}
 	server.getItem = function(name, val){

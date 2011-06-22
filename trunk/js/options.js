@@ -33,6 +33,8 @@ $(document).ready(function(){
 	$("#filterUpdate").combobox({autocomplete:false});
 	$("input[type=button]").button();
 	$('#filterBadge').click(function(){		$('#optionsFilterColorRow').setVisibility(this.checked);	});
+	
+	
 	$('#colorSelector').ColorPicker({
 		color: '#00ff00',
 		onShow: function (colpkr) {
@@ -47,6 +49,7 @@ $(document).ready(function(){
 			$('#colorSelector div').css('backgroundColor', '#' + hex);
 		}
 	});
+	
 	updateServersTable();
 	updateFilterTable();
 	
@@ -130,6 +133,7 @@ $(document).ready(function(){
 	
 	function toggleSelectedServer(){
 		$("#optionsServerDelete").button({disabled:false});
+		$("#optionsServerEdit").button({disabled:false});
 	}
 	
 	function updateFilterTable(iSelectedFilter){
@@ -147,10 +151,11 @@ $(document).ready(function(){
 		if(!oServers){
 			createServersTable();
 		} else {
+			if(typeof iSelectedServer != 'number')
+				iSelectedServer = oServers.fnGetSelectedPosition();
 			oServers.fnClearTable();
 			oServers.fnAddData(loader.servers);
-			if(typeof iSelectedServer == 'number')
-				oServers.fnSelectRow(iSelectedServer);
+			oServers.fnSelectRow(iSelectedServer);
 			toggleSelectedServer();
 		}
 	}
@@ -319,7 +324,10 @@ $(document).ready(function(){
   }
   
   function editServer(server){
+	var bNew = true,
+		iSelectedServer;
 	if (!server){
+		bNew = false;
 		var iSelectedServer = oServers.fnGetSelectedPosition();
 		server = loader.servers[iSelectedServer];
 	}
@@ -337,9 +345,11 @@ $(document).ready(function(){
 						password: $("#password").attr("value"),
 						success: function(server){
 							console.log('success', server);
-							loader.servers.push(server);
+							if(bNew){
+								iSelectedServer = loader.servers.push(server);
+							}
 							loader.servers.save();
-							updateServersTable();
+							updateServersTable(iSelectedServer);
 							$("#dlgAddServer").dialog('close');
 						},
 						error: function(e){
