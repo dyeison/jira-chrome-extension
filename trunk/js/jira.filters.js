@@ -87,6 +87,7 @@ JiraFiltersArray.prototype.update = function(id, callback){
 window['JiraFiltersArray'] = JiraFiltersArray;
 
 function JiraFilter(param, loader){
+	console.log(param);
 	var server = (param.server)?((typeof param.server == 'string')?loader.servers.get(param.server):param.server):loader.servers[0],
 		timer = null,
 		self = this;
@@ -104,6 +105,7 @@ function JiraFilter(param, loader){
 	}
 	$.extend(self.columns, param.columns);
 	self.__defineGetter__("rgb", function(){return hex2rgb(self.color);});
+	self.__defineGetter__("url", function(){return server.url;});
 	function randomId(){
 		var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
 			string_length = 8,
@@ -123,9 +125,10 @@ function JiraFilter(param, loader){
 	self.desktopNotify = (typeof param.desktopNotify != 'undefined')?param.desktopNotify:(param.id == "0");
 	self.badge = (typeof param.badge != 'undefined')?param.badge:(param.id == "0");
 	self.color = (typeof param.color != 'undefined')?param.color:'#00ff00';
-	
-	self.__defineGetter__('keys', function(){ var sKeys = localStorage.getItem(self.id+".keys"); return (sKeys)?sKeys.split(","):[];});
-	self.__defineSetter__('keys', function(keys){ localStorage.setItem(self.id+".keys", keys.toString()); });
+	self.server = server['id'];
+	console.log('server', server);
+	self.__defineGetter__('keys', function(){ console.log('server', server);var sKeys = server.getItem(".keys"); return (sKeys)?sKeys.split(","):[];});
+	self.__defineSetter__('keys', function(keys){ server.setItem(".keys", keys.toString()); });
 	if(self.type=='jql'){
 		self.jql  = param.jql;
 	}
@@ -154,7 +157,7 @@ function JiraFilter(param, loader){
 	};
 
 	self['toArray'] = function(){
-		return [self.id, self.enabled, self.name, self.updateInterval, self.notify, self.desktopNotify, self.badge?self.color:'', self.jql?self.jql:''];
+		return [self.id, self.enabled, self.name, self.url, self.updateInterval, self.notify, self.desktopNotify, self.badge?self.color:'', self.jql?self.jql:''];
 	};
 	
 	self.showNotifications = function(){

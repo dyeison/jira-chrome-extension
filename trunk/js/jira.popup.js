@@ -11,7 +11,7 @@ var jira = {
 		statuses: null,
 		isDetached: location.search == '?detached',
 		init: function(){
-			
+			/*
 			jira.serverUrl = localStorage.getItem("url");
 			jira.resolutions = loader.resolutions;
 			jira.issuetypes = loader.issuetypes;
@@ -48,7 +48,7 @@ var jira = {
 			$("span#title").click(function(){
 				loader.addTab(jira.url(""));
 			}).css("cursor", "pointer");
-			
+			*/
 			jQuery.fn.dataTableExt.oSort['string-date-asc']  = function(x,y) {
 				if(x == "") return (y=="")?0:1;
 				if(y == "") return (x=="")?0:-1;
@@ -61,20 +61,12 @@ var jira = {
 				return -1* jQuery.fn.dataTableExt.oSort['string-date-asc'](x,y);
 			};	
 			
-			if(jira.serverUrl)
+			//if(jira.serverUrl)
 			{
-				$("#quicksearch").attr("action", jira.url("/secure/QuickSearch.jspa"));
-				jira.initHeaderLinks();
-				if(localStorage.getItem('error')!="")
-				{
-					jira.error(localStorage.getItem('error'));
-				 } else {
-					jira.getIssuesFromFilter();
-				}
-			} else {
-				$("#quicksearch").hide();
-				jira.error(chrome.i18n.getMessage("configError"));
-			}
+				//$("#quicksearch").attr("action", jira.url("/secure/QuickSearch.jspa"));
+				//jira.initHeaderLinks();
+				jira.getIssuesFromFilter();
+			} 
 		},
 		getIssuesFromFilter: function(){
 			var filters = loader.filters;
@@ -93,6 +85,8 @@ var jira = {
 		},
 		renderTableFromXml: function(id){
 			var filter = loader.filters.get(id);
+				server = loader.servers.get(filter.server);
+				console.log(filter.server, server.worklog);
 			$("#table_"+id).dataTable( {
 				"bLengthChange": jira.isDetached,
 				"bFilter": false,
@@ -104,7 +98,7 @@ var jira = {
 				"aaSorting": [],
 				"aoColumns": [
 						{"bVisible": filter.columns.type, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { 
-							return (jira.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
+							return (server.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
 						{"bVisible": filter.columns.key, "sTitle": chrome.i18n.getMessage('Key'), "bUseRendered":false,  "fnRender": function(obj) { 
 							return "<a target='_main' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 						{"bVisible": filter.columns.summary, "sTitle": chrome.i18n.getMessage('Summary'), "sClass": "Summary"},
@@ -118,18 +112,21 @@ var jira = {
 							return obj.aData[ obj.iDataColumn ]?loader.getDate(obj.aData[ obj.iDataColumn ]):"";
 						}, "sClass": "Date"},
 						//{ "sTitle": "Est.", "sClass": "Date"},
-						{"bVisible": filter.columns.priority, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (jira.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+						{"bVisible": filter.columns.priority, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (server.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"bVisible": filter.columns.resolution, "sTitle": chrome.i18n.getMessage('Res'), "sClass": "ShortField","fnRender": function(obj) { 
+								
+								console.log(obj.aData, obj.aData[ obj.iDataColumn ]);
 								if(obj.aData[ obj.iDataColumn ].toLowerCase().indexOf("unresolved")>=0)
 									return "<a href=\"javascript:{jira.resolve('"+obj.aData[1]+"')}\">" + obj.aData[ obj.iDataColumn ] + "</a>";
 								else
 									return obj.aData[ obj.iDataColumn ];
 							}
 						},
-						{"bVisible": filter.columns.status, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (jira.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ jira.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + jira.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+						{"bVisible": filter.columns.status, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (server.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
 						{"bVisible": filter.columns.worklog, "sClass":"icon","sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
+							console.log(obj.aData[ 6 ]);
 							if(obj.aData[ 6 ].toLowerCase().indexOf("unresolved")>=0){
-								return (loader.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
+								return (server.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
 									"<div onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>"+loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</span></div>":
 									"<div onclick=\"loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><span class=\"ui-icon ui-icon-clock\"></span></div>");
 							} else {
@@ -138,13 +135,13 @@ var jira = {
 						}}
 					]
 				} ).find("th").append("<div />");
+				console.log('end');
 		},
 		addTab: function(filter){
 			function transp(rgba, trnasp){
 				rgba[3] = trnasp;
 				return rgba;
 			}
-			console.log(1)
 			$("#tabHeader").append(
 				$("<LI />").append(
 					$("<A />")
@@ -167,7 +164,6 @@ var jira = {
 					"text-shadow": "#fff 0px 0px 1px"
 				})
 			);
-			console.log(2)
 			$("#tabs").append(
 				$("<DIV />").attr("id", "div_"+filter.id).append(
 					$("<TABLE />").attr({

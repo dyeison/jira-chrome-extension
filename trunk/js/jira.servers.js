@@ -4,7 +4,9 @@ function JiraServersArray(_loader){
 	self['load'] = function (){
 		if(loader.getItem('servers')){
 			$.each(JSON.parse(loader.getItem('servers')), function(i, url){
-					self.push(new JiraServer(url, loader));
+					var s = new JiraServer(url, loader);
+					s.login();
+					self.push(s);
 				}
 			);
 		} else {
@@ -28,7 +30,7 @@ function JiraServersArray(_loader){
 JiraServersArray.prototype = Array();
 JiraServersArray.prototype.get = function(id){
 	var res = -1;
-	$.each(self, function(i, el){
+	$.each(this, function(i, el){
 		if (el.id.toString() == id.toString()){
 			res = el;
 			return false;
@@ -42,27 +44,35 @@ window['JiraServersArray'] = JiraServersArray;
 function JiraServer(_url, _loader, username, password){
 	var loader = _loader,
 		server = this,
-		url = _url;
-	server.setItem = function(name, val){
-		console.log(server.id+"."+name, val);
-		loader.setItem(server.id+"."+name, val);
+		id = $['md5'](_url),
+		url = _url,
+		soapUrl = _url + "/rpc/soap/jirasoapservice-v2";
+	this.setItem = function(name, val){
+		loader.setItem(id+"."+name, val);
 	}
-	server.getItem = function(name, val){
-		return loader.getItem(server.id+"."+name);
+	this.getItem = function(name, val){
+		return loader.getItem(id+"."+name);
 	}
 	
 	if(username) server.setItem("username", username);
 	if(password) server.setItem("password", password);
-	server.__defineGetter__('url', function(){ return url; });
-	server.__defineSetter__('url', function(_url){ 
-		server.id = $['md5'](_url);
+	this.__defineGetter__('url', function(){ return url; });
+	this.__defineSetter__('url', function(_url){ 
+		id = $['md5'](_url);
 		url = _url;
 		soapUrl = _url + "/rpc/soap/jirasoapservice-v2";
 	});
-
+	this.__defineSetter__("username", function(val){
+		username = val;
+		server.setItem('username', username);
+	});
+	this.__defineSetter__("password", function(val){
+		password = val;
+		server.setItem('password', password);
+	});	
+	this.__defineGetter__("id", function(){ return 66 + id; });
 	
-	var token= null,
-		username = server.getItem("username"),
+	var username = server.getItem("username"),
 		password = server.getItem("password");
 
 	server['loggedIn'] = false;
@@ -72,27 +82,14 @@ function JiraServer(_url, _loader, username, password){
 	server['statuses'] = {}
 	server['users'] = {}
 	server['worklog'] = new JiraWorklog(server);
-
-	server.__defineSetter__("username", function(val){
-		username = val;
-		server.setItem('username', username);
-	});
-	server.__defineSetter__("password", function(val){
-		password = val;
-		server.setItem('password', password);
-	});
-	server.__defineSetter__("token", function(val){
-		token = val;
-		server.setItem('token', token);
-	});
+	server.token = null;
 
 	server['login'] = function(param){
 			var pl = new SOAPClientParameters(),
 				options = $.extend({
 						'username': username,
 						'passowrd': password
-					}, param);
-			
+					}, param);		
 			pl.add("username", options['username']);
 			pl.add("password", options['password']);
 				SOAPClient.invoke(soapUrl, "login", pl, true, function(r, xhr){
@@ -107,7 +104,8 @@ function JiraServer(_url, _loader, username, password){
 						server.token = $(xhr).text();
 						server.username = options.username;
 						server.password = options.password;
-						//getSettings();
+						getSettings();
+						server.update();
 						if (options['success'])
 							options['success'](server);
 					}
@@ -115,14 +113,42 @@ function JiraServer(_url, _loader, username, password){
 	};
 	
 	server['update'] = function(callback){
-		loader.filters.update();
+		$.each(loader.filters, function(i, filter){
+			if(filter.server == server.id){
+				filter.update();
+			}
+		});
+	};
+	
+	this['getIssuesFromFilter'] = function(filter, callback){
+		console.log(filter, callback);
+		if(filter.notify){
+			loader.icon.play();
+		}
+		if(filter.type == 'jql'){
+			server.getIssuesFromJQL(filter, callback);
+		} else {
+			var pl = new SOAPClientParameters();
+			pl.add("in0", server.token);
+			pl.add("in1", filter.id);
+			SOAPClient.invoke(soapUrl, "getIssuesFromFilter", pl, true, function(r, xhr){
+				filter.issues = server.parseXml(xhr);
+				loader.filters.updateBadge();
+				chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
+				if(callback){
+					callback(filter.issues);
+				}
+				filter.showNotifications();
+			});
+		}
 	};
 	
 	server.getIssuesFromJQL = function(filter, callback){
 		var pl = new SOAPClientParameters();
-		pl.add("in0", token);
+		pl.add("in0", server.token);
 		pl.add("in1", filter.jql);
-		pl.add("in2",100);
+		pl.add("in2", 100);
+		console.log(server.token);
 		SOAPClient.invoke(soapUrl, "getIssuesFromJqlSearch", pl, true, function(r, xhr){
 			if($("Fault", xhr).size()>=1){
 				//server.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
@@ -139,19 +165,19 @@ function JiraServer(_url, _loader, username, password){
 	};
 	
 	server.getIssuesFromTextSearchWithLimit = function(terms, callback){
-				var pl = new SOAPClientParameters();
-				pl.add("in0", token);
-				pl.add("in1", terms);
-				pl.add("in2", 0);
-				pl.add("in3", 10);
-				SOAPClient.invoke(soapUrl, "getIssuesFromTextSearchWithLimit", pl, true, function(r, xhr){
-						callback(xhr);
-				});
-	};
+		var pl = new SOAPClientParameters();
+		pl.add("in0", server.token);
+		pl.add("in1", terms);
+		pl.add("in2", 0);
+		pl.add("in3", 10);
+		SOAPClient.invoke(soapUrl, "getIssuesFromTextSearchWithLimit", pl, true, function(r, xhr){
+				callback(xhr);
+		});
+};
 	
 	server.getCustomFields = function(){
 				var pl = new SOAPClientParameters();
-				pl.add("in0", token);
+				pl.add("in0", server.token);
 				SOAPClient.invoke(soapUrl, "getCustomFields", pl, true, function(r, xhr){
 
 				});
@@ -159,7 +185,7 @@ function JiraServer(_url, _loader, username, password){
 	
 	server.getWorklogs = function(issue){
 				var pl = new SOAPClientParameters();
-				pl.add("in0", token);
+				pl.add("in0", server.token);
 				pl.add("in1", issue);
 				SOAPClient.invoke(soapUrl, "getWorklogs", pl, true, function(r, xhr){
 
@@ -168,7 +194,7 @@ function JiraServer(_url, _loader, username, password){
 	
 	server.getAvailableActions = function(issue){
 				var pl = new SOAPClientParameters();
-				pl.add("in0", token);
+				pl.add("in0", server.token);
 				pl.add("in1", issue);
 				SOAPClient.invoke(soapUrl, "getAvailableActions", pl, true, function(r, xhr){
 
@@ -177,7 +203,7 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['getProjects'] = function(callback){
 				var pl = new SOAPClientParameters();
-				pl.add("in0", token);
+				pl.add("in0", server.token);
 				SOAPClient.invoke(soapUrl, "getProjectsNoSchemes", pl, true, function(r, xhr){
 						if(callback)
 							callback(xhr);
@@ -186,7 +212,7 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['addWorkLog'] = function(issue, timeSpent, log, callback){
 		var pl = new SOAPClientParameters();
-		pl.add("in0", token);
+		pl.add("in0", server.token);
 		pl.add("in1", issue);
 		pl.add("in2", {
 			"startDate":loader.getXsdDateTime(new Date()),
@@ -201,7 +227,7 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['resolveIssue'] = function(issue, resolution, callback){
 		var pl = new SOAPClientParameters();
-		pl.add("in0", token);
+		pl.add("in0", server.token);
 		pl.add("in1", issue);
 		pl.add("in2", "5");  //-- is 'Resolve issue' action
 		pl.add("in3", {
@@ -215,7 +241,7 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['getGroup'] = function(groupName, callback){
 		var pl = new SOAPClientParameters();
-		pl.add("in0", token);
+		pl.add("in0", server.token);
 		pl.add("in1", groupName);
 		SOAPClient.invoke(soapUrl, "getGroup", pl, true, function(r, xhr){
 			if(callback)
@@ -225,12 +251,12 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['assigneIssue'] = function(issue, user, callback){
 		var pl = new SOAPClientParameters();
-		pl.add("in0", token);
+		pl.add("in0", server.token);
 		pl.add("in1", issue);
 		pl.add("in2", {
-			RemoteFieldValue: {
-				id: "assignee",
-				values: [user]
+			'RemoteFieldValue': {
+				'id': "assignee",
+				'values': [user]
 			}
 		});
 		SOAPClient.invoke(soapUrl, "updateIssue", pl, true, function(r, xhr){
@@ -241,7 +267,7 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['addComment'] = function(issue, comment, callback){
 		var pl = new SOAPClientParameters();
-		pl.add("in0", token);
+		pl.add("in0", server.token);
 		pl.add("in1", issue);
 		pl.add("in2", {
 				"body": comment
@@ -254,7 +280,7 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['addAttachmentsToIssue'] = function(issue, files, callback){
 		var pl = new SOAPClientParameters();
-		pl.add("in0", token);
+		pl.add("in0", server.token);
 		pl.add("in1", issue);
 		pl.add("in2", $.map(files, function(f){return f.fileName}));
 		pl.add("in3", $.map(files, function(f){return SOAPClient._toBase64(f.data);}));
@@ -267,7 +293,7 @@ function JiraServer(_url, _loader, username, password){
 	server['parseXml'] = function(xhr){
 			var data = [];
 			$(xhr).children(":first").children(":first").children(":first").children(":first").children().each( function(){
-				$("multiRef" + self.getAttribute('href') , xhr).each(function(i, val) {
+				$("multiRef" + this.getAttribute('href') , xhr).each(function(i, val) {
 						if($("key", val).text()){
 							data.push([
 								$("type", val).text(),
@@ -298,11 +324,11 @@ function JiraServer(_url, _loader, username, password){
 	
 	function getSettings(){
 		var pl = new SOAPClientParameters();
-		pl.add("in0", token);
+		pl.add("in0", server.token);
 		SOAPClient.invoke(soapUrl, "getResolutions", pl, true, function(r, xhr){
 		$(xhr).find("multiRef").each(function(i, val) {
 				if($("id", val).text()){
-					server.resolutions[$("id", val).text()] = $("name", val).text();
+					server['resolutions'][$("id", val).text()] = $("name", val).text();
 				}
 			});
 		});
@@ -310,7 +336,7 @@ function JiraServer(_url, _loader, username, password){
 		SOAPClient.invoke(soapUrl, "getIssueTypes", pl, true, function(r, xhr){
 			$(xhr).find("multiRef").each(function(i, val) {
 				if($("id", val).text()){
-					server.issuetypes[$("id", val).text()] = {
+					server['issuetypes'][$("id", val).text()] = {
 						"icon": $("icon", val).text(), 
 						"text": $("name", val).text()
 					};
@@ -321,7 +347,7 @@ function JiraServer(_url, _loader, username, password){
 		SOAPClient.invoke(soapUrl, "getPriorities", pl, true, function(r, xhr){
 			$(xhr).find("multiRef").each(function(i, val) {
 				if($("id", val).text()){
-					server.priorities[$("id", val).text()] = {
+					server['priorities'][$("id", val).text()] = {
 						"icon": $("icon", val).text(), 
 						"text": $("name", val).text()
 					};
@@ -332,7 +358,7 @@ function JiraServer(_url, _loader, username, password){
 		SOAPClient.invoke(soapUrl, "getStatuses", pl, true, function(r, xhr){
 			$(xhr).find("multiRef").each(function(i, val) {
 				if($("id", val).text()){
-					server.statuses[$("id", val).text()] = {
+					server['statuses'][$("id", val).text()] = {
 						"icon": $("icon", val).text(), 
 						"text": $("name", val).text()
 					};
@@ -341,7 +367,7 @@ function JiraServer(_url, _loader, username, password){
 		});
 		
 		server.getProjects(function(xhr){
-			server.projects = $(xhr).find("multiRef").map(function(el){
+			server['projects'] = $(xhr).find("multiRef").map(function(el){
 				if($("id", this).text()){
 					return {
 						"id": $("id", this).text(),
@@ -355,7 +381,7 @@ function JiraServer(_url, _loader, username, password){
 		server.getGroup("jira-users", function(xhr){
 			$("multiRef", xhr).each(function(i, val) {
 				if($("fullname", val).text()){
-					server.users[$("name", val).text()] = {
+					server['users'][$("name", val).text()] = {
 						"email": $("email", val).text(), 
 						"fullname": $("fullname", val).text()
 					};
@@ -368,7 +394,8 @@ window['JiraServer'] = JiraServer;
 
 function JiraWorklog(_server){
 	var issues = {},
-		server = _server;
+		server = _server
+		self = this;
 	self.__defineGetter__("issues", function(){
        return issues;
     });

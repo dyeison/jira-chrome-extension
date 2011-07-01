@@ -39,7 +39,7 @@ $(document).ready(function(){
 			}
 		});
 	$("input[type=button]").button();
-	$('#filterBadge').click(function(){		$('#optionsFilterColorRow').setVisibility(this.checked);	});
+	$('#filterBadge').click(function(){	$('#optionsFilterColorRow').setVisibility(this.checked);});
 	
 	
 	$('#colorSelector').ColorPicker({
@@ -110,6 +110,7 @@ $(document).ready(function(){
 							"sClass": "center ShortField",
 							"bUseRendered":false, "fnRender": function(obj) { return (obj.aData[ obj.iDataColumn ])?"<span class=\"ui-icon ui-icon-check\"></span>":"";}},
 						{"sTitle": chrome.i18n.getMessage('optionsFilterName')},
+						{"sTitle": chrome.i18n.getMessage('optionsServerUrl')},
 						{"sTitle": chrome.i18n.getMessage('optionsUpdateInterval'), "sClass":"icon", "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?obj.aData[ obj.iDataColumn ]:chrome.i18n.getMessage('optionsManualUpdateInterval');}},
 						{"sTitle": chrome.i18n.getMessage('optionsNotify'), "sClass":"icon", "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?"<span class=\"ui-icon ui-icon-check\"></span>":'';}},
 						{"sTitle": chrome.i18n.getMessage('optionsDesktopNotify'), "sClass":"icon", "fnRender": function(obj) { return obj.aData[ obj.iDataColumn ]?"<span class=\"ui-icon ui-icon-check\"></span>":'';}},
@@ -323,10 +324,9 @@ $(document).ready(function(){
 					$.each(filter.columns, function(c, v){
 						filter.columns[c] = $("#filterColumns #"+c).is(":checked");
 					});
+					loader.filters.save();
 					updateFilterTable(iSelectedFilter);
-					//loader.updateFavoritesFilters(function(){
-					//	loader.getIssuesFromFilter(filter);
-					//});
+					filter.update();
 					
 					$("#dlgAddFilter").dialog('close');
 				}
@@ -363,7 +363,6 @@ $(document).ready(function(){
 						username: $("#username").attr("value"),
 						password: $("#password").attr("value"),
 						success: function(server){
-							console.log('success', server);
 							if(bNew){
 								iSelectedServer = loader.servers.push(server);
 							}

@@ -11,9 +11,9 @@ function JiraLoader(){
 		delete localStorage[name];
 	}
 	
-	self['filters'] = new JiraFiltersArray(self);
 	self['servers'] = new JiraServersArray(self);
-
+	self['filters'] = new JiraFiltersArray(self);
+	self['icon'] = new AnimatedIcon("/images/logo-19.png");
 	$.each(['omnibox', 'attachments', 'quickadd'], function(i, param){
 		loader.__defineGetter__(param, function(){
 			return server.getItem(param)?(loader.getItem(param)=="true"):true;

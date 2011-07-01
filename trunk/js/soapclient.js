@@ -110,7 +110,6 @@ SOAPClient._loadWsdl = function (url, method, parameters, async, callback, error
 		'async': async,
 		'type': "GET",
 		'success': function(data, status, xhr){
-			console.log(data);
 			SOAPClient._onLoadWsdl(url, method, parameters, async, callback, error, xhr);
 		},
 		'error': function(xhr, textStatus, errorThrown){
@@ -128,12 +127,18 @@ SOAPClient._onLoadWsdl = function (url, method, parameters, async, callback, err
 	return SOAPClient._sendSoapRequest(url, method, parameters, async, callback, error, wsdl);
 }
 SOAPClient._sendSoapRequest = function (url, method, parameters, async, callback, error, wsdl) {
-console.log(url, method, parameters, async, callback, error, wsdl);
-	var ns = (wsdl.documentElement.attributes["targetNamespace"] + "" == "undefined") ? wsdl.documentElement.attributes.getNamedItem("targetNamespace").nodeValue : wsdl.documentElement.attributes["targetNamespace"].value,
-		sr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<soap:Envelope " + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " + "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "<soap:Body>" + "<" + method + " xmlns=\"" + ns + "\">" +
-		parameters.toXml() + "</" + method + "></soap:Body></soap:Envelope>",
-		soapaction = ((ns.lastIndexOf("/") != ns.length - 1) ? ns + "/" : ns) + method,
-		xhr = $.ajax({
+	var ns = (wsdl.documentElement.attributes["targetNamespace"] + "" == "undefined") ? 
+				wsdl.documentElement.attributes.getNamedItem("targetNamespace").nodeValue : 
+				wsdl.documentElement.attributes["targetNamespace"].value,
+		sr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "<soap:Envelope " + 
+				"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " + 
+				"xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " + 
+				"xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + 
+				"<soap:Body>" + 
+				"<" + method + " xmlns=\"" + ns + "\">" +
+				parameters.toXml() + "</" + method + "></soap:Body></soap:Envelope>",
+		soapaction = ((ns.lastIndexOf("/") != ns.length - 1) ? ns + "/" : ns) + method;
+	var	xhr = $.ajax({
 			//username: SOAPClient.userName,
 			//password: SOAPClient.password,
 			'url': url,
@@ -155,26 +160,6 @@ console.log(url, method, parameters, async, callback, error, wsdl);
 	if (!async){
 		return xhr;
 	}		
-	/*
-	var xmlHttp = SOAPClient._getXmlHttp();
-	if (SOAPClient.userName && SOAPClient.password) {
-		xmlHttp.open("POST", url, async, SOAPClient.userName, SOAPClient.password);
-		xmlHttp.setRequestHeader("Authorization", "Basic " + SOAPClient._toBase64(SOAPClient.userName + ":" + SOAPClient.password));
-	} else
-		xmlHttp.open("POST", url, async);
-	var soapaction = ((ns.lastIndexOf("/") != ns.length - 1) ? ns + "/" : ns) + method;
-	xmlHttp.setRequestHeader("SOAPAction", soapaction);
-	xmlHttp.setRequestHeader("Content-Type", "text/xml; charset=utf-8");
-	if (async) {
-		xmlHttp.onreadystatechange = function () {
-			if (xmlHttp.readyState == 4)
-				SOAPClient._onSendSoapRequest(method, async, callback, error, wsdl, xmlHttp);
-		}
-	}
-	xmlHttp.send(sr);
-	if (!async)
-		return SOAPClient._onSendSoapRequest(method, async, callback, error, wsdl, xmlHttp);
-	*/
 }
 SOAPClient._onSendSoapRequest = function (method, async, callback, error, wsdl, req) {
 	var o = null;
