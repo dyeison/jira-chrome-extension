@@ -9,8 +9,7 @@ var optionsPage = this,
 	oFilters = null,
 	oServers = null,
 	bg = chrome.extension.getBackgroundPage(),
-	loader = bg.loader,
-	updateIntervalValues = [0, 1, 3, 5, 10, 30, 60];
+	loader = bg.loader;
 	
 $(document).ready(function(){
 	/*
@@ -26,11 +25,19 @@ $(document).ready(function(){
 		value:localStorage.getItem('url')?localStorage.getItem('url'):"http://jira.atlassian.com/"
 	});
 
-	
+	/*
 	$.map(updateIntervalValues,function(val){
 		$("#filterUpdate").append($("<OPTION  />").attr("value", val).text(val?val:chrome.i18n.getMessage( "optionsManualUpdateInterval")));
 	});
 	$("#filterUpdate").combobox({autocomplete:false});
+	*/
+	$("#filterUpdate").slider({
+			value:10,
+			max: 60,
+			slide: function( event, ui ) {
+				$( "#filterUpdateAmount" ).text( ui.value?(ui.value + ", min"):chrome.i18n.getMessage("optionsManualUpdateInterval") );
+			}
+		});
 	$("input[type=button]").button();
 	$('#filterBadge').click(function(){		$('#optionsFilterColorRow').setVisibility(this.checked);	});
 	
@@ -134,6 +141,7 @@ $(document).ready(function(){
 	function toggleSelectedServer(){
 		$("#optionsServerDelete").button({disabled:false});
 		$("#optionsServerEdit").button({disabled:false});
+		$("#optionsFilterAdd").button({disabled:false});
 	}
 	
 	function updateFilterTable(iSelectedFilter){
@@ -191,7 +199,7 @@ $(document).ready(function(){
 		});
 	}
 
-
+/*
   function saveOptions(){
 		chrome.extension.getBackgroundPage().loader.attachments = $("#attachmentEnabled").is(":checked");
 		chrome.extension.getBackgroundPage().loader.quickadd = $("#quickaddEnabled").is(":checked");
@@ -236,28 +244,38 @@ $(document).ready(function(){
 		alert("Settings was saved");
 	}
   }
+*/
   
   function addFilter(){
-	editFilter(new bg.JiraFilter({
+	var iSelectedServer = oServers.fnGetSelectedPosition(),
+		server = loader.servers[iSelectedServer];
+		console.log(loader)
+		editFilter(new bg.JiraFilter({
 						type: "jql",
-						enabled: true
-					}));
+						enabled: true,
+						server: server
+					}, loader));
   }
   
   function editFilter(filter){
 	if (!filter){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
 		filter = loader.filters[iSelectedFilter];
+		console.log(filter);
+	} else {
+		window.oNewFilter = filter;
 	}
 	$("#filterId").val(filter.id);
+	$("#filterServerId").val(filter.id);
 	$("#filterEnabed").setChecked(filter.enabled);	
 	$("#filterName").val(filter.name);
 	$("#filterJQL").val(filter.jql);
 	$("#optionsFilterJQLRow").setVisibility(filter.type=='jql');
-	$("#filterUpdate").val(filter.jql);
 	$("#filterNotify").setChecked(filter.notify);
 	$("#filterDesktopNotify").setChecked(filter.desktopNotify);
-	$("#filterUpdate").combobox('value', filter.updateInterval);
+	$("#filterUpdate").slider( "value" , filter.updateInterval);
+	$("#filterUpdateAmount" ).text( filter.updateInterval?(filter.updateInterval + ", min"):chrome.i18n.getMessage("optionsManualUpdateInterval") );
+	
 	$("#filterBadge").setChecked(filter.badge);
 	$('#optionsFilterColorRow').setVisibility(filter.badge);
 
@@ -287,15 +305,16 @@ $(document).ready(function(){
 				click: function(){
 					var filter = loader.filters.get($("#filterId").val());
 					if(!filter){
-						filter = new bg.JiraFilter({type:'jql', enabled: true});
+						filter = window.oNewFilter; //new bg.JiraFilter({type:'jql', enabled: true});
 						loader.filters.push(filter);
 						var iSelectedFilter = loader.filters.length-1;
 					} else {
 						var iSelectedFilter = oFilters.fnGetSelectedPosition();
 					}
+					console.log(filter);
 					filter.jql = $("#filterJQL").val();
 					filter.name = $("#filterName").val();
-					filter.updateInterval = parseInt($("#filterUpdate").attr("value"));
+					filter.updateInterval = parseInt($("#filterUpdate").slider( "value"));
 					filter.enabled = $("#filterEnabed").is(":checked");
 					filter.notify = $("#filterNotify").is(":checked");
 					filter.desktopNotify = $("#filterDesktopNotify").is(":checked");
@@ -305,9 +324,9 @@ $(document).ready(function(){
 						filter.columns[c] = $("#filterColumns #"+c).is(":checked");
 					});
 					updateFilterTable(iSelectedFilter);
-					loader.updateFavoritesFilters(function(){
-						loader.getIssuesFromFilter(filter);
-					});
+					//loader.updateFavoritesFilters(function(){
+					//	loader.getIssuesFromFilter(filter);
+					//});
 					
 					$("#dlgAddFilter").dialog('close');
 				}

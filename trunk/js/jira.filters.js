@@ -51,15 +51,15 @@ function JiraFiltersArray(_loader){
 JiraFiltersArray.prototype = new Array;
 JiraFiltersArray.prototype.get = function (id){
 	var res = null;
-	var i = self.index(id);
+	var i = this.index(id);
 	if(i>=0){
-		res = self[i];
+		res = this[i];
 	}
 	return res;
 }
 JiraFiltersArray.prototype.index = function (id){
-	var res = -1;
-	$.each(self, function(i, el){
+	var res = -1
+	$.each(this, function(i, el){
 		if (el.id.toString() == id.toString()){
 			res = i;
 			return false;
@@ -69,17 +69,17 @@ JiraFiltersArray.prototype.index = function (id){
 }
 
 JiraFiltersArray.prototype.swap = function (x,y) {
-  var b = self[x];
-  self[x] = self[y];
-  self[y] = b;
-  return self;
+  var b = this[x];
+  this[x] = this[y];
+  this[y] = b;
+  return this;
 }
 
 JiraFiltersArray.prototype.update = function(id, callback){
 	if(typeof id != 'undefined'){
-		self.get(id).update(callback);
+		this.get(id).update(callback);
 	} else {
-		$.each(self, function(i, filter){
+		$.each(this, function(i, filter){
 			filter.update(callback);
 		});
 	}
@@ -87,7 +87,7 @@ JiraFiltersArray.prototype.update = function(id, callback){
 window['JiraFiltersArray'] = JiraFiltersArray;
 
 function JiraFilter(param, loader){
-	var server = (param.server)?loader.servers.get(param.server):loader.servers[0],
+	var server = (param.server)?((typeof param.server == 'string')?loader.servers.get(param.server):param.server):loader.servers[0],
 		timer = null,
 		self = this;
 	self.columns = {
