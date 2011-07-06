@@ -31,6 +31,7 @@ $(document).ready(function(){
 	});
 	$("#filterUpdate").combobox({autocomplete:false});
 	*/
+
 	$("#filterUpdate").slider({
 			value:10,
 			max: 60,
@@ -250,7 +251,6 @@ $(document).ready(function(){
   function addFilter(){
 	var iSelectedServer = oServers.fnGetSelectedPosition(),
 		server = loader.servers[iSelectedServer];
-		console.log(loader)
 		editFilter(new bg.JiraFilter({
 						type: "jql",
 						enabled: true,
@@ -262,7 +262,6 @@ $(document).ready(function(){
 	if (!filter){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
 		filter = loader.filters[iSelectedFilter];
-		console.log(filter);
 	} else {
 		window.oNewFilter = filter;
 	}
@@ -312,7 +311,6 @@ $(document).ready(function(){
 					} else {
 						var iSelectedFilter = oFilters.fnGetSelectedPosition();
 					}
-					console.log(filter);
 					filter.jql = $("#filterJQL").val();
 					filter.name = $("#filterName").val();
 					filter.updateInterval = parseInt($("#filterUpdate").slider( "value"));

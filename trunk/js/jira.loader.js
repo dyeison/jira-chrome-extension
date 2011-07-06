@@ -54,6 +54,12 @@ function JiraLoader(){
 	  return yyyy +'-' +mm1 +'-' +dd +'T' +hh +':' +mm2 +':' +ss;
 	};
 	
+	self['addTab'] = function(url){
+		chrome.tabs.create({
+			'url': url,
+			'selected': true
+		});
+	}
 }
 
 window['loader'] = new JiraLoader();

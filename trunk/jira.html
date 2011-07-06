@@ -9,15 +9,14 @@
 	<script type="text/javascript" src="js/jquery-1.5.1.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
 	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
-	<script type="text/javascript" src="js/jquery.combobox.pack.js"></script>
+	<script type="text/javascript" src="js/jquery.combobox.js"></script>
 	<script type="text/javascript" src="js/jira.popup.js"></script>
   </head>
 <body style="min-width: 740px;">
 		<div id="HeaderLink" class="HeaderLink"><span id="title"><img src="images/logo-19.png"><span i18n-content="title"></span></span>
-		
 			<form id="quicksearch" action="/jira/secure/QuickSearch.jspa" target="_main" method="post" style="display: inline-block;margin-bottom: 0px;height: 22px;">
-				<label for="quickSearchInput" class="overlabel-apply" i18n-content="quickSearch"></label>
-				<input id="quickSearchInput" class="ui-widget-content ui-corner-all quickSearchInput" style="height: 22px;padding:0px;" title="Go directly to an issue by typing a valid issue key, or run a free-text search." type="text" size="25" name="searchString" accesskey="q" valign="absmiddle">
+				<input id="quickSearchInput" class="ui-widget-content ui-corner-all quickSearchInput" style="height: 25px; width: 180px;padding:0px;border-radius; border-top-right-radius: 0;border-bottom-right-radius: 0;" title="Go directly to an issue by typing a valid issue key, or run a free-text search." type="text" name="searchString" accesskey="q" valign="absmiddle">
+				<select id="serverList" style="width:120px;"></select>
 			</form>
 		
 		</div>

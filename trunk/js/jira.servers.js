@@ -314,6 +314,9 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['toArray'] = function(){
 		return [server.loggedIn, server.url, username];
+	}	
+	server['getUrl'] = function(str){
+		return (server.url + "/" + str).replace(/([^:])(\/{2,})/, '$1/');
 	}
 	
 	

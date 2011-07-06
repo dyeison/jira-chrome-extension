@@ -47,6 +47,7 @@ function JiraFiltersArray(_loader){
 		}*/
 	}
 	self.load();
+	self.statrBadgeAnimation();
 }
 JiraFiltersArray.prototype = new Array;
 JiraFiltersArray.prototype.get = function (id){

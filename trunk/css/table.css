@@ -1,6 +1,7 @@
 
 .dataTables_wrapper {
 	position: relative;
+	width: 100%;
 	clear: both;
 	zoom: 1; /* Feeling sorry for IE */
 }
@@ -107,6 +108,15 @@ table.display thead th {
 	white-space: nowrap;
     overflow: hidden;
 	text-overflow: ellipsis;	
+}
+
+table.display thead th.sorting:hover{
+	/*background-image: -webkit-linear-gradient(top, #7db0dd, #5597d1);*/
+	-webkit-box-shadow: -1px -1px 2px rgba(0,0,0,.25) inset, 1px 1px 2px rgba(255,255,255,.25) inset;
+}
+table.display thead th.sorting_asc, table.display thead th.sorting_desc{
+	/*background-image: -webkit-linear-gradient(top, #7db0dd, #5597d1);*/
+	-webkit-box-shadow: 1px 1px 2px rgba(0,0,0,.25) inset, -1px -1px 2px rgba(255,255,255,.25) inset;
 }
 
 table#filters {
@@ -226,8 +236,8 @@ tr.selected_row {
 	color: #ffffff; 
 }
 
-table.display tr:not(.selected_row || .dataTables_empty):hover{
-	background-image:   -webkit-linear-gradient(top, rgba(20,132,230,0.3), rgba(20,132,230,0.1));
+table.display tr:not(.selected_row):hover,table.display tr:not(.selected_row):hover td{
+	background-image:   -webkit-linear-gradient(top, rgba(20,132,230,0.3), rgba(20,132,230,0.1)) !important;
 }
 
 

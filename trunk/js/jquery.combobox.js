@@ -21,6 +21,9 @@
 				this.input = $( "<input>" )
 					.insertAfter( select )
 					.val( value )
+					.css({
+						"height": "25px !important"
+					})
 					.autocomplete({
 						delay: 0,
 						minLength: 0,
