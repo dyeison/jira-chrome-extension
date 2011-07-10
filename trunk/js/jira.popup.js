@@ -37,17 +37,7 @@ var jira = {
 		init: function(){
 			/*
 
-			for (i in jira.resolutions){
-				$("#progressResolution, #resolveResolution").append(
-					$("<option />").val(i).text(jira.resolutions[i])
-				)
-			}
-			$("#progressResolution, #resolveResolution").combobox();
-			for (i in jira.users){
-				$("#progressUsers, #assigneeUsers").append(
-					$("<option />").val(i).text(jira.users[i].fullname).attr("title", jira.users[i].email)
-				)
-			}
+
 			$.each(loader.projects, function(i, p){
 				$("#createIssueProject").append($("<option />").val(p.id).text(p.name));
 			});
@@ -55,7 +45,7 @@ var jira = {
 				$("#createIssueType").append($("<option />").val(i).text(type.text));
 			});
 			$("select").combobox();
-			
+			*/
 			$("#progressIsResolved").click(function(){
 				$("#progressResolution").attr("disabled", !this.checked).toggleClass('ui-state-disabled');
 			});
@@ -66,7 +56,7 @@ var jira = {
 			$("span#title").click(function(){
 				loader.addTab(jira.url(""));
 			}).css("cursor", "pointer");
-			*/
+			
 			$("#quickSearchInput").adText(chrome.i18n.getMessage('quickSearch'));
 			$.each(loader.servers, function(i, server){
 				$("#serverList").append($("<option />").text(server.url.replace(/https?:\/\//, '')).val(server.url));
@@ -130,7 +120,7 @@ var jira = {
 						{"bVisible": filter.columns.type, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { 
 							return (server.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
 						{"bVisible": filter.columns.key, "sTitle": chrome.i18n.getMessage('Key'), "bUseRendered":false,  "fnRender": function(obj) { 
-							return "<a target='_main' href=\""+jira.url("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+							return "<a target='_main' href=\""+server.getUrl("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
 						{"bVisible": filter.columns.summary, "sTitle": chrome.i18n.getMessage('Summary'), "sClass": "Summary"},
 						{"bVisible": filter.columns.assignee, "sTitle": chrome.i18n.getMessage('assigne'),  "fnRender": function(obj) { 
 								return "<a href=\"javascript:{jira.assignee('"+obj.aData[1]+"', '"+id+"')}\">" + 
@@ -154,8 +144,8 @@ var jira = {
 						{"bVisible": filter.columns.worklog, "sClass":"icon","sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
 							if(obj.aData[ 6 ].toLowerCase().indexOf("unresolved")>=0){
 								return (server.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
-									"<div onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"');\"><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>"+loader.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</span></div>":
-									"<div onclick=\"loader.worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><span class=\"ui-icon ui-icon-clock\"></span></div>");
+									"<div onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"', '"+filter.id+"');\"><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>"+server.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</span></div>":
+									"<div onclick=\"loader.servers.get('"+filter.server+"').worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><span class=\"ui-icon ui-icon-clock\"></span></div>");
 							} else {
 								return '';
 							}
@@ -289,14 +279,12 @@ var jira = {
 		updateCurrentTable: function(bReload){
 			var currentFilter = loader.filters[$("#tabs").tabs( "option", "selected" )];
 			if(bReload){
-				loader.getIssuesFromFilter(
-					currentFilter,
-					function(issues){
+				currentFilter.update(function(issues){
+						console.log(issues);
 						var dt = $("#table_"+currentFilter.id).dataTable();
 						dt.fnClearTable();
 						dt.fnAddData(issues);
-					}
-				);
+					});
 			} else {
 				var dt = $("#table_"+currentFilter.id).dataTable();
 				dt.fnClearTable();
@@ -321,9 +309,23 @@ var jira = {
 				window.close();
 			}
 		},
-		stopProgress: function(issueId){
-			var timeSpent = loader.worklog.getTimeSpent(issueId);
-			var bResolve = false;
+		stopProgress: function(issueId, filterId){
+			var bResolve = false,
+				filter = loader.filters.get(filterId),
+				server = loader.servers.get(filter.server),
+				timeSpent = server.worklog.getTimeSpent(issueId)
+			$("#progressResolution, #progressUsers").empty();
+			for (i in server.resolutions){
+				$("#progressResolution").append(
+					$("<option />").val(i).text(server.resolutions[i])
+				)
+			}
+			for (i in server.users){
+				$("#progressUsers").append(
+					$("<option />").val(i).text(server.users[i].fullname).attr("title", server.users[i].email)
+				)
+			}
+			$("#progressResolution, #progressUsers").combobox();			
 			
 			function stop(opt){
 				loader.addWorkLog(opt.issueId, opt.timeSpent, opt.log, opt.date, function(data){
