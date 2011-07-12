@@ -167,15 +167,18 @@ var jira = {
 						.attr("filterId", filter.id)
 						.attr("title", filter.jql?filter.jql:'')
 						.attr("type", filter.type)
-						.text(filter.name +
-							((typeof(filter.issues) != "string")?
-								("(" + filter.issues.length + ")"):''))
+						.append(
+							$("<span />").addClass('tabHeaderContent').text(filter.name)
+						)
 						.dblclick(function(){
 							if(this.getAttribute("type") == "filter")
 								loader.addTab(server.getUrl("/secure/IssueNavigator.jspa?requestId=" + this.getAttribute("filterId")));
 							else if(this.getAttribute("type") == 'jql')
 								loader.addTab(server.getUrl("/secure/IssueNavigator!executeAdvanced.jspa?runQuery=true&jqlQuery=" + escape(this.getAttribute("title"))));
 						})
+				).append(
+					$("<span />").addClass('tabHeaderCounter').text((typeof(filter.issues) != "string")?
+							(filter.issues.length):'')
 				)
 				.css({
 					"background-image": (filter.badge?("-webkit-linear-gradient(bottom, rgba("+transp(filter.rgb, .01)+"), rgba("+transp(filter.rgb, .4)+"))"):""),

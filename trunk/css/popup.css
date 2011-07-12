@@ -41,3 +41,35 @@ a.HeaderLink:hover{
 		overflow-x: hidden;
 		padding-right: 20px;
 }
+
+#tabHeader li{
+	position: relative;
+}
+#tabHeader li:not(.ui-tabs-selected) span.tabHeaderCounter{
+	display:inline-block;
+	background: rgba(46, 87, 129,.3); 
+	color:black; 
+	padding:5px 5px 5px 8px;
+}
+#tabHeader li.ui-tabs-selected span.tabHeaderCounter{
+	display:inline-block;
+	background: rgba(255, 255, 255,.5); 
+	color: black; 
+	padding:5px 5px 5px 8px;
+}
+#tabHeader li a span.tabHeaderContent{
+	font-weight: normal;
+	white-space: nowrap;
+	padding-right: 5px;
+	display: inline-block;
+}
+#tabHeader li:not(.ui-tabs-selected):not(.ui-sortable-helper) a span.tabHeaderContent{
+	/*max-width: 50px !important;
+	overflow: hidden;
+	text-overflow: ellipsis;*/
+	display: inline-block;
+}
+#tabHeader li:hover:not(.ui-tabs-selected) a span.tabHeaderContent{
+	max-width: inherit !important;
+	transition:max-width 1s ease-in;
+}
