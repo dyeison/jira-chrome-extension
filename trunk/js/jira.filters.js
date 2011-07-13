@@ -17,7 +17,7 @@ function JiraFiltersArray(_loader){
 			}, 10000);
 	}
 	self.updateBadge = function(){
-		if(self[badgeItem].badge){
+		if(self[badgeItem] && self[badgeItem].badge){
 			chrome.browserAction.setBadgeBackgroundColor({color: self[badgeItem].rgb})
 			chrome.browserAction.setBadgeText({text: self[badgeItem].issues.length.toString()});
 			badgeItem = badgeItem+1>=self.length?0:badgeItem+1;

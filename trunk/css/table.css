@@ -33,8 +33,16 @@
 
 .dataTables_filter {
 	width: 50%;
-	float: right;
-	text-align: right;
+	padding: 4px;
+}
+
+.dataTables_filter input{
+	font-size: 12px;
+	width: 50%;
+	border: 1px solid #DDD;
+	height: 25px;
+	-webkit-border-radius: 2px;
+	
 }
 
 .dataTables_info {

@@ -150,3 +150,11 @@ table.display td {
 	display:block;
 	border-radius:2px;
 }
+.httpAuthRow{
+	font-style: italic;
+	display: none;
+}
+
+.ui-dialog{
+	-webkit-box-shadow: 0 0 30px 0 #53637D;
+}

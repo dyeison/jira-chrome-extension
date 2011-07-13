@@ -16,7 +16,7 @@
 				'color': 'inherit !important',
 				'padding': '0 5px 0 5px'
 			};
-		$(this).each(function(){
+		return $(this).each(function(){
 			
 			$(this).bind("focus", function(){
 				if(this.getAttribute('adtext'))
@@ -109,9 +109,11 @@ var jira = {
 				server = loader.servers.get(filter.server);
 			$("#table_"+id).dataTable( {
 				"bLengthChange": jira.isDetached,
-				"bFilter": false,
+				"bFilter": true,
 				"bSort": true,
-				//"bInfo": false,
+				"oLanguage": {
+					"sSearch": ""
+				},
 				"bJQueryUI": false,
 				"sPaginationType ": "full_numbers",
 				"aaData": filter.issues,
@@ -151,7 +153,11 @@ var jira = {
 							}
 						}}
 					]
-				} ).find("th").append("<div />");
+				} ).parent(".dataTables_wrapper").find(".dataTables_filter input").adText('Search').parent().append(
+					$("<div />").css({'float':'right'}).append(
+						$("<button />").text('Test').button({icons: {primary: "ui-icon-flag"},text: false})
+					)
+				);
 		},
 		addTab: function(filter){
 			function transp(rgba, trnasp){

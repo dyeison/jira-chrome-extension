@@ -31,7 +31,9 @@ $(document).ready(function(){
 	});
 	$("#filterUpdate").combobox({autocomplete:false});
 	*/
-
+	$("#httpauth").bind("change", function(){
+		$(".httpAuthRow").setVisibility(this.checked);
+	});
 	$("#filterUpdate").slider({
 			value:10,
 			max: 60,
@@ -207,13 +209,13 @@ $(document).ready(function(){
 		chrome.extension.getBackgroundPage().loader.quickadd = $("#quickaddEnabled").is(":checked");
 
 	if(
-		localStorage.getItem('username')!=$("#username").attr("value") || 
-		localStorage.getItem('password') != $("#password").attr("value") ||
+		localStorage.getItem('username')!=$("#username").val() || 
+		localStorage.getItem('password') != $("#password").val() ||
 		localStorage.getItem('url') != $("#url").combobox('value')){
 		
 			localStorage.setItem('url', $("#url").combobox('value'));  
 			loader.url = $("#url").combobox('value'); 
-			loader.login($("#username").attr("value"), $("#password").attr("value"), function(res){
+			loader.login($("#username").val(), $("#password").val(), function(res){
 				console.log(res)
 				if(typeof res == 'string'){
 					$("#dlgCnnecting").html(res).dialog({
@@ -227,8 +229,8 @@ $(document).ready(function(){
 					});
 				} else {
 					
-					localStorage.setItem('username', $("#username").attr("value"));
-					localStorage.setItem('password', $("#password").attr("value"));
+					localStorage.setItem('username', $("#username").val());
+					localStorage.setItem('password', $("#password").val());
 					loader.update(function(){
 						updateFilterTable();
 						$("#tabPageFilters").show().click();
@@ -251,6 +253,7 @@ $(document).ready(function(){
   function addFilter(){
 	var iSelectedServer = oServers.fnGetSelectedPosition(),
 		server = loader.servers[iSelectedServer];
+		console.log(loader)
 		editFilter(new bg.JiraFilter({
 						type: "jql",
 						enabled: true,
@@ -262,6 +265,7 @@ $(document).ready(function(){
 	if (!filter){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
 		filter = loader.filters[iSelectedFilter];
+		console.log(filter);
 	} else {
 		window.oNewFilter = filter;
 	}
@@ -348,6 +352,13 @@ $(document).ready(function(){
 		var iSelectedServer = oServers.fnGetSelectedPosition();
 		server = loader.servers[iSelectedServer];
 	}
+	
+	$("#username").val(server.username);
+	$("#password").val(server.password);
+	$("#httpauth").setChecked(server.httpAuth.enabled);
+	$("#httpauthUsername").val(server.httpAuth.username);
+	$("#httpauthPassword").val(server.httpAuth.password);
+
 	$("#dlgAddServer").dialog({
 		modal:true,
 		width: 420,
@@ -358,8 +369,13 @@ $(document).ready(function(){
 				click: function(){
 					server.url = $("#url").combobox('value');
 					var param = {
-						username: $("#username").attr("value"),
-						password: $("#password").attr("value"),
+						username: $("#username").val(),
+						password: $("#password").val(),
+						httpAuth: {
+							enabled : $("#httpauth").is(":checked"),
+							username : $("#httpauthUsername").val(),
+							password : $("#httpauthPassword").val()
+						},
 						success: function(server){
 							if(bNew){
 								iSelectedServer = loader.servers.push(server);

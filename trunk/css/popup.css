@@ -18,7 +18,7 @@ body {background:  -webkit-linear-gradient(top, #fff, #eaeef3 50%, #d3d7db);}
 div.HeaderLink{
 	font: 9px 'Segoe UI', "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 	color: #8888;
-	margin:3px;
+	margin:3px 0 3px 0;
 	text-align:right;
 }
 a.HeaderLink{

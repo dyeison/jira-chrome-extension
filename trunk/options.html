@@ -103,8 +103,9 @@
 					</tr>
 					<tr>
 						<td align="right"><span i18n-content="optionsPassword"></td>
-						<td><input type="password" id="password" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
+						<td><input type="password" id="password" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
 					</tr>
+	
 					<tr>
 						<td align="right"><span i18n-content="optionsServerUrl"></td>
 						<td style="vertical-align:text-top;"><select id="url">
@@ -121,6 +122,22 @@
 						</select>
 						</td>
 					</tr>
+
+					<tr>
+						<td align="right"></td>
+						<td><input type="checkbox" id="httpauth"/><span i18n-content="optionsHttpEnabled"></span></td>
+					</tr>
+					
+					<tr class="httpAuthRow">
+						<td align="right" width="120"><span i18n-content="optionsHttpUsername"></td>
+						<td><input id="httpauthUsername" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
+					</tr>
+					<tr class="httpAuthRow">
+						<td align="right"><span i18n-content="optionsHttpPassword"></td>
+						<td><input type="password" id="httpauthPassword" type="text" class="ui-widget-content ui-corner-all ui-autocomplete-input"/></td>
+					</tr>					
+					
+
 					<!--tr>
 						<td align="right"><span i18n-content="optionsUpdateInterval"></td>
 						<td><select id="updateinterval" ></select>, min</td>

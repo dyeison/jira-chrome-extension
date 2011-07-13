@@ -74,7 +74,16 @@ function JiraServer(_url, _loader, username, password){
 	
 	var username = server.getItem("username"),
 		password = server.getItem("password");
-
+	server.__defineSetter__('httpAuth', function(obj){
+		server.setItem("httpAuth", JSON.stringify(obj));
+	});
+	server.__defineGetter__('httpAuth', function(){
+		return server.getItem("httpAuth")?JSON.parse(server.getItem("httpAuth")):{
+			'enabled': false,
+			'username': '',
+			'password': ''
+		};
+	});
 	server['loggedIn'] = false;
 	server['resolutions'] = {}
 	server['priorities'] = {};
@@ -88,28 +97,43 @@ function JiraServer(_url, _loader, username, password){
 			var pl = new SOAPClientParameters(),
 				options = $.extend({
 						'username': username,
-						'passowrd': password
-					}, param);		
+						'passowrd': password,
+						'httpAuth': {
+							'username': server['httpAuth']['username'],
+							'password': server['httpAuth']['password']
+						}
+					}, param);
+			console.log(options);
 			pl.add("username", options['username']);
 			pl.add("password", options['password']);
-				SOAPClient.invoke(soapUrl, "login", pl, true, function(r, xhr){
-					if($("faultstring",xhr).text() != '')
-					{
-						server.loggedIn = false;
-						if(options['error'])
-							options['error'](server, $("faultstring",xhr).text());
-					} else {
-						console.log(server, $(xhr).text());
-						server.loggedIn = true;
-						server.token = $(xhr).text();
-						server.username = options.username;
-						server.password = options.password;
-						getSettings();
-						server.update();
-						if (options['success'])
-							options['success'](server);
-					}
-				}, 	options.error);
+				SOAPClient.invoke({
+					'url': soapUrl, 'username':options['httpAuth']['username'],'password':options['httpAuth']['password'], 
+					'method': "login", 
+					'parameters': pl, 
+					'async': true, 
+					'callback': function(r, xhr){
+						console.log('login callback', xhr, options);
+						if($("faultstring",xhr).text() != '')
+						{
+							server.loggedIn = false;
+							if(options['error'])
+								options['error'](server, $("faultstring",xhr).text());
+						} else {
+							console.log(server, $(xhr).text());
+							server.loggedIn = true;
+							server.token = $(xhr).text();
+							server['username'] = options.username;
+							server['password'] = options.password;
+							server['httpAuth'] = options['httpAuth'];
+							
+							getSettings();
+							server.update();
+							if (options['success'])
+								options['success'](server);
+						}
+					}, 	
+					'error': options.error
+				});
 	};
 	
 	server['update'] = function(callback){
@@ -131,14 +155,20 @@ function JiraServer(_url, _loader, username, password){
 			var pl = new SOAPClientParameters();
 			pl.add("in0", server.token);
 			pl.add("in1", filter.id);
-			SOAPClient.invoke(soapUrl, "getIssuesFromFilter", pl, true, function(r, xhr){
-				filter.issues = server.parseXml(xhr);
-				loader.filters.updateBadge();
-				chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
-				if(callback){
-					callback(filter.issues);
+			SOAPClient.invoke({
+				'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+				'method': "getIssuesFromFilter", 
+				'parameters': pl, 
+				'async': true, 
+				'callback': function(r, xhr){
+					filter.issues = server.parseXml(xhr);
+					loader.filters.updateBadge();
+					chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
+					if(callback){
+						callback(filter.issues);
+					}
+					filter.showNotifications();
 				}
-				filter.showNotifications();
 			});
 		}
 	};
@@ -148,18 +178,23 @@ function JiraServer(_url, _loader, username, password){
 		pl.add("in0", server.token);
 		pl.add("in1", filter.jql);
 		pl.add("in2", 100);
-		console.log(server.token);
-		SOAPClient.invoke(soapUrl, "getIssuesFromJqlSearch", pl, true, function(r, xhr){
-			if($("Fault", xhr).size()>=1){
-				//server.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
-			} else {
-				filter.issues = server.parseXml(xhr);
-				loader.filters.updateBadge();
-				chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
-				if(callback){
-					callback(filter.issues);
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "getIssuesFromJqlSearch", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				if($("Fault", xhr).size()>=1){
+					//server.issuesFromFilter[filter.id] = "Your JIRA SOAP service does not support this request, ask your administrator to update it to version 4.0";	
+				} else {
+					filter.issues = server.parseXml(xhr);
+					loader.filters.updateBadge();
+					chrome.browserAction.setIcon({ 'path' : 'images/logo-19.png'});
+					if(callback){
+						callback(filter.issues);
+					}
+					filter.showNotifications();
 				}
-				filter.showNotifications();
 			}
 		});
 	};
@@ -170,16 +205,27 @@ function JiraServer(_url, _loader, username, password){
 		pl.add("in1", terms);
 		pl.add("in2", 0);
 		pl.add("in3", 10);
-		SOAPClient.invoke(soapUrl, "getIssuesFromTextSearchWithLimit", pl, true, function(r, xhr){
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "getIssuesFromTextSearchWithLimit", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
 				callback(xhr);
+			}
 		});
 };
 	
 	server.getCustomFields = function(){
 				var pl = new SOAPClientParameters();
 				pl.add("in0", server.token);
-				SOAPClient.invoke(soapUrl, "getCustomFields", pl, true, function(r, xhr){
-
+				SOAPClient.invoke({
+					'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+					'method': "getCustomFields", 
+					'parameters': pl, 
+					'async': true, 
+					'callback': function(r, xhr){
+					}
 				});
 	};
 	
@@ -187,8 +233,13 @@ function JiraServer(_url, _loader, username, password){
 				var pl = new SOAPClientParameters();
 				pl.add("in0", server.token);
 				pl.add("in1", issue);
-				SOAPClient.invoke(soapUrl, "getWorklogs", pl, true, function(r, xhr){
-
+				SOAPClient.invoke({
+					'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+					'method': "getWorklogs", 
+					'parameters': pl, 
+					'async': true, 
+					'callback': function(r, xhr){
+					}
 				});
 	};
 	
@@ -196,17 +247,28 @@ function JiraServer(_url, _loader, username, password){
 				var pl = new SOAPClientParameters();
 				pl.add("in0", server.token);
 				pl.add("in1", issue);
-				SOAPClient.invoke(soapUrl, "getAvailableActions", pl, true, function(r, xhr){
-
+				SOAPClient.invoke({
+					'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+					'method': "getAvailableActions", 
+					'parameters': pl, 
+					'async': true, 
+					'callback': function(r, xhr){
+					}
 				});
 	};
 	
 	server['getProjects'] = function(callback){
 				var pl = new SOAPClientParameters();
 				pl.add("in0", server.token);
-				SOAPClient.invoke(soapUrl, "getProjectsNoSchemes", pl, true, function(r, xhr){
+				SOAPClient.invoke({
+					'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+					'method': "getProjectsNoSchemes", 
+					'parameters': pl, 
+					'async': true, 
+					'callback': function(r, xhr){
 						if(callback)
 							callback(xhr);
+					}
 				});
 	};
 	
@@ -219,9 +281,15 @@ function JiraServer(_url, _loader, username, password){
 			"comment":log,
 			"timeSpent":timeSpent
 		});
-		SOAPClient.invoke(soapUrl, "addWorklogAndAutoAdjustRemainingEstimate", pl, true, function(r, xhr){
-			if(callback)
-				callback(xhr);
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "addWorklogAndAutoAdjustRemainingEstimate", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				if(callback)
+					callback(xhr);
+			}
 		});
 	};
 	
@@ -233,9 +301,15 @@ function JiraServer(_url, _loader, username, password){
 		pl.add("in3", {
 			"resolution":resolution
 		});
-		SOAPClient.invoke(soapUrl, "progressWorkflowAction", pl, true, function(r, xhr){
-			if(callback)
-				callback(xhr);
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "progressWorkflowAction", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				if(callback)
+					callback(xhr);
+			}
 		});
 	};
 	
@@ -243,9 +317,15 @@ function JiraServer(_url, _loader, username, password){
 		var pl = new SOAPClientParameters();
 		pl.add("in0", server.token);
 		pl.add("in1", groupName);
-		SOAPClient.invoke(soapUrl, "getGroup", pl, true, function(r, xhr){
-			if(callback)
-				callback(xhr);
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "getGroup", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				if(callback)
+					callback(xhr);
+			}
 		});
 	};
 	
@@ -259,9 +339,15 @@ function JiraServer(_url, _loader, username, password){
 				'values': [user]
 			}
 		});
-		SOAPClient.invoke(soapUrl, "updateIssue", pl, true, function(r, xhr){
-			if(callback)
-				callback(xhr);
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "updateIssue", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				if(callback)
+					callback(xhr);
+			}
 		});
 	};
 	
@@ -272,9 +358,15 @@ function JiraServer(_url, _loader, username, password){
 		pl.add("in2", {
 				"body": comment
 		});
-		SOAPClient.invoke(soapUrl, "addComment", pl, true, function(r, xhr){
-			if(callback)
-				callback(xhr);
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "addComment", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				if(callback)
+					callback(xhr);
+			}
 		});
 	};
 	
@@ -284,9 +376,15 @@ function JiraServer(_url, _loader, username, password){
 		pl.add("in1", issue);
 		pl.add("in2", $.map(files, function(f){return f.fileName}));
 		pl.add("in3", $.map(files, function(f){return SOAPClient._toBase64(f.data);}));
-		SOAPClient.invoke(soapUrl, "addBase64EncodedAttachmentsToIssue", pl, true, function(r, xhr){
-			if(callback)
-				callback();
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "addBase64EncodedAttachmentsToIssue", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				if(callback)
+					callback();
+			}
 		});
 	};	
 	
@@ -328,45 +426,69 @@ function JiraServer(_url, _loader, username, password){
 	function getSettings(){
 		var pl = new SOAPClientParameters();
 		pl.add("in0", server.token);
-		SOAPClient.invoke(soapUrl, "getResolutions", pl, true, function(r, xhr){
-		$(xhr).find("multiRef").each(function(i, val) {
-				if($("id", val).text()){
-					server['resolutions'][$("id", val).text()] = $("name", val).text();
-				}
-			});
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "getResolutions", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				$(xhr).find("multiRef").each(function(i, val) {
+					if($("id", val).text()){
+						server['resolutions'][$("id", val).text()] = $("name", val).text();
+					}
+				});
+			}
 		});
 
-		SOAPClient.invoke(soapUrl, "getIssueTypes", pl, true, function(r, xhr){
-			$(xhr).find("multiRef").each(function(i, val) {
-				if($("id", val).text()){
-					server['issuetypes'][$("id", val).text()] = {
-						"icon": $("icon", val).text(), 
-						"text": $("name", val).text()
-					};
-				}
-			});
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "getIssueTypes", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				$(xhr).find("multiRef").each(function(i, val) {
+					if($("id", val).text()){
+						server['issuetypes'][$("id", val).text()] = {
+							"icon": $("icon", val).text(), 
+							"text": $("name", val).text()
+						};
+					}
+				});
+			}
 		});
 		
-		SOAPClient.invoke(soapUrl, "getPriorities", pl, true, function(r, xhr){
-			$(xhr).find("multiRef").each(function(i, val) {
-				if($("id", val).text()){
-					server['priorities'][$("id", val).text()] = {
-						"icon": $("icon", val).text(), 
-						"text": $("name", val).text()
-					};
-				}
-			});
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "getPriorities", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				$(xhr).find("multiRef").each(function(i, val) {
+					if($("id", val).text()){
+						server['priorities'][$("id", val).text()] = {
+							"icon": $("icon", val).text(), 
+							"text": $("name", val).text()
+						};
+					}
+				});
+			}
 		});
 		
-		SOAPClient.invoke(soapUrl, "getStatuses", pl, true, function(r, xhr){
-			$(xhr).find("multiRef").each(function(i, val) {
-				if($("id", val).text()){
-					server['statuses'][$("id", val).text()] = {
-						"icon": $("icon", val).text(), 
-						"text": $("name", val).text()
-					};
-				}
-			});
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "getStatuses", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				$(xhr).find("multiRef").each(function(i, val) {
+					if($("id", val).text()){
+						server['statuses'][$("id", val).text()] = {
+							"icon": $("icon", val).text(), 
+							"text": $("name", val).text()
+						};
+					}
+				});
+			}
 		});
 		
 		server.getProjects(function(xhr){

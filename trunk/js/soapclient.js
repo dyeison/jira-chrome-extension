@@ -91,21 +91,26 @@ SOAPClientParameters._serialize = function (o) {
 	return s;
 }
 function SOAPClient() {}
-SOAPClient.username = null;
-SOAPClient.password = null;
-SOAPClient.invoke = function (url, method, parameters, async, callback, error) {
-	if (async)
-		SOAPClient._loadWsdl(url, method, parameters, async, callback, error);
+SOAPClient.invoke = function (prop) {
+	SOAPClient_cacheAuth[prop['url']] = {
+		'u': prop['username'],
+		'p': prop['password']
+	};
+	if (prop['async'])
+		SOAPClient._loadWsdl(prop['url'], prop['method'], prop['parameters'], prop['async'], prop['callback'], prop['error']);
 	else
-		return SOAPClient._loadWsdl(url, method, parameters, async, callback, error);
+		return SOAPClient._loadWsdl(prop['url'], prop['method'], prop['parameters'], prop['async'], prop['callback'], prop['error']);
 }
-var SOAPClient_cacheWsdl = new Array();
+
+var SOAPClient_cacheWsdl = {}, SOAPClient_cacheAuth = {};
 SOAPClient._loadWsdl = function (url, method, parameters, async, callback, error) {
 	var wsdl = SOAPClient_cacheWsdl[url];
 	if (wsdl + "" != "" && wsdl + "" != "undefined")
 		return SOAPClient._sendSoapRequest(url, method, parameters, async, callback, error, wsdl);
 		
 	var xhr = $.ajax({
+		'username': SOAPClient_cacheAuth[url]['u'],
+		'password': SOAPClient_cacheAuth[url]['p'],	
 		'url': url + "?wsdl",
 		'async': async,
 		'type': "GET",
@@ -139,8 +144,8 @@ SOAPClient._sendSoapRequest = function (url, method, parameters, async, callback
 				parameters.toXml() + "</" + method + "></soap:Body></soap:Envelope>",
 		soapaction = ((ns.lastIndexOf("/") != ns.length - 1) ? ns + "/" : ns) + method;
 	var	xhr = $.ajax({
-			//username: SOAPClient.userName,
-			//password: SOAPClient.password,
+			'username': SOAPClient_cacheAuth[url]['u'],
+			'password': SOAPClient_cacheAuth[url]['p'],
 			'url': url,
 			'async': async,
 			'type': "POST",
@@ -149,9 +154,12 @@ SOAPClient._sendSoapRequest = function (url, method, parameters, async, callback
 				"Content-Type": "text/xml; charset=utf-8"
 			},
 			'success': function(data, status, xhr){
+				console.log('s', xhr);
+
 				SOAPClient._onSendSoapRequest(method, async, callback, error, wsdl, xhr);
 			},
 			'error': function(xhr, textStatus, errorThrown){
+				console.log('e', xhr)
 				if(error)
 					error(errorThrown);
 			},

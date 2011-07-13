@@ -107,6 +107,15 @@
 	"optionsPassword": { 
 		"message": "Password"
 	},
+	"optionsHttpEnabled": { 
+		"message": "Use HTTP Auth"
+	},
+	"optionsHttpUsername": { 
+		"message": "HTTP Auth username"
+	},
+	"optionsHttpPassword": { 
+		"message": "HTTP Auth password"
+	},
 	"optionsFilterName": { 
 		"message": "Filter name"
 	},
