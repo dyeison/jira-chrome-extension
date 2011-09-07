@@ -211,17 +211,31 @@
 						<td class="label" i18n-content="optionsFilterName"></td>
 						<td><input id="filterName" type="text" class="ui-widget-content ui-corner-all" />
 					</tr>
-					<tr id="optionsFilterJQLRow">
+					<tr>
+						<td class="label" i18n-content="optionsFilterType"></td>
+						<td>
+							<input id="optionsFilterTypeFilter" type="radio" name="optionsFilterType" value="filter" ><span i18n-content="optionsFilterTypeFilter"></span><br />
+							<input id="optionsFilterTypeJQL" type="radio" name="optionsFilterType" value="jql" checked><span i18n-content="optionsFilterTypeJQL" ></span><br />
+							<input id="optionsFilterTypeFeed" type="radio" name="optionsFilterType" value="feed" ><span i18n-content="optionsFilterTypeFeed"></span><br />
+						</td>
+					</tr>					
+					<tr id="optionsFilterJQLRow" class="filterType">
 						<td class="label" i18n-content="optionsFilterJQL"></td>
 						<td><textarea id="filterJQL" type="text" class="ui-widget-content ui-corner-all" style="width:300px;max-width:300px;" ></textarea></td>
+					</tr>
+					<tr id="optionsFilterFilterRow"  class="filterType" style="display:none;">
+						<td class="label" i18n-content="optionsFilterTypeFilter"></td>
+						<td><select id="optionsFilterFilter" /></td>
+					</tr>
+					<tr id="optionsFilterFeedRow"  class="filterType" style="display:none;">
+						<td class="label" i18n-content="optionsFilterTypeFeed"></td>
+						<td><input type="text" id="optionsFilterFeed" class="ui-widget-content ui-corner-all" style="width:200px;max-width:300px;"/></td>
 					</tr>
 					<tr>
 						<td align="right"><span i18n-content="optionsUpdateInterval"></td>
 						<td>
 						<div id="filterUpdate" style="display: inline-block; width:100px;margin: 0 10px 0 5px;"></div>
 						<span type="text" id="filterUpdateAmount" style="font-weight:bold;" />, min
-						
-						<!--select id="filterUpdate" ></select>, min</td-->
 					</tr>
 					<tr>
 						<td align="right"></td>

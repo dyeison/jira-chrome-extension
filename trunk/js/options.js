@@ -25,6 +25,16 @@ $(document).ready(function(){
 		value:localStorage.getItem('url')?localStorage.getItem('url'):"http://jira.atlassian.com/"
 	});
 
+	$("input[name=optionsFilterType]").change(function(){
+		$(".filterType").hide();
+		if(this.value == 'filter'){
+			$("#optionsFilterFilterRow").show();
+		} else if (this.value == 'jql'){
+			$("#optionsFilterJQLRow").show();
+		} else {
+			$("#optionsFilterFeedRow").show();
+		}
+	});
 	/*
 	$.map(updateIntervalValues,function(val){
 		$("#filterUpdate").append($("<OPTION  />").attr("value", val).text(val?val:chrome.i18n.getMessage( "optionsManualUpdateInterval")));
@@ -262,6 +272,7 @@ $(document).ready(function(){
   }
   
   function editFilter(filter){
+
 	if (!filter){
 		var iSelectedFilter = oFilters.fnGetSelectedPosition();
 		filter = loader.filters[iSelectedFilter];
@@ -269,6 +280,17 @@ $(document).ready(function(){
 	} else {
 		window.oNewFilter = filter;
 	}
+	var server = loader.servers.get(filter.server);
+	$(".optionsFilterType[value="+filter.type+"]").setChecked();
+	$("#optionsFilterFilter").text('');
+	$("#optionsFilterFilter").empty();
+	for (i in server.savedFilters){
+		$("#optionsFilterFilter").append(
+			$("<option />").val(server.savedFilters[i].id).text(server.savedFilters[i].name)
+		)
+	}
+	$("#optionsFilterFilter").combobox({'editable': false});
+		
 	$("#filterId").val(filter.id);
 	$("#filterServerId").val(filter.id);
 	$("#filterEnabed").setChecked(filter.enabled);	
@@ -315,7 +337,9 @@ $(document).ready(function(){
 					} else {
 						var iSelectedFilter = oFilters.fnGetSelectedPosition();
 					}
+					filter.type = $("input[name=optionsFilterType]:checked").val();
 					filter.jql = $("#filterJQL").val();
+					filter.feed = $("#optionsFilterFeed").val();
 					filter.name = $("#filterName").val();
 					filter.updateInterval = parseInt($("#filterUpdate").slider( "value"));
 					filter.enabled = $("#filterEnabed").is(":checked");

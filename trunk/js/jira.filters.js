@@ -88,9 +88,9 @@ JiraFiltersArray.prototype.update = function(id, callback){
 window['JiraFiltersArray'] = JiraFiltersArray;
 
 function JiraFilter(param, loader){
-	console.log(param);
 	var server = (param.server)?((typeof param.server == 'string')?loader.servers.get(param.server):param.server):loader.servers[0],
 		timer = null,
+		data = null,
 		self = this;
 	self.columns = {
 		type: true,
@@ -107,6 +107,7 @@ function JiraFilter(param, loader){
 	$.extend(self.columns, param.columns);
 	self.__defineGetter__("rgb", function(){return hex2rgb(self.color);});
 	self.__defineGetter__("url", function(){return server.url;});
+	self.getData = function(){return data;}
 	function randomId(){
 		var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz",
 			string_length = 8,
@@ -132,8 +133,11 @@ function JiraFilter(param, loader){
 	self.__defineSetter__('keys', function(keys){ server.setItem(".keys", keys.toString()); });
 	if(self.type=='jql'){
 		self.jql  = param.jql;
+	} else if(self.type=='feed'){
+		self.feed  = param.feed;
 	}
 	if(param.id == "0"){
+		self.type = 'jql';
 		self.jql = "assignee = currentUser() AND resolution = unresolved ORDER BY duedate ASC, priority DESC, created ASC";
 	}
 		
@@ -142,8 +146,17 @@ function JiraFilter(param, loader){
 			clearTimeout(timer);
 		}
 		if(self.enabled){
-			server.getIssuesFromFilter(self, callback);
-		}
+			if(self.type == 'feed'){
+				server.ajax({
+					'url': self.feed,
+					'success': function(_data){
+						data = _data;
+					}
+				});
+			} else {
+				server.getIssuesFromFilter(self, callback);
+			}
+		} 
 		if(self.updateInterval){
 			timer = setTimeout(function(){
 				self.update();

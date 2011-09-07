@@ -5,7 +5,7 @@
  
 (function($)  {
    $.fn.extend({
-      adText : function(text)  {
+      'adText' : function(text)  {
 		var blured = {
 				'font-style': 'italic',
 				'color': '#aaa',
@@ -26,7 +26,30 @@
 					$(this).css(blured).attr('adtext', true).val(text);
 			}).css(blured).val(text).attr('adtext', true);
 		});
-      }
+      },
+	  'rssLayout': function(feed){
+		return $(this).each(function(){
+			var self = $("<ul />").appendTo(this).css({
+				'overflow': 'auto',
+				'max-height': '400px'
+			});
+			$("entry", feed).each(function(i, entry){
+				console.log($("title", entry).val());
+				self.append(
+					$("<li />").append(
+						$("<label />").html($("title", entry).text())
+					).append(
+						$("<ul />").hide().append(
+							$("<li />").append(
+								$("<label />").html($("summary", entry).text())
+							)
+						)
+					)
+				);
+			});
+			self.checkboxTree();
+		});
+	  }
    });
 }(jQuery));
 
@@ -107,64 +130,70 @@ var jira = {
 		renderTableFromXml: function(id){
 			var filter = loader.filters.get(id);
 				server = loader.servers.get(filter.server);
-			$("#table_"+id).dataTable( {
-				"bLengthChange": jira.isDetached,
-				"bFilter": true,
-				"bSort": true,
-				"oLanguage": {
-					"sSearch": ""
-				},
-				"bJQueryUI": false,
-				"sPaginationType ": "full_numbers",
-				"aaData": filter.issues,
-				"aaSorting": [],
-				"aoColumns": [
-						{"bVisible": filter.columns.type, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { 
-							return (server.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
-						{"bVisible": filter.columns.key, "sTitle": chrome.i18n.getMessage('Key'), "bUseRendered":false,  "fnRender": function(obj) { 
-							return "<a target='_main' href=\""+server.getUrl("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
-						{"bVisible": filter.columns.summary, "sTitle": chrome.i18n.getMessage('Summary'), "sClass": "Summary"},
-						{"bVisible": filter.columns.assignee, "sTitle": chrome.i18n.getMessage('assigne'),  "fnRender": function(obj) { 
-								return "<a href=\"javascript:{jira.assignee('"+obj.aData[1]+"', '"+id+"')}\">" + 
-									((obj.aData[ obj.iDataColumn ] && obj.aData[ obj.iDataColumn ].length>10)?(obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."):obj.aData[ obj.iDataColumn ])+
-									"</a>";
-							}
-						},
-						{"bVisible": filter.columns.duedate, "sType": "string-date","sTitle": chrome.i18n.getMessage('duedate'),  "fnRender": function(obj) {
-							return obj.aData[ obj.iDataColumn ]?loader.getDate(obj.aData[ obj.iDataColumn ]):"";
-						}, "sClass": "Date"},
-						//{ "sTitle": "Est.", "sClass": "Date"},
-						{"bVisible": filter.columns.priority, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (server.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
-						{"bVisible": filter.columns.resolution, "sTitle": chrome.i18n.getMessage('Res'), "sClass": "ShortField","fnRender": function(obj) { 
-								if(obj.aData[ obj.iDataColumn ].toLowerCase().indexOf("unresolved")>=0)
-									return "<a href=\"javascript:{jira.resolve('"+obj.aData[1]+"')}\">" + obj.aData[ obj.iDataColumn ] + "</a>";
-								else
-									return obj.aData[ obj.iDataColumn ];
-							}
-						},
-						{"bVisible": filter.columns.status, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (server.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
-						{"bVisible": filter.columns.worklog, "sClass":"icon","sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
-							if(obj.aData[ 6 ].toLowerCase().indexOf("unresolved")>=0){
-								return (server.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
-									"<div onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"', '"+filter.id+"');\"><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>"+server.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</span></div>":
-									"<div onclick=\"loader.servers.get('"+filter.server+"').worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><span class=\"ui-icon ui-icon-clock\"></span></div>");
-							} else {
-								return '';
-							}
-						}}
-					]
-				} ).parent(".dataTables_wrapper").find(".dataTables_filter input").adText('Search').parent().append(
-					$("<div />").css({'float':'right'}).append(
-						$("<button />").text('Test').button({icons: {primary: "ui-icon-flag"},text: false})
-					)
-				);
+			if(filter.type == 'feed'){
+				this.renderFeed(filter);
+			} else {
+				$("#table_"+id).dataTable( {
+					"bLengthChange": jira.isDetached,
+					"bFilter": true,
+					"bSort": true,
+					"oLanguage": {
+						"sSearch": ""
+					},
+					"bJQueryUI": false,
+					"sPaginationType ": "full_numbers",
+					"aaData": filter.issues,
+					"aaSorting": [],
+					"aoColumns": [
+							{"bVisible": filter.columns.type, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { 
+								return (server.issuetypes[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.issuetypes[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.issuetypes[obj.aData[ obj.iDataColumn ]].icon +"'>"):"";}},
+							{"bVisible": filter.columns.key, "sTitle": chrome.i18n.getMessage('Key'), "bUseRendered":false,  "fnRender": function(obj) { 
+								return "<a target='_main' href=\""+server.getUrl("/browse/"+ obj.aData[ obj.iDataColumn ])+"\">"+obj.aData[ obj.iDataColumn ]+"</a>" ;}},
+							{"bVisible": filter.columns.summary, "sTitle": chrome.i18n.getMessage('Summary'), "sClass": "Summary"},
+							{"bVisible": filter.columns.assignee, "sTitle": chrome.i18n.getMessage('assigne'),  "fnRender": function(obj) { 
+									return "<a href=\"javascript:{jira.assignee('"+obj.aData[1]+"', '"+id+"')}\">" + 
+										((obj.aData[ obj.iDataColumn ] && obj.aData[ obj.iDataColumn ].length>10)?(obj.aData[ obj.iDataColumn ].substr(0, 10)+"..."):obj.aData[ obj.iDataColumn ])+
+										"</a>";
+								}
+							},
+							{"bVisible": filter.columns.duedate, "sType": "string-date","sTitle": chrome.i18n.getMessage('duedate'),  "fnRender": function(obj) {
+								return obj.aData[ obj.iDataColumn ]?loader.getDate(obj.aData[ obj.iDataColumn ]):"";
+							}, "sClass": "Date"},
+							//{ "sTitle": "Est.", "sClass": "Date"},
+							{"bVisible": filter.columns.priority, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (server.priorities[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.priorities[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.priorities[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+							{"bVisible": filter.columns.resolution, "sTitle": chrome.i18n.getMessage('Res'), "sClass": "ShortField","fnRender": function(obj) { 
+									if(obj.aData[ obj.iDataColumn ].toLowerCase().indexOf("unresolved")>=0)
+										return "<a href=\"javascript:{jira.resolve('"+obj.aData[1]+"')}\">" + obj.aData[ obj.iDataColumn ] + "</a>";
+									else
+										return obj.aData[ obj.iDataColumn ];
+								}
+							},
+							{"bVisible": filter.columns.status, "sTitle": "", "sClass": "icon",  "fnRender": function(obj) { return (server.statuses[obj.aData[ obj.iDataColumn ]])?("<img title=\""+ server.statuses[obj.aData[ obj.iDataColumn ]].text +"\" src='" + server.statuses[obj.aData[ obj.iDataColumn ]].icon+"'>"):"";}},
+							{"bVisible": filter.columns.worklog, "sClass":"icon","sTitle": chrome.i18n.getMessage('Worklog'), "fnRender":function(obj){
+								if(obj.aData[ 6 ].toLowerCase().indexOf("unresolved")>=0){
+									return (server.worklog.inProgress(obj.aData[ obj.iDataColumn ])?
+										"<div onclick=\"jira.stopProgress('"+obj.aData[ obj.iDataColumn ]+"', '"+filter.id+"');\"><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>"+server.worklog.getTimeSpent(obj.aData[ obj.iDataColumn ])+"</span></div>":
+										"<div onclick=\"loader.servers.get('"+filter.server+"').worklog.startProgress('"+obj.aData[ obj.iDataColumn ]+"');jira.updateCurrentTable(true);\"><span class=\"ui-icon ui-icon-clock\"></span></div>");
+								} else {
+									return '';
+								}
+							}}
+						]
+					} ).parent(".dataTables_wrapper").find(".dataTables_filter input").adText('Search').parent().append(
+						$("<div />").css({'float':'right'}).append(
+							$("<button />").text('Test').button({icons: {primary: "ui-icon-flag"},text: false})
+						)
+					);
+			}
+		},
+		renderFeed: function(filter){
+			$("#table_"+filter.id).parent().empty().rssLayout(filter.getData());
 		},
 		addTab: function(filter){
 			function transp(rgba, trnasp){
 				rgba[3] = trnasp;
 				return rgba;
 			}
-			console.log(filter);
 			var server = loader.servers.get(filter.server);
 			$("#tabHeader").append(
 				$("<LI />").append(
@@ -183,8 +212,9 @@ var jira = {
 								loader.addTab(server.getUrl("/secure/IssueNavigator!executeAdvanced.jspa?runQuery=true&jqlQuery=" + escape(this.getAttribute("title"))));
 						})
 				).append(
-					$("<span />").addClass('tabHeaderCounter').text((typeof(filter.issues) != "string")?
-							(filter.issues.length):'')
+					$("<span />").addClass('tabHeaderCounter').html(
+						(filter.type=='feed'?'<img src="images/rss.png">':((typeof(filter.issues) != "string")?filter.issues.length:''))
+					)
 				)
 				.css({
 					"background-image": (filter.badge?("-webkit-linear-gradient(bottom, rgba("+transp(filter.rgb, .01)+"), rgba("+transp(filter.rgb, .4)+"))"):""),

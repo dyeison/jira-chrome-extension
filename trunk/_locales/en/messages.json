@@ -119,6 +119,18 @@
 	"optionsFilterName": { 
 		"message": "Filter name"
 	},
+	"optionsFilterType": { 
+		"message": "Filter type"
+	},
+	"optionsFilterTypeFilter": { 
+		"message": "Saved JIRA filter"
+	},
+	"optionsFilterTypeJQL": { 
+		"message": "JIRA query"
+	},
+	"optionsFilterTypeFeed": { 
+		"message": "JIRA Activity Feed"
+	},
 	"optionsFilterEnabled": { 
 		"message": "Enabled"
 	},

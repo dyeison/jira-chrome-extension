@@ -22,7 +22,8 @@
 					.insertAfter( select )
 					.val( value )
 					.css({
-						"height": "25px !important"
+						"height": "25px !important",
+						"box-sizing": "border-box"
 					})
 					.autocomplete({
 						delay: 0,

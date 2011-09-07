@@ -412,10 +412,21 @@ function JiraServer(_url, _loader, username, password){
 	
 	server['toArray'] = function(){
 		return [server.loggedIn, server.url, username];
-	}	
+	};
+	
 	server['getUrl'] = function(str){
 		return (server.url + "/" + str).replace(/([^:])(\/{2,})/, '$1/');
-	}
+	};
+	
+	server['ajax'] = function(param){
+		$.ajax($.extend({
+			'url': soapUrl, 
+			'username':server['httpAuth']['username'],
+			'password':server['httpAuth']['password'], 
+			'async': false
+		}, param));
+	
+	};
 	
 	
 	//---------------------------------------------------------
@@ -488,6 +499,27 @@ function JiraServer(_url, _loader, username, password){
 						};
 					}
 				});
+			}
+		});
+
+		SOAPClient.invoke({
+			'url': soapUrl, 'username':server['httpAuth']['username'],'password':server['httpAuth']['password'], 
+			'method': "getSavedFilters", 
+			'parameters': pl, 
+			'async': true, 
+			'callback': function(r, xhr){
+				server.savedFilters = $(xhr).find("multiRef").map(function(){
+					var id = $("id", this).text();
+					if(id){
+						return {
+							'name': $("name", this).text(),
+							'id': id
+						};
+					} else {
+						return null;
+					}
+				});
+				console.log(server.savedFilters);
 			}
 		});
 		

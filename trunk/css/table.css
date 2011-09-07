@@ -243,12 +243,12 @@ tr.even {
 	background-color: #cee4f4;
 }
 
-tr.selected_row {
-	background-image:   -webkit-linear-gradient(bottom, rgba(20,132,230,0.2), rgba(20,132,230,0.6));
-	color: #ffffff; 
+tr.selected_row td {
+	background-image: -webkit-linear-gradient(bottom, rgba(20,132,230,0.2), rgba(20,132,230,0.4));
 }
 
-table.display tr:hover,table.display tr:hover td{
+
+table.display tr:not(.selected_row):hover,table.display tr:not(.selected_row):hover td{
 	background-image:   -webkit-linear-gradient(top, rgba(255,255,255,0.3), rgba(255,255,255,0.3)) !important;
 }
 
