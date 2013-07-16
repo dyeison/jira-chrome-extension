@@ -97,6 +97,7 @@ function JiraFilter(param, loader){
 		key: true,
 		summary: true,
 		assignee: true,
+		reporter: true,
 		duedate: true,
 		priority: true,
 		resolution: true,

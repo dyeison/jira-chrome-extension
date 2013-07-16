@@ -23,6 +23,9 @@
 	"assigne": {
 		"message": "Assignee"
 	},
+	"reporter": {
+		"message": "Reporter"
+	},
 	"comment": {
 		"message": "Comment"
 	},

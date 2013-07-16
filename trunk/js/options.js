@@ -310,6 +310,7 @@ $(document).ready(function(){
 	
 	$("#filterColumns").empty().attr("filterid", filter.id);
 	$.each(filter.columns, function(column, isVisible){
+		console.log(column);
 		$("#filterColumns").append(
 			$("<span />").css({"width":"120px","display":"inline-block"}).append(
 				$("<input />").attr("type", "checkbox").attr("id", column)
