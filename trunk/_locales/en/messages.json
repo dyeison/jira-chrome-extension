@@ -1,0 +1,248 @@
+{
+	"title": {
+		"message": "JIRA assistant"
+	},
+	"quickSearch": {
+		"message": "Quick Search"
+	},
+	"timeSpent": {
+		"message": "Time spent:"
+	},
+	"date": {
+		"message": "Date:"
+	},
+	"resolveIssue": {
+		"message": "Resolve issue"
+	},
+	"assignIssue": {
+		"message": "Assign issue"
+	},
+	"issue": {
+		"message": "Issue"
+	},
+	"assigne": {
+		"message": "Assignee"
+	},
+	"reporter": {
+		"message": "Reporter"
+	},
+	"comment": {
+		"message": "Comment"
+	},
+	"resolution": {
+		"message": "Resolution"
+	},
+	"log": {
+		"message": "Log"
+	},
+	"save": {
+		"message": "Save"
+	},
+	"cancel": {
+		"message": "Cancel"
+	},
+	"yes": {
+		"message": "Yes"
+	},
+	"no": {
+		"message": "No"
+	},
+	"close": {
+		"message": "Close"
+	},
+	"logWork": {
+		"message": "Log Work"
+	},
+	"cancelProgress": {
+		"message": "Cancel progress"
+	},
+	"reload": {
+		"message": "Reload issues"
+	},
+	"manageFilters": {
+		"message": "Manage filters"
+	},
+	"options": {
+		"message": "Options"
+	},
+	"Key": {
+		"message": "Key"
+	},
+	"Worklog": {
+		"message": "Worklog"
+	},
+	"Summary": {
+		"message": "Summary"
+	},
+	"duedate": {
+		"message": "Due date"
+	},
+	"Res": {
+		"message": "Res."
+	},
+	"assignedToMe": {
+		"message": "Assigned to me"
+	},
+	"configError": {
+		"message": "Configure first!"
+	},
+	"optionsTitle": { 
+		"message": "JIRA assistant settings"
+	},
+	"optionsPpageMain": { 
+		"message": "Main settings"
+	},
+	"optionsPageFilters": { 
+		"message": "Configure filters"
+	},
+	"optionsPageServers": { 
+		"message": "Configure servers"
+	},
+	"optionsUpdateInterval": { 
+		"message": "Update interval"
+	},
+	"optionsServerUrl": { 
+		"message": "JIRA Server URL"
+	},
+	"optionsUsername": { 
+		"message": "Username"
+	},
+	"optionsPassword": { 
+		"message": "Password"
+	},
+	"optionsHttpEnabled": { 
+		"message": "Use HTTP Auth"
+	},
+	"optionsHttpUsername": { 
+		"message": "HTTP Auth username"
+	},
+	"optionsHttpPassword": { 
+		"message": "HTTP Auth password"
+	},
+	"optionsFilterName": { 
+		"message": "Filter name"
+	},
+	"optionsFilterType": { 
+		"message": "Filter type"
+	},
+	"optionsFilterTypeFilter": { 
+		"message": "Saved JIRA filter"
+	},
+	"optionsFilterTypeJQL": { 
+		"message": "JIRA query"
+	},
+	"optionsFilterTypeFeed": { 
+		"message": "JIRA Activity Feed"
+	},
+	"optionsFilterShowType": { 
+		"message": "Show as"
+	},
+	"optionsFilterShowTypeTable": { 
+		"message": "Table"
+	},
+	"optionsFilterShowTypeCalendar": { 
+		"message": "Calendar"
+	},
+	"optionsFilterEnabled": { 
+		"message": "Enabled"
+	},
+	"optionsFilterDisable": { 
+		"message": "Disable/Enable"
+	},	
+	"optionsFilterDelete": { 
+		"message": "Delete"
+	},	
+	"optionsDlgDeleteFilter": { 
+		"message": "Delete filter"
+	},
+	"optionsDlgDeleteFilterConfirmation": { 
+		"message": "Are you sure you want to delete selected filter?"
+	},
+	"optionsFilterShowCounter": { 
+		"message": "Show counter for this filter"
+	},
+	"optionsDlgLoading": { 
+		"message": "Authorization..."
+	},
+	"optionsFilterJQL": { 
+		"message": "JIRA Query"
+	},
+	"optionsFilterAdd": { 
+		"message": "Add filter"
+	},
+	"optionsFilterSave": { 
+		"message": "Save filter"
+	},	
+	"optionsFilterEdit": { 
+		"message": "Edit filter"
+	},	
+	"optionsOmniboxEnabled": { 
+		"message": "Enable omnibox handler"
+	},	
+	"optionsFileAttachmentsEnabled": { 
+		"message": "Enable drag&drop file attachments"
+	},	
+	"optionsFileAttachmentsLabel": { 
+		"message": "Drag file into this area to make an attachment"
+	},	
+	"optionsQuickAddEnabled": { 
+		"message": "Enable QuickAdd filter"
+	},	
+	"optionsQuickAddLabel": { 
+		"message": "Add this query to JIRA Assistant"
+	},	
+	"issueType": { 
+		"message": "Issue type"
+	},	
+	"project": { 
+		"message": "Project"
+	},	
+	"create": { 
+		"message": "Create"
+	},	
+	"createIssue": { 
+		"message": "Create issue"
+	},
+	"optionsFilterColumns":{
+		"message": "Configure filter columns"
+	},
+	"optionsFilterColumnsDialog":{
+		"message": "Configure filter columns"
+	},
+	"optionsManualUpdateInterval":{
+		"message": "Manual"
+	},
+	"optionsFilterDesktopNotification":{
+		"message": "Show desktop notification of new issues"
+	},
+	"optionsFilterNotify":{
+		"message": "Notify for filter updating (icon will rotate)"
+	},
+	"optionsNotify":{
+		"message": "Notify Update"
+	},
+	"optionsDesktopNotify":{
+		"message": "Desktop notifications"
+	},
+	"optionsFilterColor":{
+		"message": "Badge color"
+	},
+	"optionsFilterBadge":{
+		"message": "Show issues count on the badge"
+	},
+	"detachWindow":{
+		"message": "Detach window"
+	},
+	"optionsServerAdd": {
+		"message": "Add JIRA server"
+	},
+	"optionsServerEdit": {
+		"message": "Edit server settings"
+	},
+	"optionsServerDelete": {
+		"message": "Delete server"
+	},
+	"optionsServerSave": {
+		"message": "Save server"
+	}
+}

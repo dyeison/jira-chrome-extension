@@ -1,0 +1,25 @@
+#JA_drag_file_box {
+	color: #666;
+	border-radius: 5px;
+	border: 2px solid #74A0CE;
+	padding: 20px;
+	background-color: #FAFAFA;
+	-webkit-box-shadow: inset 0px 0px 3px #888;
+	text-align: center;
+	min-height: 48px;
+	-webkit-transition: all .2s linear;
+}
+
+
+#JA_drag_file_box.dragover{
+	border-color: #3C78B5;
+	color: #000;
+	background-color: #c1dbff;
+}
+
+
+#JA_drag_file_box.dropped{
+	border-color: #A4B6D6;
+	background-color: #FAFAFA;
+}
+
