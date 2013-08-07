@@ -60,17 +60,17 @@ var loader = chrome.extension.getBackgroundPage().loader;
 var jira = {
 		isDetached: location.search == '?detached',
 		init: function(){
-			/*
 
-
-			$.each(loader.projects, function(i, p){
+			$.each(loader.servers[0].projects, function(i, p){
 				$("#createIssueProject").append($("<option />").val(p.id).text(p.name));
 			});
-			$.each(loader.issuetypes, function(i, type){
+			$.each(loader.servers[0].issuetypes, function(i, type){
 				$("#createIssueType").append($("<option />").val(i).text(type.text));
 			});
-			$("select").combobox();
-			*/
+			$("#createIssueProject,#createIssueType").combobox();
+
+
+
 			$("#progressIsResolved").click(function(){
 				$("#progressResolution").attr("disabled", !this.checked).toggleClass('ui-state-disabled');
 			});
@@ -231,7 +231,7 @@ var jira = {
 							"sTitle" : chrome.i18n.getMessage('Worklog'),
 							"fnRender" : function (obj) {
 								if (obj.aData[6].toLowerCase().indexOf("unresolved") >= 0) {
-									return (server.worklog.inProgress(obj.aData[obj.iDataColumn]) ?
+									return (server.worklog.inProgress(obj.aData[1]) ?
 										"<div><span class=\"ui-icon ui-icon-circle-check\" style='display: inline-block !important;'></span><span style='padding-left:18px;'>" + server.worklog.getTimeSpent(obj.aData[obj.iDataColumn]) + "</span></div>" :"<div><span class=\"ui-icon ui-icon-clock\"></span></div>");
 								} else {
 									return '';
@@ -239,10 +239,10 @@ var jira = {
 							},
 							"fnCreatedCell" : function (td, sData, aData, iRow, iCol) {
 								$(td).click(function () {
-									if(server.worklog.inProgress(aData[iCol]))
-										jira.stopProgress(aData[iCol], filter.id);
+									if(server.worklog.inProgress(aData[1]))
+										jira.stopProgress(aData[1], filter.id);
 									else {
-										loader.servers.get(filter.server).worklog.startProgress(aData[iCol]);
+										loader.servers.get(filter.server).worklog.startProgress(aData[1]);
 										jira.updateCurrentTable(true);
 									}
 								});
@@ -391,11 +391,11 @@ var jira = {
 							$("<button />").click(function(){
 								jira.updateCurrentTable(true);
 							}).text(chrome.i18n.getMessage('reload')).button({icons: {primary: "ui-icon-refresh"},text: false})
-						)/*.append(
+						).append(
 							$("<button />").click(function(){
 								jira.createIssue();
 							}).text(chrome.i18n.getMessage('createIssue')).button({icons: {primary: "ui-icon-plusthick"},text: false})
-						)*/.append(
+						).append(
 							$("<button />").click(function(){
 								loader.addTab("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TRSCE62LWTWT6");
 								if(!jira.isDetached){
@@ -488,6 +488,9 @@ var jira = {
 						if(opt.bAssignee){
 							server.assigneIssue(opt.issueId, opt.assignee);
 						}
+						if(opt.comment){
+							server.addComment(opt.issueId, opt.comment);
+						}
 						//if(!jira.isDetached){
 						//	window.close();
 						//} else {
@@ -517,6 +520,7 @@ var jira = {
 							timeSpent: $("#progressTimeSpent").val(), 
 							date: $("#progressDate").datepicker( "getDate" ), 
 							log: $("#progressLog").val(), 
+							comment: $("#progressComment").val(), 
 							bResolve: $("#progressIsResolved").is(":checked"), 
 							resolution: $("#progressResolution").val(),
 							bAssignee: $("#progressIsAssignee").is(":checked"), 
@@ -631,7 +635,7 @@ var jira = {
 					click: function(){
 						var pid = $("#createIssueProject").val();
 						var type = $("#createIssueType").val();
-						loader.addTab(jira.url("/secure/CreateIssue.jspa?pid="+pid+"&issuetype="+type+"&Create=Create"));
+						loader.addTab(loader.servers[0].url + "/secure/CreateIssue.jspa?pid="+pid+"&issuetype="+type+"&Create=Create");
 						$(this).dialog('close');
 						if(!jira.isDetached){
 							window.close();
