@@ -262,9 +262,10 @@ var jira = {
 				disableResizing : true,
 				events: $.map(filter.issues, function(issue){
 					return {
-						title: issue[1],
-						start: parseXSDDateString(issue[4]),
-						issue: issue
+						"title": issue[1],
+						"start": parseXSDDateString(issue[4]),
+						"issue": issue,
+						"description": issue[2]
 					}
 				}),
 				eventDrop: function(event, delta) {
@@ -276,6 +277,18 @@ var jira = {
 				},
 				eventClick: function( event, jsEvent, view ) { 
 					loader.addTab(server.getUrl("/browse/"+ event.title));
+				},
+				eventAfterRender: function(event, element, view){
+					$(element).qtip({
+						"content": event["description"],
+					    "position": {
+					    	"my": 'left center',
+					    	"at": 'right center'
+					    },
+					    "style": {
+					        classes: 'qtip-blue qtip-shadow qtip-tipped'
+					    }
+					});
 				}
 			});
 		},
